@@ -1,6 +1,6 @@
 <div align="center">
 
-<h1>Guarda-Roupa App</h1>
+<h2>Guarda-Roupa App</h2>
 
 <p>App mobile que detecta chuva via integração com módulo Arduino e API de clima.</p>
 
@@ -8,7 +8,7 @@
 [![Expo](https://img.shields.io/badge/Expo-000020?style=for-the-badge&logo=expo&logoColor=white)](https://expo.dev/)
 [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/pt-BR/docs/Web/JavaScript)
 
-<br/>
+<br>
 
 [Sobre](#sobre-o-projeto) &nbsp;•&nbsp;
 [Funcionalidades](#funcionalidades) &nbsp;•&nbsp;
@@ -21,19 +21,17 @@
 
 ---
 
+<br>
+
 ## Sobre o projeto
 
 O **Guarda-Roupa App** é um aplicativo mobile que resolve um problema cotidiano: recolher ou expor roupas no varal sem depender de "achismos" sobre o tempo antes de ser tarde demais.
 
 A ideia central é combinar uma **API de clima em tempo real** com um **módulo Arduino físico** para automatizar (ou pelo menos facilitar) a decisão de expor e recolher roupas.
 
-<div align="right">
-
-[Voltar para o início ↺](#guarda-roupa-app)
-
+<div align="left">
+   <h6><a href="#guarda-roupa-app"> Voltar para o início ↺</a></h6>
 </div>
-
----
 
 ## Funcionalidades
 
@@ -44,13 +42,9 @@ A ideia central é combinar uma **API de clima em tempo real** com um **módulo 
 - Toggle manual do estado do varal (exposto/recolhido)
 - Dados mockados para desenvolvimento sem dependência de API ou Arduino
 
-<div align="right">
-
-[Voltar para o início ↺](#guarda-roupa-app)
-
+<div align="left">
+   <h6><a href="#guarda-roupa-app"> Voltar para o início ↺</a></h6>
 </div>
-
----
 
 ## Estrutura do projeto
 
@@ -77,13 +71,9 @@ guardaRoupaApp/
 └── README.md
 ```
 
-<div align="right">
-
-[Voltar para o início ↺](#guarda-roupa-app)
-
+<div align="left">
+   <h6><a href="#guarda-roupa-app"> Voltar para o início ↺</a></h6>
 </div>
-
----
 
 ## Tecnologias utilizadas
 
@@ -94,13 +84,9 @@ guardaRoupaApp/
 [![Linear Gradient](https://img.shields.io/badge/Linear_Gradient-FF6B6B?style=for-the-badge&logo=expo&logoColor=white)](https://docs.expo.dev/versions/latest/sdk/linear-gradient/)
 [![Google Fonts](https://img.shields.io/badge/Google_Fonts_(Nunito)-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://fonts.google.com/specimen/Nunito)
 
-<div align="right">
-
-[Voltar para o início ↺](#guarda-roupa-app)
-
+<div align="left">
+   <h6><a href="#guarda-roupa-app"> Voltar para o início ↺</a></h6>
 </div>
-
----
 
 ## Como rodar
 
@@ -125,13 +111,9 @@ npx expo start
 
 4. Abra no dispositivo escaneando o QR code com o **Expo Go**, ou pressione `w` para abrir no navegador.
 
-<div align="right">
-
-[Voltar para o início ↺](#guarda-roupa-app)
-
+<div align="left">
+   <h6><a href="#guarda-roupa-app"> Voltar para o início ↺</a></h6>
 </div>
-
----
 
 ## Changelog
 
@@ -144,8 +126,6 @@ npx expo start
 - Estrutura de projeto organizada em `src/` com `screens`, `components`, `services`, `utils` e `data`
 - Integração placeholder com Arduino e API de clima, prontos para implementação real
 
-<div align="right">
-
-[Voltar para o início ↺](#guarda-roupa-app)
-
+<div align="left">
+   <h6><a href="#guarda-roupa-app"> Voltar para o início ↺</a></h6>
 </div>

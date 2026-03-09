@@ -1,50 +1,151 @@
-# Welcome to your Expo app 👋
+<div align="center">
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+<h1>Guarda-Roupa App</h1>
 
-## Get started
+<p>App mobile que detecta chuva via integração com módulo Arduino e API de clima.</p>
 
-1. Install dependencies
+[![React Native](https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactnative.dev/)
+[![Expo](https://img.shields.io/badge/Expo-000020?style=for-the-badge&logo=expo&logoColor=white)](https://expo.dev/)
+[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/pt-BR/docs/Web/JavaScript)
 
-   ```bash
-   npm install
-   ```
+<br/>
 
-2. Start the app
+[Sobre](#sobre-o-projeto) &nbsp;•&nbsp;
+[Funcionalidades](#funcionalidades) &nbsp;•&nbsp;
+[Estrutura](#estrutura-do-projeto) &nbsp;•&nbsp;
+[Stack](#tecnologias-utilizadas) &nbsp;•&nbsp;
+[Como rodar](#como-rodar) &nbsp;•&nbsp;
+[Changelog](#changelog)
 
-   ```bash
-   npx expo start
-   ```
+</div>
 
-In the output, you'll find options to open the app in a
+---
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Sobre o projeto
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+O **Guarda-Roupa App** é um aplicativo mobile que resolve um problema cotidiano: recolher ou expor roupas no varal sem depender de "achismos" sobre o tempo antes de ser tarde demais.
 
-## Get a fresh project
+A ideia central é combinar uma **API de clima em tempo real** com um **módulo Arduino físico** para automatizar (ou pelo menos facilitar) a decisão de expor e recolher roupas.
 
-When you're ready, run:
+<div align="right">
 
-```bash
-npm run reset-project
+[Voltar para o início ↺](#guarda-roupa-app)
+
+</div>
+
+---
+
+## Funcionalidades
+
+- Tela principal com gradiente dinâmico de fundo (baseado na condição climática)
+- Seção **"Hoje"** com previsão climática horária horizontal (6h às 21h)
+- Menu inferior animado com dois estados: **recolhido** (~20% da tela) e **expandido** (~90%)
+- Botão flutuante **RECOLHER / EXPOR** na divisa do menu, com animação de linhas irradiando
+- Toggle manual do estado do varal (exposto/recolhido)
+- Dados mockados para desenvolvimento sem dependência de API ou Arduino
+
+<div align="right">
+
+[Voltar para o início ↺](#guarda-roupa-app)
+
+</div>
+
+---
+
+## Estrutura do projeto
+
+```
+guardaRoupaApp/
+├── app/                        # Roteamento (Expo Router)
+│   ├── _layout.jsx             # Layout raiz (fontes, status bar)
+│   └── index.jsx               # Rota inicial → renderiza MainScreen
+├── src/
+│   ├── components/
+│   │   └── ToggleVaralBtn.jsx  # Botão RECOLHER/EXPOR com animação
+│   ├── data/
+│   │   └── mockData.js         # Dados mockados para desenvolvimento
+│   ├── screens/
+│   │   └── MainScreen.jsx      # Tela principal do app
+│   ├── services/
+│   │   ├── arduinoService.js   # Comunicação com o Arduino (placeholder)
+│   │   └── weatherService.js   # Chamadas à API de clima (placeholder)
+│   └── utils/
+│       ├── timeUtils.js        # Formatação de horários
+│       └── weatherUtils.js     # Cores do céu e mapeamento de ícones
+├── constants/
+│   └── theme.js                # Cores, fontes e espaçamentos globais
+└── README.md
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+<div align="right">
 
-## Learn more
+[Voltar para o início ↺](#guarda-roupa-app)
 
-To learn more about developing your project with Expo, look at the following resources:
+</div>
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+---
 
-## Join the community
+## Tecnologias utilizadas
 
-Join our community of developers creating universal apps.
+[![React Native](https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactnative.dev/)
+[![Expo](https://img.shields.io/badge/Expo-000020?style=for-the-badge&logo=expo&logoColor=white)](https://expo.dev/)
+[![Expo Router](https://img.shields.io/badge/Expo_Router-000020?style=for-the-badge&logo=expo&logoColor=white)](https://expo.github.io/router/)
+[![Reanimated](https://img.shields.io/badge/Reanimated-764ABC?style=for-the-badge&logo=react&logoColor=white)](https://docs.swmansion.com/react-native-reanimated/)
+[![Linear Gradient](https://img.shields.io/badge/Linear_Gradient-FF6B6B?style=for-the-badge&logo=expo&logoColor=white)](https://docs.expo.dev/versions/latest/sdk/linear-gradient/)
+[![Google Fonts](https://img.shields.io/badge/Google_Fonts_(Nunito)-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://fonts.google.com/specimen/Nunito)
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+<div align="right">
+
+[Voltar para o início ↺](#guarda-roupa-app)
+
+</div>
+
+---
+
+## Como rodar
+
+> [!IMPORTANT]
+> Certifique-se de ter o **Node.js** e o **Expo CLI** instalados antes de prosseguir.
+
+1. Clone o repositório
+```bash
+git clone https://github.com/seu-usuario/guardaRoupaApp.git
+cd guardaRoupaApp
+```
+
+2. Instale as dependências
+```bash
+npm install
+```
+
+3. Inicie o projeto
+```bash
+npx expo start
+```
+
+4. Abra no dispositivo escaneando o QR code com o **Expo Go**, ou pressione `w` para abrir no navegador.
+
+<div align="right">
+
+[Voltar para o início ↺](#guarda-roupa-app)
+
+</div>
+
+---
+
+## Changelog
+
+### v0.1.0 - 09/03/2026
+
+- Interface principal com gradiente dinâmico de céu
+- Menu inferior animado (recolhido/expandido) com `react-native-reanimated`
+- Botão flutuante RECOLHER/EXPOR com animação de linhas irradiando
+- Previsão horária horizontal com dados mockados
+- Estrutura de projeto organizada em `src/` com `screens`, `components`, `services`, `utils` e `data`
+- Integração placeholder com Arduino e API de clima, prontos para implementação real
+
+<div align="right">
+
+[Voltar para o início ↺](#guarda-roupa-app)
+
+</div>

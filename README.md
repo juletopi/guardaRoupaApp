@@ -85,7 +85,7 @@ guardaRoupaApp/
 [![Expo Router](https://img.shields.io/badge/Expo_Router-000020?style=for-the-badge&logo=expo&logoColor=white)](https://expo.github.io/router/)
 [![Reanimated](https://img.shields.io/badge/Reanimated-764ABC?style=for-the-badge&logo=react&logoColor=white)](https://docs.swmansion.com/react-native-reanimated/)
 [![Linear Gradient](https://img.shields.io/badge/Linear_Gradient-FF6B6B?style=for-the-badge&logo=expo&logoColor=white)](https://docs.expo.dev/versions/latest/sdk/linear-gradient/)
-[![Google Fonts](https://img.shields.io/badge/Google_Fonts_(Nunito)-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://fonts.google.com/specimen/Nunito)
+[![Google Fonts](<https://img.shields.io/badge/Google_Fonts_(Nunito)-4285F4?style=for-the-badge&logo=google&logoColor=white>)](https://fonts.google.com/specimen/Nunito)
 
 <div align="left">
    <h6><a href="#guarda-roupa-app"> Voltar para o início ↺</a></h6>
@@ -97,17 +97,20 @@ guardaRoupaApp/
 > Certifique-se de ter o **Node.js** e o **Expo CLI** instalados antes de prosseguir.
 
 1. Clone o repositório
+
 ```bash
 git clone https://github.com/seu-usuario/guardaRoupaApp.git
 cd guardaRoupaApp
 ```
 
 2. Instale as dependências
+
 ```bash
 npm install
 ```
 
 3. Inicie o projeto
+
 ```bash
 npx expo start
 ```
@@ -120,25 +123,13 @@ npx expo start
 
 ## Changelog
 
-### v0.2.0 - 09/03/2026
+O projeto mantém um histórico de alterações detalhado para cada versão, incluindo:
 
-- Integração real com a API **OpenWeatherMap** (`/weather`, `/forecast`, `/geo/1.0/reverse`)
-- Novo hook `useWeather` — solicita permissão de localização, busca clima atual, previsão horária e nome de cidade em paralelo
-- Reverse geocoding via endpoint OWM para resolver corretamente nomes de municípios brasileiros
-- Novo componente `HourlyForecast` — renderiza previsão horária com estados de loading, erro e lista horizontal
-- Novos helpers em `weatherUtils`: `getSkyConditionFromIcon` e `getIconColor`
-- Gradiente do céu e texto de status agora refletem a condição climática real
-- API key carregada via variável de ambiente `EXPO_PUBLIC_OWM_API_KEY` (`.env`)
-- Logs de depuração com `__DEV__` guard (não executam em produção)
+- Novas funcionalidades adicionadas
+- Alterações em funcionalidades existentes
+- Correções de bugs
 
-### v0.1.0 - 09/03/2026
-
-- Interface principal com gradiente dinâmico de céu
-- Menu inferior animado (recolhido/expandido) com `react-native-reanimated`
-- Botão flutuante RECOLHER/EXPOR com animação de linhas irradiando
-- Previsão horária horizontal com dados mockados
-- Estrutura de projeto organizada em `src/` com `screens`, `components`, `services`, `utils` e `data`
-- Integração placeholder com Arduino e API de clima, prontos para implementação real
+Consulte o [CHANGELOG.md](CHANGELOG.md) para ver o histórico completo de alterações.
 
 <div align="left">
    <h6><a href="#guarda-roupa-app"> Voltar para o início ↺</a></h6>

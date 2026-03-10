@@ -2,9 +2,7 @@
 
 <details open>
 <summary>
-  <h3 style="display: inline-block;">
-    <a href="https://github.com/juletopi/guardaRoupaApp/releases/tag/v0.2.0">[v0.2.0]</a> - 09/03/2026
-  </h3>
+  <h3 style="display: inline-block;">[v0.2.0] - 09/03/2026</h3>
 </summary>
 
 <h3>Adicionado</h3>
@@ -56,9 +54,7 @@
 
 <details>
 <summary>
-  <h3 style="display: inline-block;">
-    <a href="https://github.com/juletopi/guardaRoupaApp/releases/tag/v0.1.0">[v0.1.0]</a> - 09/03/2026
-  </h3>
+  <h3 style="display: inline-block;">[v0.1.0] - 09/03/2026</h3>
 </summary>
 
 <h3>Adicionado</h3>

@@ -1,7 +1,5 @@
 <h2>Changelog</h2>
 
----
-
 <details open>
 <summary>
   <h3 style="display: inline-block;">
@@ -51,6 +49,8 @@
 - `.env` adicionado ao `.gitignore`
 
 </details>
+
+<br>
 
 ---
 

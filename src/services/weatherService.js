@@ -1,23 +1,39 @@
-import axios from 'axios';
+import axios from "axios";
 
-const WEATHER_API_URL = 'https://api.openweathermap.org/data/2.5/weather';
+const BASE_URL = "https://api.openweathermap.org/data/2.5";
+const API_KEY = process.env.EXPO_PUBLIC_OWM_API_KEY;
 
-export async function fetchWeather(lat, lon, apiKey) {
-    const response = await axios.get(WEATHER_API_URL, {
-        params: {
-            lat,
-            lon,
-            appid: apiKey,
-            units: 'metric',
-            lang: 'pt_br',
-        },
+const defaultParams = (lat, lon) => ({
+  lat,
+  lon,
+  appid: API_KEY,
+  units: "metric",
+  lang: "pt_br",
+});
+
+export async function fetchCurrentWeather(lat, lon) {
+  const response = await axios.get(`${BASE_URL}/weather`, {
+    params: defaultParams(lat, lon),
+  });
+  const { main, weather, name } = response.data;
+  return {
+    temp: Math.round(main.temp),
+    description: weather[0].description,
+    icon: weather[0].icon,
+    city: name,
+  };
+}
+
+export async function fetchHourlyForecast(lat, lon) {
+    const response = await axios.get(`${BASE_URL}/forecast`, {
+        params: { ...defaultParams(lat, lon), cnt: 16 },
     });
+    return response.data.list;
+}
 
-    const data = response.data;
-    return {
-        temp: Math.round(data.main.temp),
-        description: data.weather[0].description,
-        icon: data.weather[0].icon,
-        city: data.name,
-    };
+export async function fetchCityName(lat, lon) {
+    const response = await axios.get('https://api.openweathermap.org/geo/1.0/reverse', {
+        params: { lat, lon, limit: 1, appid: API_KEY },
+    });
+    return response.data[0]?.local_names?.pt ?? response.data[0]?.name ?? null;
 }

@@ -1,7 +1,6 @@
 import { theme } from '../../constants/theme';
 
 // condition: 'sunny' | 'rainy' | 'night'
-// Will receive live data from weatherService once API is integrated
 export function getSkyColors(condition) {
     switch (condition) {
         case 'rainy': return theme.colors.sky.rainy;
@@ -18,6 +17,28 @@ export function getWeatherStatusText(condition) {
         case 'sunny':
         default:      return 'Céu Limpo';
     }
+}
+
+export function getSkyConditionFromIcon(icon) {
+    if (!icon) return 'sunny';
+    if (icon.endsWith('n')) return 'night';
+    const code = icon.slice(0, 2);
+    if (['09', '10', '11'].includes(code)) return 'rainy';
+    return 'sunny';
+}
+
+export function getIconColor(apiIcon) {
+    if (!apiIcon) return '#A0AEC0';
+    const isNight = apiIcon.endsWith('n');
+    const code = apiIcon.slice(0, 2);
+    if (code === '01') return isNight ? '#667EEA' : '#ECC94B';
+    if (code === '02') return isNight ? '#A0AEC0' : '#ECC94B';
+    if (['03', '04'].includes(code)) return '#A0AEC0';
+    if (['09', '10'].includes(code)) return '#63B3ED';
+    if (code === '11') return '#9F7AEA';
+    if (code === '13') return '#BEE3F8';
+    if (code === '50') return '#CBD5E0';
+    return '#A0AEC0';
 }
 
 // Maps OpenWeatherMap icon codes (e.g. '10d') to MaterialCommunityIcons names.

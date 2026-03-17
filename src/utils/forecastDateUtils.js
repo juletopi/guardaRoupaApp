@@ -13,14 +13,36 @@ export function isSameDay(a, b) {
 }
 
 export function formatPtBrFullDate(date) {
-  const label = new Intl.DateTimeFormat("pt-BR", {
+  const formatter = new Intl.DateTimeFormat("pt-BR", {
     weekday: "long",
     day: "numeric",
     month: "long",
     year: "numeric",
-  }).format(date);
+  });
 
-  return label.charAt(0).toUpperCase() + label.slice(1);
+  const parts = formatter.formatToParts(date);
+
+  const weekdayPart = parts.find((part) => part.type === "weekday");
+  const dayPart = parts.find((part) => part.type === "day");
+  const monthPart = parts.find((part) => part.type === "month");
+  const yearPart = parts.find((part) => part.type === "year");
+
+  let weekday = weekdayPart ? weekdayPart.value : "";
+  const day = dayPart ? dayPart.value : "";
+  let month = monthPart ? monthPart.value : "";
+  const year = yearPart ? yearPart.value : "";
+
+  weekday = weekday.replace("-feira", "");
+
+  if (weekday) {
+    weekday = weekday.charAt(0).toUpperCase() + weekday.slice(1);
+  }
+
+  if (month) {
+    month = month.charAt(0).toUpperCase() + month.slice(1);
+  }
+
+  return `${weekday}, ${day} de ${month} de ${year}`;
 }
 
 export function formatDateInput(date) {

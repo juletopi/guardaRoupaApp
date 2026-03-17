@@ -193,7 +193,6 @@ const styles = StyleSheet.create({
     fontFamily: theme.fonts.bold,
     color: theme.colors.textDark,
     fontSize: 15,
-    textTransform: "capitalize",
     marginBottom: 10,
   },
   monthNavRow: {

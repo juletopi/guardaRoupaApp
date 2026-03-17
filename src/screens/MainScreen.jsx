@@ -20,6 +20,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { theme } from "../../constants/theme";
+import ExpandMenuButton from "../components/ExpandMenuButton";
 import ForecastCalendar from "../components/ForecastCalendar";
 import HourlyForecast from "../components/HourlyForecast";
 import ToggleVaralBtn, {
@@ -299,17 +300,10 @@ export default function HomeScreen() {
       </Animated.View>
 
       <View style={styles.bottomSheet}>
-        <TouchableOpacity
-          style={styles.expandButton}
-          activeOpacity={0.7}
+        <ExpandMenuButton
+          isExpanded={isExpanded}
           onPress={handleSheetToggle}
-        >
-          <MaterialCommunityIcons
-            name={isExpanded ? "chevron-down" : "chevron-up"}
-            size={18}
-            color={theme.colors.textDark}
-          />
-        </TouchableOpacity>
+        />
 
         <ScrollView
           contentContainerStyle={styles.scrollContent}
@@ -471,28 +465,12 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 36,
     borderTopRightRadius: 36,
     paddingHorizontal: 25,
+    overflow: "visible",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.08,
     shadowRadius: 12,
     elevation: 10,
-  },
-  expandButton: {
-    position: "absolute",
-    top: 16,
-    right: 20,
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: theme.colors.surface,
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.12,
-    shadowRadius: 4,
-    elevation: 3,
-    zIndex: 10,
   },
   scrollContent: {
     paddingTop: 10,
@@ -500,10 +478,10 @@ const styles = StyleSheet.create({
   },
   titleArea: {
     minHeight: 36,
-    marginTop: 50,
+    marginTop: 44,
     marginBottom: 12,
     justifyContent: "center",
-    paddingRight: 40,
+    paddingRight: 62,
   },
   sectionTitle: {
     fontFamily: theme.fonts.bold,
@@ -531,7 +509,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     maxWidth: "72%",
     textAlign: "center",
-    textTransform: "capitalize",
   },
   dateChevronBtn: {
     width: 30,

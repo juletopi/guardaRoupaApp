@@ -9,8 +9,13 @@ import {
 } from "react-native";
 import { theme } from "../../constants/theme";
 
-export default function HourlyForecast({ items, isLoading, error }) {
-  if (isLoading) {
+export default function HourlyForecast({
+  items,
+  isLoading,
+  error,
+  showLoadingOverlay = false,
+}) {
+  if (isLoading && (!items || items.length === 0)) {
     return (
       <View style={[styles.container, styles.center]}>
         <ActivityIndicator size="small" color={theme.colors.textMuted} />
@@ -57,6 +62,12 @@ export default function HourlyForecast({ items, isLoading, error }) {
           </React.Fragment>
         ))}
       </ScrollView>
+
+      {showLoadingOverlay && (
+        <View style={styles.loadingOverlay} pointerEvents="none">
+          <ActivityIndicator size="small" color={theme.colors.textMuted} />
+        </View>
+      )}
     </View>
   );
 }
@@ -108,5 +119,11 @@ const styles = StyleSheet.create({
     fontFamily: theme.fonts.regular,
     fontSize: 13,
     color: theme.colors.textMuted,
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(255,255,255,0.55)",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

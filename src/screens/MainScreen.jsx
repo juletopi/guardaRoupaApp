@@ -1,29 +1,38 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    useWindowDimensions,
-    View,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
 } from "react-native";
 import Animated, {
-    Easing,
-    Extrapolation,
-    interpolate,
-    useAnimatedStyle,
-    useSharedValue,
-    withTiming,
+  Easing,
+  Extrapolation,
+  FadeInDown,
+  FadeOut,
+  interpolate,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
 } from "react-native-reanimated";
 import { theme } from "../../constants/theme";
+import ForecastCalendar from "../components/ForecastCalendar";
 import HourlyForecast from "../components/HourlyForecast";
 import ToggleVaralBtn, {
-    WRAPPER_HALF_HEIGHT,
+  WRAPPER_HALF_HEIGHT,
 } from "../components/ToggleVaralBtn";
 import { MOCK_HISTORY } from "../data/mockData";
 import { useWeather } from "../hooks/useWeather";
+import {
+  formatPtBrFullDate,
+  getForecastItemsForDate,
+  isSameDay,
+  startOfDay,
+} from "../utils/forecastDateUtils";
 import { getSkyColors } from "../utils/weatherUtils";
 
 const TOGGLE_HALF_HEIGHT = WRAPPER_HALF_HEIGHT;
@@ -37,20 +46,129 @@ export default function HomeScreen() {
   const { height: screenHeight } = useWindowDimensions();
   const SKY_COLLAPSED_HEIGHT = screenHeight * 0.77;
 
-  const { condition, statusText, hourlyForecast, isLoading, error } =
-    useWeather();
+  const {
+    condition,
+    statusText,
+    city,
+    forecastList,
+    hourlyForecast,
+    isLoading,
+    error,
+  } = useWeather();
   const [isClotheslineExposed, setIsClotheslineExposed] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(startOfDay(new Date()));
+  const [selectedForecast, setSelectedForecast] = useState(hourlyForecast);
+  const [isDateLoading, setIsDateLoading] = useState(false);
 
   const skyHeight = useSharedValue(SKY_COLLAPSED_HEIGHT);
+  const expandedProgress = useSharedValue(0);
+  const dateLoadingTimeoutRef = useRef(null);
+
+  const availableRange = useMemo(() => {
+    if (!forecastList || forecastList.length === 0) {
+      return { minDate: null, maxDate: null };
+    }
+
+    const firstItemDate = new Date(forecastList[0].dt * 1000);
+    const lastItemDate = new Date(
+      forecastList[forecastList.length - 1].dt * 1000,
+    );
+
+    return {
+      minDate: startOfDay(firstItemDate),
+      maxDate: startOfDay(lastItemDate),
+    };
+  }, [forecastList]);
+
+  const collapsedTitle = city ? `Hoje, ${city}` : "Hoje";
+  const expandedDateLabel = formatPtBrFullDate(selectedDate);
+
+  const clampDateToForecastRange = useCallback((date) => {
+    if (!availableRange.minDate || !availableRange.maxDate) return date;
+    if (date < availableRange.minDate) return availableRange.minDate;
+    if (date > availableRange.maxDate) return availableRange.maxDate;
+    return date;
+  }, [availableRange.maxDate, availableRange.minDate]);
+
+  const setForecastForDate = useCallback((targetDate) => {
+    if (forecastList.length > 0) {
+      setSelectedForecast(getForecastItemsForDate(forecastList, targetDate));
+      return;
+    }
+
+    if (isSameDay(targetDate, startOfDay(new Date()))) {
+      setSelectedForecast(hourlyForecast);
+      return;
+    }
+
+    setSelectedForecast([]);
+  }, [forecastList, hourlyForecast]);
+
+  const handleSelectDate = useCallback((nextDate) => {
+    const normalizedDate = startOfDay(nextDate);
+    const clampedDate = clampDateToForecastRange(normalizedDate);
+
+    if (isSameDay(clampedDate, selectedDate)) return;
+
+    setSelectedDate(clampedDate);
+    setIsDateLoading(true);
+
+    if (dateLoadingTimeoutRef.current) {
+      clearTimeout(dateLoadingTimeoutRef.current);
+    }
+
+    dateLoadingTimeoutRef.current = setTimeout(() => {
+      setForecastForDate(clampedDate);
+      setIsDateLoading(false);
+    }, 220);
+  }, [clampDateToForecastRange, selectedDate, setForecastForDate]);
+
+  const canStepPrev = availableRange.minDate
+    ? selectedDate > availableRange.minDate
+    : false;
+  const canStepNext = availableRange.maxDate
+    ? selectedDate < availableRange.maxDate
+    : false;
+
+  const handleStepDate = (dayOffset) => {
+    const nextDate = new Date(selectedDate);
+    nextDate.setDate(nextDate.getDate() + dayOffset);
+    handleSelectDate(nextDate);
+  };
+
+  useEffect(() => {
+    const today = startOfDay(new Date());
+    const clampedToday = clampDateToForecastRange(today);
+
+    setSelectedDate((previousDate) =>
+      isSameDay(previousDate, clampedToday) ? previousDate : clampedToday,
+    );
+    setForecastForDate(clampedToday);
+    setIsDateLoading(false);
+  }, [clampDateToForecastRange, forecastList, hourlyForecast, setForecastForDate]);
+
+  useEffect(() => {
+    return () => {
+      if (dateLoadingTimeoutRef.current) {
+        clearTimeout(dateLoadingTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleSheetToggle = () => {
     const willExpand = !isExpanded;
     setIsExpanded(willExpand);
+
     skyHeight.value = withTiming(
       willExpand ? SKY_EXPANDED_HEIGHT : SKY_COLLAPSED_HEIGHT,
       TIMING_CONFIG,
     );
+
+    expandedProgress.value = withTiming(willExpand ? 1 : 0, {
+      duration: 180,
+      easing: Easing.out(Easing.cubic),
+    });
   };
 
   const skyWrapperStyle = useAnimatedStyle(() => ({
@@ -61,8 +179,6 @@ export default function HomeScreen() {
     top: skyHeight.value - TOGGLE_HALF_HEIGHT,
   }));
 
-  // Interpolation bounds are non-linear intentionally:
-  // main content fades over the first ~35% of collapse, mini fades in near SKY_EXPANDED_HEIGHT
   const skyMainOpacity = useAnimatedStyle(() => ({
     opacity: interpolate(
       skyHeight.value,
@@ -91,9 +207,63 @@ export default function HomeScreen() {
     ],
   }));
 
+  const collapsedTitleStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(
+      expandedProgress.value,
+      [0, 1],
+      [1, 0],
+      Extrapolation.CLAMP,
+    ),
+    transform: [
+      {
+        translateX: interpolate(
+          expandedProgress.value,
+          [0, 1],
+          [0, 34],
+          Extrapolation.CLAMP,
+        ),
+      },
+      {
+        translateY: interpolate(
+          expandedProgress.value,
+          [0, 1],
+          [0, -2],
+          Extrapolation.CLAMP,
+        ),
+      },
+    ],
+  }));
+
+  const expandedDateRowStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(
+      expandedProgress.value,
+      [0, 1],
+      [0, 1],
+      Extrapolation.CLAMP,
+    ),
+    transform: [
+      {
+        translateY: interpolate(
+          expandedProgress.value,
+          [0, 1],
+          [-8, 0],
+          Extrapolation.CLAMP,
+        ),
+      },
+    ],
+  }));
+
+  const chevronsStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(
+      expandedProgress.value,
+      [0, 1],
+      [0, 1],
+      Extrapolation.CLAMP,
+    ),
+  }));
+
   return (
     <View style={styles.container}>
-      {/* Gradient lives on the container so rounded panel corners reveal it instead of white */}
       <LinearGradient
         colors={getSkyColors(condition)}
         style={StyleSheet.absoluteFillObject}
@@ -146,12 +316,89 @@ export default function HomeScreen() {
           showsVerticalScrollIndicator={false}
           scrollEnabled={isExpanded}
         >
-          <Text style={styles.sectionTitle}>Hoje</Text>
+          <View style={styles.titleArea}>
+            <Animated.Text
+              numberOfLines={1}
+              style={[
+                styles.sectionTitle,
+                styles.collapsedTitleText,
+                collapsedTitleStyle,
+              ]}
+            >
+              {collapsedTitle}
+            </Animated.Text>
+
+            <Animated.View
+              style={[styles.expandedDateRow, expandedDateRowStyle]}
+              pointerEvents={isExpanded ? "auto" : "none"}
+            >
+              <Animated.View style={chevronsStyle}>
+                <TouchableOpacity
+                  style={[
+                    styles.dateChevronBtn,
+                    (!canStepPrev || !isExpanded) &&
+                      styles.dateChevronBtnDisabled,
+                  ]}
+                  activeOpacity={0.7}
+                  onPress={() => handleStepDate(-1)}
+                  disabled={!canStepPrev || !isExpanded}
+                >
+                  <MaterialCommunityIcons
+                    name="chevron-left"
+                    size={20}
+                    color={theme.colors.textDark}
+                  />
+                </TouchableOpacity>
+              </Animated.View>
+
+              <Text
+                numberOfLines={1}
+                style={[styles.sectionTitle, styles.expandedDateText]}
+              >
+                {expandedDateLabel}
+              </Text>
+
+              <Animated.View style={chevronsStyle}>
+                <TouchableOpacity
+                  style={[
+                    styles.dateChevronBtn,
+                    (!canStepNext || !isExpanded) &&
+                      styles.dateChevronBtnDisabled,
+                  ]}
+                  activeOpacity={0.7}
+                  onPress={() => handleStepDate(1)}
+                  disabled={!canStepNext || !isExpanded}
+                >
+                  <MaterialCommunityIcons
+                    name="chevron-right"
+                    size={20}
+                    color={theme.colors.textDark}
+                  />
+                </TouchableOpacity>
+              </Animated.View>
+            </Animated.View>
+          </View>
+
           <HourlyForecast
-            items={hourlyForecast}
+            items={selectedForecast}
             isLoading={isLoading}
+            showLoadingOverlay={isDateLoading && selectedForecast.length > 0}
             error={error}
           />
+
+          {isExpanded && (
+            <Animated.View
+              entering={FadeInDown.duration(220)}
+              exiting={FadeOut.duration(160)}
+            >
+              <ForecastCalendar
+                selectedDate={selectedDate}
+                onSelectDate={handleSelectDate}
+                minDate={availableRange.minDate}
+                maxDate={availableRange.maxDate}
+              />
+            </Animated.View>
+          )}
 
           <Text style={styles.sectionTitle}>Histórico de Atividade</Text>
           {MOCK_HISTORY.map((item) => (
@@ -248,8 +495,15 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   scrollContent: {
-    paddingTop: 20,
+    paddingTop: 10,
     paddingBottom: 40,
+  },
+  titleArea: {
+    minHeight: 36,
+    marginTop: 50,
+    marginBottom: 12,
+    justifyContent: "center",
+    paddingRight: 40,
   },
   sectionTitle: {
     fontFamily: theme.fonts.bold,
@@ -257,6 +511,38 @@ const styles = StyleSheet.create({
     color: theme.colors.textDark,
     marginTop: 10,
     marginBottom: 15,
+  },
+  collapsedTitleText: {
+    marginTop: 0,
+    marginBottom: 0,
+  },
+  expandedDateRow: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 4,
+  },
+  expandedDateText: {
+    marginTop: 0,
+    marginBottom: 0,
+    fontSize: 15,
+    maxWidth: "72%",
+    textAlign: "center",
+    textTransform: "capitalize",
+  },
+  dateChevronBtn: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: theme.colors.backgroundAlt,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  dateChevronBtnDisabled: {
+    opacity: 0.35,
   },
   historyCard: {
     backgroundColor: theme.colors.backgroundAlt,

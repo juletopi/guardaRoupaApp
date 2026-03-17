@@ -26,7 +26,7 @@ export async function fetchCurrentWeather(lat, lon) {
 
 export async function fetchHourlyForecast(lat, lon) {
     const response = await axios.get(`${BASE_URL}/forecast`, {
-        params: { ...defaultParams(lat, lon), cnt: 16 },
+    params: { ...defaultParams(lat, lon), cnt: 40 },
     });
     return response.data.list;
 }

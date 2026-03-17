@@ -5,11 +5,10 @@ import {
   fetchCurrentWeather,
   fetchHourlyForecast,
 } from "../services/weatherService";
+import { getForecastItemsForDate } from "../utils/forecastDateUtils";
 import {
-  getIconColor,
   getSkyConditionFromIcon,
   getWeatherStatusText,
-  mapApiIconToMCI,
 } from "../utils/weatherUtils";
 
 export function useWeather() {
@@ -17,6 +16,7 @@ export function useWeather() {
     condition: "sunny",
     statusText: "Carregando...",
     city: null,
+    forecastList: [],
     hourlyForecast: [],
     isLoading: true,
     error: null,
@@ -53,19 +53,7 @@ export function useWeather() {
         fetchHourlyForecast(lat, lon),
       ]);
 
-      const todayStr = new Date().toDateString();
-      const hourlyForecast = forecastList
-        .filter((item) => new Date(item.dt * 1000).toDateString() === todayStr)
-        .map((item, index) => ({
-          id: String(index),
-          time: new Date(item.dt * 1000).toLocaleTimeString("pt-BR", {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
-          icon: mapApiIconToMCI(item.weather[0].icon),
-          temp: `${Math.round(item.main.temp)}°`,
-          iconColor: getIconColor(item.weather[0].icon),
-        }));
+      const hourlyForecast = getForecastItemsForDate(forecastList, new Date());
 
       const condition = getSkyConditionFromIcon(current.icon);
       if (__DEV__) {
@@ -84,6 +72,7 @@ export function useWeather() {
           condition,
           statusText: getWeatherStatusText(condition),
           city,
+          forecastList,
           hourlyForecast,
           isLoading: false,
           error: null,

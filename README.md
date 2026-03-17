@@ -1,27 +1,32 @@
 <div align="center">
-
-<h2>Guarda-Roupa App</h2>
-
-<p>App mobile que detecta chuva via integração com módulo Arduino e API de clima.</p>
-
-[![React Native](https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactnative.dev/)
-[![Expo](https://img.shields.io/badge/Expo-000020?style=for-the-badge&logo=expo&logoColor=white)](https://expo.dev/)
-[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/pt-BR/docs/Web/JavaScript)
-
-<br>
-
-[Sobre](#sobre-o-projeto) &nbsp;•&nbsp;
-[Funcionalidades](#funcionalidades) &nbsp;•&nbsp;
-[Estrutura](#estrutura-do-projeto) &nbsp;•&nbsp;
-[Stack](#tecnologias-utilizadas) &nbsp;•&nbsp;
-[Como rodar](#como-rodar) &nbsp;•&nbsp;
-[Changelog](#changelog)
-
+   <h2 align="center">Guarda-Roupa App</h2>
+   <p align="center">
+      App mobile que detecta chuva via integração com módulo Arduino e API de clima.
+   </p>
 </div>
 
----
+<div align="center">
+   <a href="https://reactnative.dev/">
+      <img src="https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="ReactNative-badge" style="max-width: 100%;">
+   </a>
+   <a href="https://expo.dev/">
+      <img src="https://img.shields.io/badge/Expo-5A29E4?style=for-the-badge&logo=expo&logoColor=white" alt="Expo-badge" style="max-width: 100%;">
+   </a>
+   <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript">
+      <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript-badge" style="max-width: 100%;">
+   </a>
+</div>
 
 <br>
+
+<div align="center">
+   <a href="#sobre-o-projeto">Sobre</a> &#xa0; • &#xa0;
+   <a href="#estrutura-do-projeto">Estrutura</a> &#xa0; • &#xa0;
+   <a href="#instalação">Instalação</a> &#xa0; • &#xa0;
+   <a href="#changelog">Changelog</a>
+</div>
+
+----
 
 ## Sobre o projeto
 
@@ -29,11 +34,7 @@ O **Guarda-Roupa App** é um aplicativo mobile que resolve um problema cotidiano
 
 A ideia central é combinar uma **API de clima em tempo real** com um **módulo Arduino físico** para automatizar (ou pelo menos facilitar) a decisão de expor e recolher roupas.
 
-<div align="left">
-   <h6><a href="#guarda-roupa-app"> Voltar para o início ↺</a></h6>
-</div>
-
-## Funcionalidades
+### Funcionalidades
 
 - Tela principal com gradiente dinâmico de fundo (baseado na condição climática real)
 - Seção **"Hoje"** com previsão climática horária horizontal via API OpenWeatherMap
@@ -41,6 +42,27 @@ A ideia central é combinar uma **API de clima em tempo real** com um **módulo 
 - Botão flutuante **RECOLHER / EXPOR** na divisa do menu, com animação de linhas irradiando
 - Toggle manual do estado do varal (exposto/recolhido)
 - Localização automática via GPS com nome de cidade resolvido por reverse geocoding (OWM)
+
+### Tecnologias utilizadas
+
+<a href="https://reactnative.dev/">
+   <img src="https://img.shields.io/badge/React_Native-0.81+-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="ReactNative-badge">
+</a>
+<a href="https://expo.dev/">
+   <img src="https://img.shields.io/badge/Expo-54+-5A29E4?style=for-the-badge&logo=expo&logoColor=white" alt="Expo-badge">
+</a>
+<a href="https://expo.github.io/router/">
+   <img src="https://img.shields.io/badge/Expo_Router-6+-5A29E4?style=for-the-badge&logo=expo&logoColor=white" alt="ExpoRouter-badge">
+</a>
+<a href="https://docs.swmansion.com/react-native-reanimated/">
+   <img src="https://img.shields.io/badge/Reanimated-4.1+-764ABC?style=for-the-badge&logo=react&logoColor=white" alt="Reanimated-badge">
+</a>
+<a href="https://docs.expo.dev/versions/latest/sdk/linear-gradient/">
+   <img src="https://img.shields.io/badge/Expo_Linear_Gradient-15+-5A29E4?style=for-the-badge&logo=expo&logoColor=white" alt="ExpoLinearGradient-badge">
+</a>
+<a href="https://fonts.google.com/specimen/Nunito">
+   <img src="https://img.shields.io/badge/Google_Fonts_(Nunito)-0.4+-4285F4?style=for-the-badge&logo=googlefonts&logoColor=white" alt="GoogleFonts-badge">
+</a>
 
 <div align="left">
    <h6><a href="#guarda-roupa-app"> Voltar para o início ↺</a></h6>
@@ -78,44 +100,43 @@ guardaRoupaApp/
    <h6><a href="#guarda-roupa-app"> Voltar para o início ↺</a></h6>
 </div>
 
-## Tecnologias utilizadas
-
-[![React Native](https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactnative.dev/)
-[![Expo](https://img.shields.io/badge/Expo-000020?style=for-the-badge&logo=expo&logoColor=white)](https://expo.dev/)
-[![Expo Router](https://img.shields.io/badge/Expo_Router-000020?style=for-the-badge&logo=expo&logoColor=white)](https://expo.github.io/router/)
-[![Reanimated](https://img.shields.io/badge/Reanimated-764ABC?style=for-the-badge&logo=react&logoColor=white)](https://docs.swmansion.com/react-native-reanimated/)
-[![Linear Gradient](https://img.shields.io/badge/Linear_Gradient-FF6B6B?style=for-the-badge&logo=expo&logoColor=white)](https://docs.expo.dev/versions/latest/sdk/linear-gradient/)
-[![Google Fonts](<https://img.shields.io/badge/Google_Fonts_(Nunito)-4285F4?style=for-the-badge&logo=google&logoColor=white>)](https://fonts.google.com/specimen/Nunito)
-
-<div align="left">
-   <h6><a href="#guarda-roupa-app"> Voltar para o início ↺</a></h6>
-</div>
-
-## Como rodar
+## Instalação
 
 > [!IMPORTANT]
-> Certifique-se de ter o **Node.js** e o **Expo CLI** instalados antes de prosseguir.
+> Certifique-se de ter os seguintes requisitos antes de iniciar:
+>
+> <a href="https://nodejs.org/">
+>    <img src="https://img.shields.io/badge/Node.js-16.0.0+-339933?style=for-the-badge&logo=node.js&logoColor=white" alt="Node-badge">
+> </a>
+> <a href="https://www.npmjs.com/">
+>    <img src="https://img.shields.io/badge/NPM-8.0.0+-CB3837?style=for-the-badge&logo=npm&logoColor=white" alt="NPM-badge">
+> </a>
+> <a href="https://expo.dev/">
+>    <img src="https://img.shields.io/badge/Expo%20CLI-5A29E4?style=for-the-badge&logo=expo&logoColor=white" alt="ExpoCLI-badge">
+> </a>
 
 1. Clone o repositório
-
 ```bash
 git clone https://github.com/seu-usuario/guardaRoupaApp.git
 cd guardaRoupaApp
 ```
 
-2. Instale as dependências
-
+2. Instale as dependências do projeto
 ```bash
 npm install
 ```
 
-3. Inicie o projeto
-
+3. Instale o Expo CLI globalmente (caso não tenha)
 ```bash
-npx expo start
+npm install -g expo-cli
 ```
 
-4. Abra no dispositivo escaneando o QR code com o **Expo Go**, ou pressione `w` para abrir no navegador.
+4. Inicie o projeto
+```bash
+npm start
+```
+
+5. Abra no dispositivo escaneando o QR code com o **Expo Go**, ou pressione `w` para abrir no navegador.
 
 <div align="left">
    <h6><a href="#guarda-roupa-app"> Voltar para o início ↺</a></h6>

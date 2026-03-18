@@ -36,7 +36,8 @@
   },
   "devDependencies": {
     "eslint": "^9.25.0",
-    "eslint-config-expo": "~10.0.0"
+    "eslint-config-expo": "~10.0.0",
+    "prettier": "^3.8.1"
   },
   "private": true
 }

@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
+    Pressable,
     StyleSheet,
     Text,
     TextInput,
@@ -17,280 +18,321 @@ import {
 const WEEKDAY_LABELS = ["S", "T", "Q", "Q", "S", "S", "D"];
 
 export default function ForecastCalendar({
-  selectedDate,
-  onSelectDate,
-  minDate,
-  maxDate,
+    selectedDate,
+    onSelectDate,
+    minDate,
+    maxDate,
 }) {
-  const [viewDate, setViewDate] = useState(
-    new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1),
-  );
-  const [inputDate, setInputDate] = useState(formatDateInput(selectedDate));
-  const [inputError, setInputError] = useState("");
-
-  useEffect(() => {
-    setInputDate(formatDateInput(selectedDate));
-    setViewDate(
-      new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1),
+    const [viewDate, setViewDate] = useState(
+        new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1),
     );
-    setInputError("");
-  }, [selectedDate]);
+    const [inputDate, setInputDate] = useState(formatDateInput(selectedDate));
+    const [inputError, setInputError] = useState("");
 
-  const weeks = useMemo(() => buildMonthGrid(viewDate), [viewDate]);
+    useEffect(() => {
+        setInputDate(formatDateInput(selectedDate));
+        setViewDate(
+            new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1),
+        );
+        setInputError("");
+    }, [selectedDate]);
 
-  const isOutOfRange = (date) => {
-    if (minDate && date < minDate) return true;
-    if (maxDate && date > maxDate) return true;
-    return false;
-  };
+    const weeks = useMemo(() => buildMonthGrid(viewDate), [viewDate]);
 
-  const handleInputSubmit = () => {
-    const parsedDate = parseDateInput(inputDate);
+    const isOutOfRange = (date) => {
+        if (minDate && date < minDate) return true;
+        if (maxDate && date > maxDate) return true;
+        return false;
+    };
 
-    if (!parsedDate) {
-      setInputError("Data inválida. Use DD/MM/AAAA.");
-      return;
-    }
+    const handleInputSubmit = () => {
+        const parsedDate = parseDateInput(inputDate);
 
-    if (isOutOfRange(parsedDate)) {
-      setInputError("Data fora da previsão disponível.");
-      return;
-    }
+        if (!parsedDate) {
+            setInputError("Data inválida. Use DD/MM/AAAA.");
+            return;
+        }
 
-    setInputError("");
-    onSelectDate(parsedDate);
-  };
+        if (isOutOfRange(parsedDate)) {
+            setInputError("Data fora da previsão disponível.");
+            return;
+        }
 
-  const canGoPrevMonth =
-    !minDate ||
-    new Date(viewDate.getFullYear(), viewDate.getMonth(), 0) >=
-      new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate());
+        setInputError("");
+        onSelectDate(parsedDate);
+    };
 
-  const canGoNextMonth =
-    !maxDate ||
-    new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1) <=
-      new Date(maxDate.getFullYear(), maxDate.getMonth(), maxDate.getDate());
-
-  return (
-    <View style={styles.wrapper}>
-      <Text style={styles.monthLabel}>
-        {viewDate.toLocaleDateString("pt-BR", {
-          month: "long",
-          year: "numeric",
-        })}
-      </Text>
-
-      <View style={styles.monthNavRow}>
-        <TouchableOpacity
-          style={[styles.monthNavBtn, !canGoPrevMonth && styles.navBtnDisabled]}
-          onPress={() =>
-            canGoPrevMonth &&
-            setViewDate(
-              new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1),
-            )
-          }
-          activeOpacity={0.7}
-          disabled={!canGoPrevMonth}
-        >
-          <Text style={styles.monthNavText}>Mês anterior</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.monthNavBtn, !canGoNextMonth && styles.navBtnDisabled]}
-          onPress={() =>
-            canGoNextMonth &&
-            setViewDate(
-              new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1),
-            )
-          }
-          activeOpacity={0.7}
-          disabled={!canGoNextMonth}
-        >
-          <Text style={styles.monthNavText}>Próximo mês</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.weekHeader}>
-        {WEEKDAY_LABELS.map((label, index) => (
-          <Text key={`${label}-${index}`} style={styles.weekLabel}>
-            {label}
-          </Text>
-        ))}
-      </View>
-
-      {weeks.map((week, weekIndex) => (
-        <View key={`week-${weekIndex}`} style={styles.weekRow}>
-          {week.map((dayCell) => {
-            const selected = isSameDay(dayCell.date, selectedDate);
-            const disabled = isOutOfRange(dayCell.date);
-
-            return (
-              <TouchableOpacity
-                key={dayCell.key}
-                style={[
-                  styles.dayBtn,
-                  !dayCell.isCurrentMonth && styles.dayBtnOutsideMonth,
-                  selected && styles.dayBtnSelected,
-                ]}
-                activeOpacity={0.7}
-                onPress={() => !disabled && onSelectDate(dayCell.date)}
-                disabled={disabled}
-              >
-                <Text
-                  style={[
-                    styles.dayText,
-                    !dayCell.isCurrentMonth && styles.dayTextOutsideMonth,
-                    selected && styles.dayTextSelected,
-                    disabled && styles.dayTextDisabled,
-                  ]}
-                >
-                  {dayCell.date.getDate()}
-                </Text>
-              </TouchableOpacity>
+    const canGoPrevMonth =
+        !minDate ||
+        new Date(viewDate.getFullYear(), viewDate.getMonth(), 0) >=
+            new Date(
+                minDate.getFullYear(),
+                minDate.getMonth(),
+                minDate.getDate(),
             );
-          })}
+
+    const canGoNextMonth =
+        !maxDate ||
+        new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1) <=
+            new Date(
+                maxDate.getFullYear(),
+                maxDate.getMonth(),
+                maxDate.getDate(),
+            );
+
+    return (
+        <View style={styles.wrapper}>
+            <Text style={styles.monthLabel}>
+                {viewDate.toLocaleDateString("pt-BR", {
+                    month: "long",
+                    year: "numeric",
+                })}
+            </Text>
+
+            <View style={styles.monthNavRow}>
+                <Pressable
+                    android_ripple={null}
+                    disabled={!canGoPrevMonth}
+                    style={({ pressed }) => [
+                        styles.monthNavBtn,
+                        !canGoPrevMonth && styles.navBtnDisabled,
+                        canGoPrevMonth &&
+                            pressed && { backgroundColor: "#1a202c" },
+                    ]}
+                    onPress={() =>
+                        canGoPrevMonth &&
+                        setViewDate(
+                            new Date(
+                                viewDate.getFullYear(),
+                                viewDate.getMonth() - 1,
+                                1,
+                            ),
+                        )
+                    }
+                >
+                    <Text style={styles.monthNavText}>Mês anterior</Text>
+                </Pressable>
+
+                <Pressable
+                    android_ripple={null}
+                    disabled={!canGoNextMonth}
+                    style={({ pressed }) => [
+                        styles.monthNavBtn,
+                        !canGoNextMonth && styles.navBtnDisabled,
+                        canGoNextMonth &&
+                            pressed && { backgroundColor: "#1a202c" },
+                    ]}
+                    onPress={() =>
+                        canGoNextMonth &&
+                        setViewDate(
+                            new Date(
+                                viewDate.getFullYear(),
+                                viewDate.getMonth() + 1,
+                                1,
+                            ),
+                        )
+                    }
+                >
+                    <Text style={styles.monthNavText}>Próximo mês</Text>
+                </Pressable>
+            </View>
+
+            <View style={styles.weekHeader}>
+                {WEEKDAY_LABELS.map((label, index) => (
+                    <Text key={`${label}-${index}`} style={styles.weekLabel}>
+                        {label}
+                    </Text>
+                ))}
+            </View>
+
+            {weeks.map((week, weekIndex) => (
+                <View key={`week-${weekIndex}`} style={styles.weekRow}>
+                    {week.map((dayCell) => {
+                        const selected = isSameDay(dayCell.date, selectedDate);
+                        const disabled = isOutOfRange(dayCell.date);
+
+                        return (
+                            <Pressable
+                                key={dayCell.key}
+                                android_ripple={null}
+                                disabled={disabled}
+                                style={({ pressed }) => [
+                                    styles.dayBtn,
+                                    !dayCell.isCurrentMonth &&
+                                        styles.dayBtnOutsideMonth,
+                                    selected && styles.dayBtnSelected,
+                                    pressed &&
+                                        !disabled && {
+                                            backgroundColor: selected
+                                                ? "#1a202c"
+                                                : "rgba(45, 55, 72, 0.1)",
+                                        },
+                                ]}
+                                onPress={() =>
+                                    !disabled && onSelectDate(dayCell.date)
+                                }
+                            >
+                                <Text
+                                    style={[
+                                        styles.dayText,
+                                        !dayCell.isCurrentMonth &&
+                                            styles.dayTextOutsideMonth,
+                                        selected && styles.dayTextSelected,
+                                        disabled && styles.dayTextDisabled,
+                                    ]}
+                                >
+                                    {dayCell.date.getDate()}
+                                </Text>
+                            </Pressable>
+                        );
+                    })}
+                </View>
+            ))}
+
+            <View style={styles.searchRow}>
+                <TextInput
+                    value={inputDate}
+                    onChangeText={(value) => {
+                        setInputDate(value);
+                        if (inputError) setInputError("");
+                    }}
+                    placeholder="DD/MM/AAAA"
+                    placeholderTextColor={theme.colors.textMuted}
+                    style={styles.searchInput}
+                    keyboardType="numbers-and-punctuation"
+                    returnKeyType="done"
+                    onSubmitEditing={handleInputSubmit}
+                />
+                <Pressable
+                    android_ripple={null}
+                    style={({ pressed }) => [
+                        styles.searchBtn,
+                        pressed && { backgroundColor: "#1a202c" },
+                    ]}
+                    onPress={handleInputSubmit}
+                >
+                    <Text style={styles.searchBtnText}>Ir</Text>
+                </Pressable>
+            </View>
+
+            {!!inputError && (
+                <Text style={styles.inputError}>{inputError}</Text>
+            )}
         </View>
-      ))}
-
-      <View style={styles.searchRow}>
-        <TextInput
-          value={inputDate}
-          onChangeText={(value) => {
-            setInputDate(value);
-            if (inputError) setInputError("");
-          }}
-          placeholder="DD/MM/AAAA"
-          placeholderTextColor={theme.colors.textMuted}
-          style={styles.searchInput}
-          keyboardType="numbers-and-punctuation"
-          returnKeyType="done"
-          onSubmitEditing={handleInputSubmit}
-        />
-        <TouchableOpacity
-          style={styles.searchBtn}
-          activeOpacity={0.8}
-          onPress={handleInputSubmit}
-        >
-          <Text style={styles.searchBtnText}>Ir</Text>
-        </TouchableOpacity>
-      </View>
-
-      {!!inputError && <Text style={styles.inputError}>{inputError}</Text>}
-    </View>
-  );
+    );
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
-    backgroundColor: theme.colors.backgroundAlt,
-    borderRadius: 18,
-    paddingHorizontal: 14,
-    paddingTop: 14,
-    paddingBottom: 12,
-    marginBottom: 18,
-  },
-  monthLabel: {
-    fontFamily: theme.fonts.bold,
-    color: theme.colors.textDark,
-    fontSize: 15,
-    marginBottom: 10,
-  },
-  monthNavRow: {
-    flexDirection: "row",
-    gap: 8,
-    marginBottom: 10,
-  },
-  monthNavBtn: {
-    flex: 1,
-    backgroundColor: theme.colors.surface,
-    borderRadius: 10,
-    paddingVertical: 7,
-    alignItems: "center",
-  },
-  navBtnDisabled: {
-    opacity: 0.45,
-  },
-  monthNavText: {
-    fontFamily: theme.fonts.bold,
-    fontSize: 12,
-    color: theme.colors.textDark,
-  },
-  weekHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 6,
-    paddingHorizontal: 2,
-  },
-  weekLabel: {
-    width: "14.28%",
-    textAlign: "center",
-    fontFamily: theme.fonts.bold,
-    fontSize: 12,
-    color: theme.colors.textMuted,
-  },
-  weekRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 4,
-  },
-  dayBtn: {
-    width: "14.28%",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 10,
-    height: 36,
-  },
-  dayBtnOutsideMonth: {
-    opacity: 0.8,
-  },
-  dayBtnSelected: {
-    backgroundColor: theme.colors.textDark,
-  },
-  dayText: {
-    fontFamily: theme.fonts.bold,
-    color: theme.colors.calendarDayText,
-    fontSize: 13,
-  },
-  dayTextOutsideMonth: {
-    color: theme.colors.calendarDayText,
-  },
-  dayTextSelected: {
-    color: theme.colors.textLight,
-  },
-  dayTextDisabled: {
-    opacity: 0.3,
-  },
-  searchRow: {
-    marginTop: 10,
-    flexDirection: "row",
-    gap: 8,
-  },
-  searchInput: {
-    flex: 1,
-    backgroundColor: theme.colors.surface,
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontFamily: theme.fonts.regular,
-    color: theme.colors.textDark,
-    fontSize: 14,
-  },
-  searchBtn: {
-    backgroundColor: theme.colors.textDark,
-    borderRadius: 10,
-    paddingHorizontal: 16,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  searchBtnText: {
-    fontFamily: theme.fonts.bold,
-    color: theme.colors.surface,
-    fontSize: 13,
-  },
-  inputError: {
-    marginTop: 8,
-    fontFamily: theme.fonts.regular,
-    fontSize: 12,
-    color: theme.colors.textMuted,
-  },
+    wrapper: {
+        backgroundColor: theme.colors.backgroundAlt,
+        borderRadius: 18,
+        paddingHorizontal: 14,
+        paddingTop: 14,
+        paddingBottom: 12,
+        marginBottom: 18,
+    },
+    monthLabel: {
+        fontFamily: theme.fonts.bold,
+        color: theme.colors.textDark,
+        fontSize: 15,
+        marginBottom: 10,
+    },
+    monthNavRow: {
+        flexDirection: "row",
+        gap: 8,
+        marginBottom: 10,
+    },
+    monthNavBtn: {
+        flex: 1,
+        backgroundColor: theme.colors.primary,
+        borderRadius: 8,
+        paddingVertical: 7,
+        alignItems: "center",
+    },
+    navBtnDisabled: {
+        opacity: 0.45,
+    },
+    monthNavText: {
+        fontFamily: theme.fonts.bold,
+        fontSize: 12,
+        color: theme.colors.textLight,
+    },
+    weekHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginBottom: 6,
+        paddingHorizontal: 2,
+    },
+    weekLabel: {
+        width: "14.28%",
+        textAlign: "center",
+        fontFamily: theme.fonts.bold,
+        fontSize: 12,
+        color: theme.colors.textMuted,
+    },
+    weekRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginBottom: 4,
+    },
+    dayBtn: {
+        width: "14.28%",
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: 10,
+        height: 36,
+    },
+    dayBtnOutsideMonth: {
+        opacity: 0.8,
+    },
+    dayBtnSelected: {
+        backgroundColor: theme.colors.textDark,
+    },
+    dayText: {
+        fontFamily: theme.fonts.bold,
+        color: theme.colors.calendarDayText,
+        fontSize: 13,
+    },
+    dayTextOutsideMonth: {
+        color: theme.colors.calendarDayText,
+    },
+    dayTextSelected: {
+        color: theme.colors.textLight,
+    },
+    dayTextDisabled: {
+        opacity: 0.3,
+    },
+    searchRow: {
+        marginTop: 10,
+        flexDirection: "row",
+        gap: 8,
+    },
+    searchInput: {
+        flex: 1,
+        backgroundColor: theme.colors.surface,
+        borderRadius: 10,
+        paddingHorizontal: 12,
+        paddingVertical: 10,
+        fontFamily: theme.fonts.regular,
+        color: theme.colors.textDark,
+        fontSize: 14,
+    },
+    searchBtn: {
+        backgroundColor: theme.colors.textDark,
+        borderRadius: 10,
+        paddingHorizontal: 16,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    searchBtnText: {
+        fontFamily: theme.fonts.bold,
+        color: theme.colors.surface,
+        fontSize: 13,
+    },
+    inputError: {
+        marginTop: 8,
+        fontFamily: theme.fonts.regular,
+        fontSize: 12,
+        color: theme.colors.textMuted,
+    },
 });

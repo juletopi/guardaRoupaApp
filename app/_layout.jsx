@@ -7,7 +7,8 @@ import {
     Nunito_700Bold,
     Nunito_900Black,
 } from '@expo-google-fonts/nunito';
-import { View, ActivityIndicator } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { theme } from '../constants/theme';
 
 export default function Layout() {
     const [fontsLoaded] = useFonts({
@@ -18,8 +19,12 @@ export default function Layout() {
 
     if (!fontsLoaded) {
         return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <ActivityIndicator size="large" color="#2d3748" />
+            <View style={styles.loadingRoot} accessibilityLabel="Carregando">
+                <ActivityIndicator
+                    size="large"
+                    color={theme.colors.textLight}
+                />
+                <Text style={styles.loadingText}>Carregando…</Text>
             </View>
         );
     }
@@ -31,3 +36,19 @@ export default function Layout() {
         </>
     );
 }
+
+const styles = StyleSheet.create({
+    loadingRoot: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: theme.colors.primary,
+    },
+    loadingText: {
+        marginTop: 16,
+        fontSize: 15,
+        fontWeight: '700',
+        color: theme.colors.textLight,
+        opacity: 0.9,
+    },
+});

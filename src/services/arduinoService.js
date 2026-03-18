@@ -1,7 +1,7 @@
-import axios from 'axios';
+import axios from "axios";
 
-// Update to match the Arduino's IP on the local network
-const ARDUINO_BASE_URL = 'http://192.168.1.100';
+// Atualizar depois para o IP do Arduino na rede local
+const ARDUINO_BASE_URL = "http://192.168.1.100";
 
 export async function getDoorState() {
     const response = await axios.get(`${ARDUINO_BASE_URL}/status`);

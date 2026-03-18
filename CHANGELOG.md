@@ -2,6 +2,48 @@
 
 <details open>
 <summary>
+  <h3 style="display: inline-block;">[v0.2.1] - 18/03/2026</h3>
+</summary>
+
+<h3>Adicionado</h3>
+
+<h4>Seleção de dia + API (previsão por data)</h4>
+
+- **Calendário** no menu expandido (`ForecastCalendar`): grade mensal, navegação **Mês anterior / Próximo mês** e campo **DD/MM/AAAA** para ir a uma data
+- Integração oficial com a API: ao escolher um dia, a previsão horária exibida passa a ser a **fatia do mesmo payload `/forecast`** já obtido no carregamento, filtrada por data via `getForecastItemsForDate`
+- **Limites de data** alinhados ao intervalo disponível na resposta da API (`minDate` / `maxDate`), evitando seleção fora da previsão retornada
+- **Setas** ao lado da data (menu expandido) para avançar/voltar um dia dentro da mesma faixa
+
+<h4>Suporte a configuração e bootstrap</h4>
+
+- `.env.example` e documentação no **README** para `EXPO_PUBLIC_OWM_API_KEY`
+- Validação da chave e mensagens de erro mais claras no `useWeather` (chave ausente, HTTP 401/429, etc.)
+- Tela de **carregamento unificada** (fontes + clima) antes de exibir o degradê real, evitando “pulo” visual ao concluir a API
+
+<h3>Alterado</h3>
+
+<h4>Hook <code>useWeather</code></h4>
+
+- Passa a expor **`forecastList`** (lista completa do endpoint `/forecast`) além de `hourlyForecast`, permitindo filtrar horários por dia selecionado
+
+<h4>Tela <code>MainScreen</code></h4>
+
+- Estado **data selecionada** sincronizado com `forecastList`; retorno ao “hoje” quando aplicável
+- Fluxo partido em **bootstrap** (aguarda clima) e **conteúdo principal** após dados prontos
+
+<h4>Outros</h4>
+
+- Ajustes de UI no calendário (botões de mês, feedback de toque alinhado ao varal)
+- Transição de entrada/saída do calendário ao recolher o menu (`FadeInDown` / `FadeOutUp`)
+
+</details>
+
+<br>
+
+---
+
+<details>
+<summary>
   <h3 style="display: inline-block;">[v0.2.0] - 09/03/2026</h3>
 </summary>
 
@@ -49,8 +91,6 @@
 </details>
 
 <br>
-
----
 
 <details>
 <summary>

@@ -138,10 +138,6 @@ npm start
 
 5. Abra no dispositivo escaneando o QR code com o **Expo Go**, ou pressione `w` para abrir no navegador.
 
-<div align="left">
-   <h6><a href="#guarda-roupa-app"> Voltar para o início ↺</a></h6>
-</div>
-
 ### API de clima (OpenWeatherMap)
 
 O app usa a API **OpenWeatherMap**. Sem chave, a previsão não carrega.

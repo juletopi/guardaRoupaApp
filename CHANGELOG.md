@@ -18,13 +18,9 @@
 
 - `.env.example` e documentação no **README** para `EXPO_PUBLIC_OWM_API_KEY`
 - Validação da chave e mensagens de erro mais claras no `useWeather` (chave ausente, HTTP 401/429, etc.)
-- Tela de **carregamento unificada** (fontes + clima) antes de exibir o degradê real, evitando “pulo” visual ao concluir a API
+- Tela de **carregamento unificada** (fontes + clima) antes de exibir o sistema, evitando percepção de pulo visual ao concluir a API
 
 <h3>Alterado</h3>
-
-<h4>Hook <code>useWeather</code></h4>
-
-- Passa a expor **`forecastList`** (lista completa do endpoint `/forecast`) além de `hourlyForecast`, permitindo filtrar horários por dia selecionado
 
 <h4>Tela <code>MainScreen</code></h4>
 
@@ -89,8 +85,6 @@
 - `.env` adicionado ao `.gitignore`
 
 </details>
-
-<br>
 
 <details>
 <summary>

@@ -142,6 +142,31 @@ npm start
    <h6><a href="#guarda-roupa-app"> Voltar para o início ↺</a></h6>
 </div>
 
+### API de clima (OpenWeatherMap)
+
+O app usa a API **OpenWeatherMap**. Sem chave, a previsão não carrega.
+
+1. Crie uma conta em [openweathermap.org/api](https://openweathermap.org/api) e gere uma **API key** (plano gratuito já satisfaz casos de teste do app).
+2. Na raiz do projeto, copie o exemplo e crie o arquivo `.env`:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+3. Edite `.env` e defina:
+
+   ```
+   EXPO_PUBLIC_OWM_API_KEY=sua_chave_aqui
+   ```
+
+4. **Reinicie o bundler** (`Ctrl+C` e `npm start` de novo). Variáveis `EXPO_PUBLIC_*` só entram após reiniciar o Expo.
+
+5. No dispositivo/emulador, **permita localização** quando o app pedir (o clima usa GPS).
+
+<div align="left">
+   <h6><a href="#guarda-roupa-app"> Voltar para o início ↺</a></h6>
+</div>
+
 ## Changelog
 
 O projeto mantém um histórico de alterações detalhado para cada versão, incluindo:

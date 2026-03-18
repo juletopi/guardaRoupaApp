@@ -38,6 +38,7 @@ A ideia central é combinar uma **API de clima em tempo real** com um **módulo 
 
 - Tela principal com gradiente dinâmico de fundo (baseado na condição climática real)
 - Seção **"Hoje"** com previsão climática horária horizontal via API OpenWeatherMap
+- Menu expandido com **calendário**: escolha de dia e previsão horária filtrada a partir do mesmo payload `/forecast`
 - Menu inferior animado com dois estados: **recolhido** (~20% da tela) e **expandido** (~90%)
 - Botão flutuante **RECOLHER / EXPOR** na divisa do menu, com animação de linhas irradiando
 - Toggle manual do estado do varal (exposto/recolhido)
@@ -72,27 +73,35 @@ A ideia central é combinar uma **API de clima em tempo real** com um **módulo 
 
 ```
 guardaRoupaApp/
-├── app/                        # Roteamento (Expo Router)
-│   ├── _layout.jsx             # Layout raiz (fontes, status bar)
-│   └── index.jsx               # Rota inicial → renderiza MainScreen
+├── app/                              # Roteamento (Expo Router)
+│   ├── _layout.jsx                   # Fontes Nunito, loading inicial, StatusBar, Stack
+│   └── index.jsx                     # Rota inicial → MainScreen
 ├── src/
 │   ├── components/
-│   │   ├── HourlyForecast.jsx  # Previsão horária com estados de loading/erro/dados
-│   │   └── ToggleVaralBtn.jsx  # Botão RECOLHER/EXPOR com animação
+│   │   ├── ExpandMenuButton.jsx      # Botão expandir/recolher menu
+│   │   ├── ForecastCalendar.jsx      # Calendário mensal, navegação de mês e seleção de dia (integrado à API)
+│   │   ├── HourlyForecast.jsx        # Lista horizontal: hora, ícone, temperatura
+│   │   └── ToggleVaralBtn.jsx        # Botão de toggle recolher/expor varal
 │   ├── data/
-│   │   └── mockData.js         # Dados mockados para desenvolvimento offline
+│   │   └── mockData.js               # Dados mockados
 │   ├── hooks/
-│   │   └── useWeather.js       # Hook de clima: localização + OWM + reverse geocoding
+│   │   └── useWeather.js             # Localização, OWM (clima + /forecast + cidade), estados de carregamento/erro
 │   ├── screens/
-│   │   └── MainScreen.jsx      # Tela principal do app
+│   │   └── MainScreen.jsx            # Céu + menu, data selecionada, clima carregado e exibido
 │   ├── services/
-│   │   ├── arduinoService.js   # Comunicação com o Arduino (placeholder)
-│   │   └── weatherService.js   # Chamadas à API OpenWeatherMap
+│   │   ├── arduinoService.js         # Arduino (placeholder)
+│   │   └── weatherService.js         # OpenWeatherMap: clima atual, previsão 5d/3h, reverse geocoding (cidade)
 │   └── utils/
-│       ├── timeUtils.js        # Formatação de horários
-│       └── weatherUtils.js     # Cores do céu, mapeamento de ícones e condições
+│       ├── forecastDateUtils.js      # Formatação de datas PT-BR, grade do calendário, itens da previsão por dia
+│       ├── timeUtils.js              # Formatação de horários
+│       └── weatherUtils.js           # Gradiente do céu, ícones e texto de condição
 ├── constants/
-│   └── theme.js                # Cores, fontes e espaçamentos globais
+│   └── theme.js                      # Paleta, fontes
+├── .editorconfig
+├── .env.example
+├── CHANGELOG.md
+├── eslint.config.js
+├── package.json
 └── README.md
 ```
 

@@ -78,7 +78,7 @@ guardaRoupaApp/
 │   └── index.jsx                     # Rota inicial → MainScreen
 ├── src/
 │   ├── components/
-│   │   ├── ExpandMenuButton.jsx      # Botão expandir/recolher menu
+│   │   ├── ExpandMenuBtn.jsx         # Botão expandir/recolher menu
 │   │   ├── ForecastCalendar.jsx      # Calendário mensal, navegação de mês e seleção de dia (integrado à API)
 │   │   ├── HourlyForecast.jsx        # Lista horizontal: hora, ícone, temperatura
 │   │   └── ToggleVaralBtn.jsx        # Botão de toggle recolher/expor varal

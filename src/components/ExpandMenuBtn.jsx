@@ -12,7 +12,7 @@ const BUTTON_PATH =
 
 const VIEWBOX = "-0.65 -0.04 2.38 1.14";
 
-export default function ExpandMenuButton({ isExpanded, onPress }) {
+export default function ExpandMenuBtn({ isExpanded, onPress }) {
     const gradId = useRef(
         `expandBtnGrad-${Math.random().toString(36).slice(2, 11)}`,
     ).current;

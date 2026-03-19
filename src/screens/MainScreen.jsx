@@ -27,7 +27,7 @@ import Animated, {
     withTiming,
 } from "react-native-reanimated";
 import { theme } from "../../constants/theme";
-import ExpandMenuButton from "../components/ExpandMenuButton";
+import ExpandMenuBtn from "../components/ExpandMenuBtn";
 import ForecastCalendar from "../components/ForecastCalendar";
 import HourlyForecast from "../components/HourlyForecast";
 import ToggleVaralBtn, {
@@ -325,7 +325,7 @@ function MainScreenContent({ weather }) {
             </Animated.View>
 
             <View style={styles.bottomSheet}>
-                <ExpandMenuButton
+                <ExpandMenuBtn
                     isExpanded={isExpanded}
                     onPress={handleSheetToggle}
                 />

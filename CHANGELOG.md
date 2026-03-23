@@ -42,10 +42,6 @@
 
 </details>
 
-<br>
-
----
-
 <details>
 <summary>
   <h3 style="display: inline-block;">[v0.2.1] - 18/03/2026</h3>

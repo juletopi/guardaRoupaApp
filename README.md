@@ -1,7 +1,10 @@
 <div align="center">
+   <a href="">
+    <img src="https://github.com/juletopi/guardaRoupaApp/blob/main/assets/images/guarda-roupa-logo.png" alt="Guarda-roupa-logo" width="230px" title="Guarda-roupa App">
+  </a>
    <h2 align="center">Guarda-Roupa App</h2>
    <p align="center">
-      App mobile que detecta chuva via integração com módulo Arduino e API de clima.
+      App mobile que salva suas roupas antes que seja tarde demais.
    </p>
 </div>
 
@@ -23,6 +26,7 @@
    <a href="#sobre-o-projeto">Sobre</a> &#xa0; • &#xa0;
    <a href="#estrutura-do-projeto">Estrutura</a> &#xa0; • &#xa0;
    <a href="#instalação">Instalação</a> &#xa0; • &#xa0;
+   <a href="#localização-e-dados-persistidos">Localização</a> &#xa0; • &#xa0;
    <a href="#changelog">Changelog</a>
 </div>
 
@@ -37,12 +41,12 @@ A ideia central é combinar uma **API de clima em tempo real** com um **módulo 
 ### Funcionalidades
 
 - Tela principal com gradiente dinâmico de fundo (baseado na condição climática real)
-- Seção **"Hoje"** com previsão climática horária horizontal via API OpenWeatherMap
+- Seção **"Hoje"** com previsão climática horária horizontal via API OpenWeatherMap (**probabilidade de chuva** por hora, campo `pop`, em vez de temperatura no card)
 - Menu expandido com **calendário**: escolha de dia e previsão horária filtrada a partir do mesmo payload `/forecast`
+- **Local manual**: toque no título com cidade para abrir modal (País → Estado → Município); opção de **local padrão** e botão para voltar à **localização atual** (GPS)
 - Menu inferior animado com dois estados: **recolhido** (~20% da tela) e **expandido** (~90%)
 - Botão flutuante **RECOLHER / EXPOR** na divisa do menu, com animação de linhas irradiando
 - Toggle manual do estado do varal (exposto/recolhido)
-- Localização automática via GPS com nome de cidade resolvido por reverse geocoding (OWM)
 
 ### Tecnologias utilizadas
 
@@ -60,6 +64,21 @@ A ideia central é combinar uma **API de clima em tempo real** com um **módulo 
 </a>
 <a href="https://docs.expo.dev/versions/latest/sdk/linear-gradient/">
    <img src="https://img.shields.io/badge/Expo_Linear_Gradient-15+-5A29E4?style=for-the-badge&logo=expo&logoColor=white" alt="ExpoLinearGradient-badge">
+</a>
+<a href="https://docs.expo.dev/versions/latest/sdk/location/">
+   <img src="https://img.shields.io/badge/Expo_Location-5A29E4?style=for-the-badge&logo=expo&logoColor=white" alt="ExpoLocation-badge">
+</a>
+<a href="https://icons.expo.fyi/">
+   <img src="https://img.shields.io/badge/@expo/vector--icons-13.x-7F7FFF?style=for-the-badge&logo=expo&logoColor=white" alt="ExpoVectorIcons-badge">
+</a>
+<a href="https://github.com/react-native-svg/react-native-svg">
+   <img src="https://img.shields.io/badge/react--native--svg-13.x-4E8EF7?style=for-the-badge&logo=svg&logoColor=white" alt="ReactNativeSVG-badge">
+</a>
+<a href="https://github.com/react-native-async-storage/async-storage">
+   <img src="https://img.shields.io/badge/Async_Storage-1.x-61DAFB?style=for-the-badge&logo=react&logoColor=white" alt="AsyncStorage-badge">
+</a>
+<a href="https://axios-http.com">
+   <img src="https://img.shields.io/badge/axios-1.x-5A29E4?style=for-the-badge&logo=axios&logoColor=white" alt="Axios-badge">
 </a>
 <a href="https://fonts.google.com/specimen/Nunito">
    <img src="https://img.shields.io/badge/Google_Fonts_(Nunito)-0.4+-4285F4?style=for-the-badge&logo=googlefonts&logoColor=white" alt="GoogleFonts-badge">
@@ -80,19 +99,21 @@ guardaRoupaApp/
 │   ├── components/
 │   │   ├── ExpandMenuBtn.jsx         # Botão expandir/recolher menu
 │   │   ├── ForecastCalendar.jsx      # Calendário mensal, navegação de mês e seleção de dia (integrado à API)
-│   │   ├── HourlyForecast.jsx        # Lista horizontal: hora, ícone, temperatura
+│   │   ├── HourlyForecast.jsx        # Lista horizontal: hora, ícone, precipitação (%)
+│   │   ├── LocationSelectModal.jsx   # Modal: local manual (país/estado/município) e local padrão
 │   │   └── ToggleVaralBtn.jsx        # Botão de toggle recolher/expor varal
 │   ├── data/
+│   │   ├── locationOptions.js        # Opções encadeadas para seleção de local na modal
 │   │   └── mockData.js               # Dados mockados
 │   ├── hooks/
-│   │   └── useWeather.js             # Localização, OWM (clima + /forecast + cidade), estados de carregamento/erro
+│   │   └── useWeather.js             # GPS/manual, local padrão (AsyncStorage), OWM (clima + /forecast + cidade)
 │   ├── screens/
 │   │   └── MainScreen.jsx            # Céu + menu, data selecionada, clima carregado e exibido
 │   ├── services/
 │   │   ├── arduinoService.js         # Arduino (placeholder)
 │   │   └── weatherService.js         # OpenWeatherMap: clima atual, previsão 5d/3h, reverse geocoding (cidade)
 │   └── utils/
-│       ├── forecastDateUtils.js      # Formatação de datas PT-BR, grade do calendário, itens da previsão por dia
+│       ├── forecastDateUtils.js      # Datas PT-BR, grade do calendário, itens horários (incl. precipitação pop)
 │       ├── timeUtils.js              # Formatação de horários
 │       └── weatherUtils.js           # Gradiente do céu, ícones e texto de condição
 ├── constants/

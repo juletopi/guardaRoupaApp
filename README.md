@@ -50,6 +50,8 @@ A ideia central é combinar uma **API de clima em tempo real** com um **módulo 
 
 ### Tecnologias utilizadas
 
+#### Core e navegação
+
 <a href="https://reactnative.dev/">
    <img src="https://img.shields.io/badge/React_Native-0.81+-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="ReactNative-badge">
 </a>
@@ -59,14 +61,14 @@ A ideia central é combinar uma **API de clima em tempo real** com um **módulo 
 <a href="https://expo.github.io/router/">
    <img src="https://img.shields.io/badge/Expo_Router-6+-5A29E4?style=for-the-badge&logo=expo&logoColor=white" alt="ExpoRouter-badge">
 </a>
+
+#### Interface e animações
+
 <a href="https://docs.swmansion.com/react-native-reanimated/">
    <img src="https://img.shields.io/badge/Reanimated-4.1+-764ABC?style=for-the-badge&logo=react&logoColor=white" alt="Reanimated-badge">
 </a>
 <a href="https://docs.expo.dev/versions/latest/sdk/linear-gradient/">
    <img src="https://img.shields.io/badge/Expo_Linear_Gradient-15+-5A29E4?style=for-the-badge&logo=expo&logoColor=white" alt="ExpoLinearGradient-badge">
-</a>
-<a href="https://docs.expo.dev/versions/latest/sdk/location/">
-   <img src="https://img.shields.io/badge/Expo_Location-5A29E4?style=for-the-badge&logo=expo&logoColor=white" alt="ExpoLocation-badge">
 </a>
 <a href="https://icons.expo.fyi/">
    <img src="https://img.shields.io/badge/@expo/vector--icons-13.x-7F7FFF?style=for-the-badge&logo=expo&logoColor=white" alt="ExpoVectorIcons-badge">
@@ -74,14 +76,20 @@ A ideia central é combinar uma **API de clima em tempo real** com um **módulo 
 <a href="https://github.com/react-native-svg/react-native-svg">
    <img src="https://img.shields.io/badge/react--native--svg-13.x-4E8EF7?style=for-the-badge&logo=svg&logoColor=white" alt="ReactNativeSVG-badge">
 </a>
-<a href="https://github.com/react-native-async-storage/async-storage">
-   <img src="https://img.shields.io/badge/Async_Storage-1.x-61DAFB?style=for-the-badge&logo=react&logoColor=white" alt="AsyncStorage-badge">
+<a href="https://fonts.google.com/specimen/Nunito">
+   <img src="https://img.shields.io/badge/Google_Fonts_(Nunito)-0.4+-4285F4?style=for-the-badge&logo=googlefonts&logoColor=white" alt="GoogleFonts-badge">
 </a>
+
+#### Dependências externas
+
 <a href="https://axios-http.com">
    <img src="https://img.shields.io/badge/axios-1.x-5A29E4?style=for-the-badge&logo=axios&logoColor=white" alt="Axios-badge">
 </a>
-<a href="https://fonts.google.com/specimen/Nunito">
-   <img src="https://img.shields.io/badge/Google_Fonts_(Nunito)-0.4+-4285F4?style=for-the-badge&logo=googlefonts&logoColor=white" alt="GoogleFonts-badge">
+<a href="https://docs.expo.dev/versions/latest/sdk/location/">
+   <img src="https://img.shields.io/badge/Expo_Location-5A29E4?style=for-the-badge&logo=expo&logoColor=white" alt="ExpoLocation-badge">
+</a>
+<a href="https://github.com/react-native-async-storage/async-storage">
+   <img src="https://img.shields.io/badge/Async_Storage-1.x-61DAFB?style=for-the-badge&logo=react&logoColor=white" alt="AsyncStorage-badge">
 </a>
 
 <div align="left">

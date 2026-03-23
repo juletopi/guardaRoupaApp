@@ -83,7 +83,7 @@ A ideia central é combinar uma **API de clima em tempo real** com um **módulo 
 #### Dependências externas
 
 <a href="https://openweathermap.org/api">
-   <img src="https://img.shields.io/badge/OpenWeatherMap-E96E4E?style=for-the-badge&logo=openweathermap&logoColor=white" alt="OpenWeatherMap-badge">
+   <img src="https://img.shields.io/badge/OpenWeatherMap-E96E4E?style=for-the-badge&logo=rainyun&logoColor=white" alt="OpenWeatherMap-badge">
 </a>
 <a href="https://docs.expo.dev/versions/latest/sdk/location/">
    <img src="https://img.shields.io/badge/Expo_Location-5A29E4?style=for-the-badge&logo=expo&logoColor=white" alt="ExpoLocation-badge">

@@ -30,6 +30,7 @@ import { theme } from "../../constants/theme";
 import ExpandMenuBtn from "../components/ExpandMenuBtn";
 import ForecastCalendar from "../components/ForecastCalendar";
 import HourlyForecast from "../components/HourlyForecast";
+import LocationSelectModal from "../components/LocationSelectModal";
 import ToggleVaralBtn, {
     WRAPPER_HALF_HEIGHT,
 } from "../components/ToggleVaralBtn";
@@ -52,7 +53,7 @@ const TIMING_CONFIG = {
 
 function MainScreenContent({ weather }) {
     const { height: screenHeight } = useWindowDimensions();
-    const SKY_COLLAPSED_HEIGHT = screenHeight * 0.77;
+    const SKY_COLLAPSED_HEIGHT = screenHeight * 0.76;
 
     const {
         condition,
@@ -62,16 +63,24 @@ function MainScreenContent({ weather }) {
         hourlyForecast,
         isLoading,
         error,
+        manualLocation,
+        setManualLocation,
+        clearManualLocation,
+        defaultLocation,
+        setDefaultLocationPreference,
     } = weather;
     const [isClotheslineExposed, setIsClotheslineExposed] = useState(true);
     const [isExpanded, setIsExpanded] = useState(false);
     const [selectedDate, setSelectedDate] = useState(startOfDay(new Date()));
     const [selectedForecast, setSelectedForecast] = useState(hourlyForecast);
     const [isDateLoading, setIsDateLoading] = useState(false);
+    const [isLocationModalVisible, setIsLocationModalVisible] = useState(false);
+    const modalCloseLockUntilRef = useRef(0);
 
     const skyHeight = useSharedValue(SKY_COLLAPSED_HEIGHT);
     const expandedProgress = useSharedValue(0);
     const dateLoadingTimeoutRef = useRef(null);
+    const isExpandedRef = useRef(isExpanded);
 
     const availableRange = useMemo(() => {
         if (!forecastList || forecastList.length === 0) {
@@ -89,7 +98,13 @@ function MainScreenContent({ weather }) {
         };
     }, [forecastList]);
 
-    const collapsedTitle = city ? `Hoje, ${city}` : "Hoje";
+    const selectedDateLabel = isSameDay(selectedDate, startOfDay(new Date()))
+        ? "Hoje"
+        : selectedDate.toLocaleDateString("pt-BR", {
+              day: "2-digit",
+              month: "2-digit",
+          });
+    const collapsedTitle = city ? `${city}, ${selectedDateLabel}` : selectedDateLabel;
     const expandedDateLabel = formatPtBrFullDate(selectedDate);
 
     const clampDateToForecastRange = useCallback(
@@ -156,6 +171,26 @@ function MainScreenContent({ weather }) {
         handleSelectDate(nextDate);
     };
 
+    const handleLocationConfirm = useCallback(
+        async (location, options = {}) => {
+            setManualLocation(location);
+            if (options.setAsDefault) {
+                await setDefaultLocationPreference(location);
+            }
+        },
+        [setDefaultLocationPreference, setManualLocation],
+    );
+
+    const openLocationModal = useCallback(() => {
+        if (Date.now() < modalCloseLockUntilRef.current) return;
+        setIsLocationModalVisible(true);
+    }, []);
+
+    const closeLocationModal = useCallback(() => {
+        modalCloseLockUntilRef.current = Date.now() + 220;
+        setIsLocationModalVisible(false);
+    }, []);
+
     useEffect(() => {
         const today = startOfDay(new Date());
         const clampedToday = clampDateToForecastRange(today);
@@ -179,6 +214,17 @@ function MainScreenContent({ weather }) {
             }
         };
     }, []);
+
+    useEffect(() => {
+        isExpandedRef.current = isExpanded;
+    }, [isExpanded]);
+
+    useEffect(() => {
+        if (!isExpandedRef.current) {
+            skyHeight.value = SKY_COLLAPSED_HEIGHT;
+            expandedProgress.value = 0;
+        }
+    }, [SKY_COLLAPSED_HEIGHT, expandedProgress, skyHeight]);
 
     const handleSheetToggle = () => {
         const willExpand = !isExpanded;
@@ -337,16 +383,42 @@ function MainScreenContent({ weather }) {
                     scrollEnabled={isExpanded}
                 >
                     <View style={styles.titleArea}>
-                        <Animated.Text
-                            numberOfLines={1}
+                        <Animated.View
                             style={[
-                                styles.sectionTitle,
-                                styles.collapsedTitleText,
                                 collapsedTitleStyle,
+                                styles.collapsedTitleWrapper,
                             ]}
                         >
-                            {collapsedTitle}
-                        </Animated.Text>
+                            <TouchableOpacity
+                                activeOpacity={0.6}
+                                style={styles.locationTrigger}
+                                onPress={openLocationModal}
+                            >
+                                <MaterialCommunityIcons
+                                    name="map-marker"
+                                    size={20}
+                                    color={theme.colors.textDark}
+                                />
+                                <Text
+                                    numberOfLines={1}
+                                    style={[
+                                        styles.sectionTitle,
+                                        styles.collapsedTitleText,
+                                    ]}
+                                >
+                                    {collapsedTitle}
+                                </Text>
+                                
+                                <Text
+                                    style={[
+                                        styles.locationActionText,
+                                        { fontSize: 12, color: theme.colors.textMuted },
+                                    ]}
+                                >
+                                    {"  "}•{"  "}alterar região
+                                </Text>
+                            </TouchableOpacity>
+                        </Animated.View>
 
                         <Animated.View
                             style={[
@@ -454,6 +526,15 @@ function MainScreenContent({ weather }) {
                     }
                 />
             </Animated.View>
+
+            <LocationSelectModal
+                visible={isLocationModalVisible}
+                onClose={closeLocationModal}
+                onConfirm={handleLocationConfirm}
+                onUseCurrentLocation={clearManualLocation}
+                currentSelection={manualLocation}
+                defaultLocation={defaultLocation}
+            />
         </View>
     );
 }
@@ -570,6 +651,15 @@ const styles = StyleSheet.create({
     collapsedTitleText: {
         marginTop: 0,
         marginBottom: 0,
+        marginLeft: 6,
+    },
+    collapsedTitleWrapper: {
+        alignSelf: "flex-start",
+    },
+    locationTrigger: {
+        flexDirection: "row",
+        alignItems: "center",
+        maxWidth: "100%",
     },
     expandedDateRow: {
         position: "absolute",

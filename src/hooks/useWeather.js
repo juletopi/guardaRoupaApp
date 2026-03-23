@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
 import { useEffect, useState } from "react";
 import {
@@ -12,7 +13,22 @@ import {
     getWeatherStatusText,
 } from "../utils/weatherUtils";
 
+const DEFAULT_LOCATION = {
+    countryCode: "BR",
+    countryName: "Brasil",
+    stateCode: "SP",
+    stateName: "São Paulo",
+    city: "São Paulo",
+    cityName: "São Paulo",
+    latitude: -23.5505,
+    longitude: -46.6333,
+};
+const DEFAULT_LOCATION_KEY = "defaultLocationPreference";
+
 export function useWeather() {
+    const [manualLocation, setManualLocation] = useState(null);
+    const [defaultLocation, setDefaultLocation] = useState(DEFAULT_LOCATION);
+    const [reloadToken, setReloadToken] = useState(0);
     const [state, setState] = useState({
         condition: "sunny",
         statusText: "Carregando...",
@@ -25,6 +41,23 @@ export function useWeather() {
 
     useEffect(() => {
         let cancelled = false;
+
+        async function getPersistedDefaultLocation() {
+            try {
+                const rawValue = await AsyncStorage.getItem(DEFAULT_LOCATION_KEY);
+                if (!rawValue) return DEFAULT_LOCATION;
+                const parsed = JSON.parse(rawValue);
+                if (
+                    typeof parsed?.latitude !== "number" ||
+                    typeof parsed?.longitude !== "number"
+                ) {
+                    return DEFAULT_LOCATION;
+                }
+                return { ...DEFAULT_LOCATION, ...parsed };
+            } catch {
+                return DEFAULT_LOCATION;
+            }
+        }
 
         async function load() {
             if (!isOpenWeatherConfigured()) {
@@ -39,34 +72,65 @@ export function useWeather() {
                 return;
             }
 
-            const { status } =
-                await Location.requestForegroundPermissionsAsync();
-            if (status !== "granted") {
-                if (!cancelled) {
-                    setState((prev) => ({
-                        ...prev,
-                        isLoading: false,
-                        error: "Permissão de localização negada.",
-                    }));
-                }
-                return;
+            const resolvedDefaultLocation = await getPersistedDefaultLocation();
+            if (!cancelled) {
+                setDefaultLocation(resolvedDefaultLocation);
             }
 
-            const loc = await Location.getCurrentPositionAsync({
-                accuracy: Location.Accuracy.Balanced,
-            });
-            const { latitude: lat, longitude: lon } = loc.coords;
-            if (__DEV__)
-                console.log(
-                    `[useWeather] Localização: lat=${lat.toFixed(4)}, lon=${lon.toFixed(4)}`,
-                );
+            let lat = manualLocation?.latitude ?? resolvedDefaultLocation.latitude;
+            let lon = manualLocation?.longitude ?? resolvedDefaultLocation.longitude;
+            let usedFallbackLocation = false;
+            const usedManualLocation = Boolean(manualLocation);
 
-            const [city, current, forecastList] = await Promise.all([
+            if (!usedManualLocation) {
+                try {
+                    const { status } =
+                        await Location.requestForegroundPermissionsAsync();
+                    if (status !== "granted") {
+                        usedFallbackLocation = true;
+                        if (__DEV__) {
+                            console.warn(
+                                "[useWeather] Permissão de localização negada. Usando fallback.",
+                            );
+                        }
+                    } else {
+                        const loc = await Location.getCurrentPositionAsync({
+                            accuracy: Location.Accuracy.Balanced,
+                        });
+                        lat = loc.coords.latitude;
+                        lon = loc.coords.longitude;
+                    }
+                } catch (locationError) {
+                    usedFallbackLocation = true;
+                    const isKnownWebLocationFailure = locationError?.message?.includes(
+                        "Failed to query location from network service",
+                    );
+                    if (__DEV__ && !isKnownWebLocationFailure) {
+                        console.warn("[useWeather] Falha ao obter localização:", {
+                            message: locationError?.message,
+                        });
+                    }
+                }
+            }
+
+            if (__DEV__) {
+                const source = usedManualLocation
+                    ? "manual"
+                    : usedFallbackLocation
+                      ? "fallback"
+                      : "dispositivo";
+                console.log(
+                    `[useWeather] Origem da localização: ${source} | lat=${lat.toFixed(4)}, lon=${lon.toFixed(4)}`,
+                );
+            }
+
+            const [resolvedCity, current, forecastList] = await Promise.all([
                 fetchCityName(lat, lon),
                 fetchCurrentWeather(lat, lon),
                 fetchHourlyForecast(lat, lon),
             ]);
 
+            const city = manualLocation?.city ?? resolvedCity;
             const hourlyForecast = getForecastItemsForDate(
                 forecastList,
                 new Date(),
@@ -75,8 +139,13 @@ export function useWeather() {
             const condition = getSkyConditionFromIcon(current.icon);
             if (__DEV__) {
                 console.log(
-                    `[useWeather] Cidade (OWM reverse geocoding): ${city}`,
+                    `[useWeather] Cidade (OWM reverse geocoding): ${resolvedCity}`,
                 );
+                if (manualLocation?.city) {
+                    console.log(
+                        `[useWeather] Cidade manual selecionada: ${manualLocation.city}`,
+                    );
+                }
                 console.log(
                     `[useWeather] Clima: ${current.description} (${current.icon}) → condition=${condition}`,
                 );
@@ -118,6 +187,11 @@ export function useWeather() {
                     err.response?.data?.error ||
                     "";
                 message = `Erro na API (HTTP ${status}).${details ? ` ${details}` : ""}`;
+            } else if (
+                err?.message?.includes("Failed to query location from network service")
+            ) {
+                message =
+                    "Não foi possível usar sua localização agora. Tente novamente em instantes.";
             } else if (err?.message) {
                 message = `Erro ao carregar previsão: ${err.message}`;
             }
@@ -138,7 +212,48 @@ export function useWeather() {
         return () => {
             cancelled = true;
         };
-    }, []);
+    }, [manualLocation, reloadToken]);
 
-    return state;
+    function setManualLocationAndReload(location) {
+        const nextLocation = { ...DEFAULT_LOCATION, ...location };
+        setState((prev) => ({
+            ...prev,
+            isLoading: true,
+            error: null,
+        }));
+        setManualLocation(nextLocation);
+        setReloadToken((prev) => prev + 1);
+    }
+
+    function clearManualLocationAndReload() {
+        setState((prev) => ({
+            ...prev,
+            isLoading: true,
+            error: null,
+        }));
+        setManualLocation(null);
+        setReloadToken((prev) => prev + 1);
+    }
+
+    async function setDefaultLocationPreference(location) {
+        const nextLocation = { ...DEFAULT_LOCATION, ...location };
+        setDefaultLocation(nextLocation);
+        try {
+            await AsyncStorage.setItem(
+                DEFAULT_LOCATION_KEY,
+                JSON.stringify(nextLocation),
+            );
+        } catch {
+            // Ignore persistence errors to avoid blocking UI flow.
+        }
+    }
+
+    return {
+        ...state,
+        manualLocation,
+        defaultLocation,
+        setManualLocation: setManualLocationAndReload,
+        clearManualLocation: clearManualLocationAndReload,
+        setDefaultLocationPreference,
+    };
 }

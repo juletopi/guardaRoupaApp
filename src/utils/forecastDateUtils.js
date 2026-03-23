@@ -89,7 +89,7 @@ export function getForecastItemsForDate(forecastList, targetDate) {
                 minute: "2-digit",
             }),
             icon: mapApiIconToMCI(item.weather[0].icon),
-            temp: `${Math.round(item.main.temp)}°`,
+            precipitation: `${Math.round((item.pop ?? 0) * 100)}%`,
             iconColor: getIconColor(item.weather[0].icon),
         }));
 }

@@ -28,7 +28,7 @@ export default function HourlyForecast({
 
     if (error) {
         return (
-            <View style={[styles.container, styles.center]}>
+            <View style={[styles.container, styles.center, styles.feedbackState]}>
                 <Text style={styles.feedbackText}>{error}</Text>
             </View>
         );
@@ -36,7 +36,7 @@ export default function HourlyForecast({
 
     if (!items || items.length === 0) {
         return (
-            <View style={[styles.container, styles.center]}>
+            <View style={[styles.container, styles.center, styles.feedbackState]}>
                 <Text style={styles.feedbackText}>Sem previsão disponível</Text>
             </View>
         );
@@ -59,7 +59,9 @@ export default function HourlyForecast({
                                 color={item.iconColor}
                                 style={styles.icon}
                             />
-                            <Text style={styles.temp}>{item.temp}</Text>
+                            <Text style={styles.precipitation}>
+                                {item.precipitation}
+                            </Text>
                         </View>
                         {index < items.length - 1 && (
                             <View style={styles.separator} />
@@ -112,10 +114,13 @@ const styles = StyleSheet.create({
     icon: {
         marginBottom: 8,
     },
-    temp: {
-        fontFamily: theme.fonts.black,
-        fontSize: 18,
-        color: theme.colors.textDark,
+    precipIcon: {
+        marginBottom: 2,
+    },
+    precipitation: {
+        fontFamily: theme.fonts.bold,
+        fontSize: 14,
+        color: theme.colors.textMuted,
     },
     separator: {
         width: 1,
@@ -127,6 +132,11 @@ const styles = StyleSheet.create({
         fontFamily: theme.fonts.regular,
         fontSize: 13,
         color: theme.colors.textMuted,
+        textAlign: "center",
+        lineHeight: 18,
+    },
+    feedbackState: {
+        paddingHorizontal: 16,
     },
     loadingOverlay: {
         ...StyleSheet.absoluteFillObject,

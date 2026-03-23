@@ -2,6 +2,52 @@
 
 <details open>
 <summary>
+  <h3 style="display: inline-block;">[v0.2.2] - 23/03/2026</h3>
+</summary>
+
+<h3>Adicionado</h3>
+
+<h4>Local manual e local padrão</h4>
+
+- Componente <code>LocationSelectModal.jsx</code>: seleção encadeada **País &gt; Estado &gt; Município** (dados em <code>src/data/locationOptions.js</code>)
+- Persistência do **local padrão** com <code>@react-native-async-storage/async-storage</code>; opção na modal para salvar o município escolhido como padrão (sobrevive a recarregar o app)
+- Título clicável na <code>MainScreen</code>: ícone de marcador + texto <code>[cidade], Hoje</code> ou <code>[cidade], DD/MM</code> conforme o dia selecionado; abre a modal de local
+- Botão **Usar localização atual** na modal para voltar ao fluxo por GPS (com recarga explícita via <code>reloadToken</code> no <code>useWeather</code>)
+
+<h4>Hook <code>useWeather</code></h4>
+
+- Suporte a <strong>localização manual</strong> (<code>setManualLocation</code>) e leitura/gravação do <strong>local padrão</strong> (<code>defaultLocation</code>, <code>setDefaultLocationPreference</code>)
+- Fallback coordenado com o local padrão persistido quando GPS falha ou permissão é negada
+
+<h3>Alterado</h3>
+
+<h4>Previsão horária (<code>HourlyForecast</code> + <code>forecastDateUtils</code>)</h4>
+
+- No lugar da temperatura por hora: **probabilidade de precipitação** (<code>pop</code> da API OWM) em %
+- Estados de erro/vazio com melhor espaçamento e texto centralizado
+
+<h4>Tela <code>MainScreen</code></h4>
+
+- Rótulo do cabeçalho do menu acompanha a <strong>data selecionada</strong> (<code>Hoje</code> ou data curta <code>DD/MM</code>)
+- Sincronização da altura do céu recolhido (<code>SKY_COLLAPSED_HEIGHT</code>) com <code>useSharedValue</code> quando a tela redimensiona, sem quebrar a animação de expandir/recolher (<code>isExpandedRef</code>)
+
+<h4>Modal de local</h4>
+
+- Ajustes de UX no fechamento (backdrop, propagação de toque) e animações leves por etapa (<code>FadeIn</code>); refinamentos para reduzir flick no web
+
+<h3>Outros</h3>
+
+- Log de desenvolvimento: falha conhecida de geolocalização no web (<code>Failed to query location from network service</code>) tratada como esperada, sem <code>console.warn</code> ruidoso
+- Dependência <code>@react-native-async-storage/async-storage</code> no projeto
+
+</details>
+
+<br>
+
+---
+
+<details>
+<summary>
   <h3 style="display: inline-block;">[v0.2.1] - 18/03/2026</h3>
 </summary>
 

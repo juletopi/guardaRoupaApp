@@ -26,7 +26,6 @@
    <a href="#sobre-o-projeto">Sobre</a> &#xa0; • &#xa0;
    <a href="#estrutura-do-projeto">Estrutura</a> &#xa0; • &#xa0;
    <a href="#instalação">Instalação</a> &#xa0; • &#xa0;
-   <a href="#localização-e-dados-persistidos">Localização</a> &#xa0; • &#xa0;
    <a href="#changelog">Changelog</a>
 </div>
 

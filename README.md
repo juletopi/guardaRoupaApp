@@ -76,7 +76,7 @@ A ideia central é combinar uma **API de clima em tempo real** com um **módulo 
    <img src="https://img.shields.io/badge/react--native--svg-13.x-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="ReactNativeSVG-badge">
 </a>
 <a href="https://fonts.google.com/specimen/Nunito">
-   <img src="https://img.shields.io/badge/Google_Fonts_(Nunito)-0.4+-4285F4?style=for-the-badge&logo=googlefonts&logoColor=white" alt="GoogleFonts-badge">
+  <img src="https://img.shields.io/badge/google_fonts_(Nunito)-4285F4?style=for-the-badge&logo=googlefonts&logoColor=white" alt="VT323-badge" style="max-width: 100%;">
 </a>
 
 #### Dependências externas

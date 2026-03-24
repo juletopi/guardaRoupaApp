@@ -64,16 +64,16 @@ A ideia central é combinar uma **API de clima em tempo real** com um **módulo 
 #### Interface e animações
 
 <a href="https://docs.swmansion.com/react-native-reanimated/">
-   <img src="https://img.shields.io/badge/Reanimated-4.1+-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="Reanimated-badge">
+   <img src="https://img.shields.io/badge/Reanimated-4.1+-20232A?style=for-the-badge&logo=react&logoColor=white" alt="Reanimated-badge">
 </a>
 <a href="https://docs.expo.dev/versions/latest/sdk/linear-gradient/">
    <img src="https://img.shields.io/badge/Expo_Linear_Gradient-15+-5A29E4?style=for-the-badge&logo=expo&logoColor=white" alt="ExpoLinearGradient-badge">
 </a>
 <a href="https://icons.expo.fyi/">
-   <img src="https://img.shields.io/badge/@expo/vector--icons-13.x-5A29E4?style=for-the-badge&logo=expo&logoColor=white" alt="ExpoVectorIcons-badge">
+   <img src="https://img.shields.io/badge/expo/vector--icons-13.x-5A29E4?style=for-the-badge&logo=expo&logoColor=white" alt="ExpoVectorIcons-badge">
 </a>
 <a href="https://github.com/react-native-svg/react-native-svg">
-   <img src="https://img.shields.io/badge/react--native--svg-13.x-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="ReactNativeSVG-badge">
+   <img src="https://img.shields.io/badge/react--native--svg-13.x-20232A?style=for-the-badge&logo=react&logoColor=white" alt="ReactNativeSVG-badge">
 </a>
 <a href="https://fonts.google.com/specimen/Nunito">
   <img src="https://img.shields.io/badge/google_fonts_(Nunito)-4285F4?style=for-the-badge&logo=googlefonts&logoColor=white" alt="VT323-badge" style="max-width: 100%;">
@@ -91,7 +91,7 @@ A ideia central é combinar uma **API de clima em tempo real** com um **módulo 
    <img src="https://img.shields.io/badge/axios-1.x-5A29E4?style=for-the-badge&logo=axios&logoColor=white" alt="Axios-badge">
 </a>
 <a href="https://github.com/react-native-async-storage/async-storage">
-   <img src="https://img.shields.io/badge/Async_Storage-1.x-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="AsyncStorage-badge">
+   <img src="https://img.shields.io/badge/Async_Storage-1.x-20232A?style=for-the-badge&logo=react&logoColor=white" alt="AsyncStorage-badge">
 </a>
 
 <div align="left">

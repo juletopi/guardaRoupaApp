@@ -2,7 +2,7 @@
    <a href="">
     <img src="https://github.com/juletopi/guardaRoupaApp/blob/main/assets/images/guarda-roupa-logo.png" alt="Guarda-roupa-logo" width="230px" title="Guarda-roupa App">
   </a>
-   <h2 align="center">Guarda-Roupa App</h2>
+   <h2 align="center">Guarda-Roupa</h2>
    <p align="center">
       App mobile que salva suas roupas antes que seja tarde demais.
    </p>
@@ -33,7 +33,7 @@
 
 ## Sobre o projeto
 
-O **Guarda-Roupa App** é um aplicativo mobile que resolve um problema cotidiano: recolher ou expor roupas no varal sem depender de "achismos" sobre o tempo antes de ser tarde demais.
+O **Guarda-Roupa** é um aplicativo mobile que resolve um problema cotidiano: recolher ou expor roupas no varal sem depender de "achismos" sobre o tempo antes de ser tarde demais.
 
 A ideia central é combinar uma **API de clima em tempo real** com um **módulo Arduino físico** para automatizar (ou pelo menos facilitar) a decisão de expor e recolher roupas.
 
@@ -95,7 +95,7 @@ A ideia central é combinar uma **API de clima em tempo real** com um **módulo 
 </a>
 
 <div align="left">
-   <h6><a href="#guarda-roupa-app"> Voltar para o início ↺</a></h6>
+   <h6><a href="#guarda-roupa"> Voltar para o início ↺</a></h6>
 </div>
 
 ## Estrutura do projeto
@@ -137,7 +137,7 @@ guardaRoupaApp/
 ```
 
 <div align="left">
-   <h6><a href="#guarda-roupa-app"> Voltar para o início ↺</a></h6>
+   <h6><a href="#guarda-roupa"> Voltar para o início ↺</a></h6>
 </div>
 
 ## Instalação
@@ -200,7 +200,7 @@ O app usa a API **OpenWeatherMap**. Sem chave, a previsão não carrega.
 5. No dispositivo/emulador, **permita localização** quando o app pedir (o clima usa GPS).
 
 <div align="left">
-   <h6><a href="#guarda-roupa-app"> Voltar para o início ↺</a></h6>
+   <h6><a href="#guarda-roupa"> Voltar para o início ↺</a></h6>
 </div>
 
 ## Changelog

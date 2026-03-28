@@ -104,7 +104,9 @@ function MainScreenContent({ weather }) {
               day: "2-digit",
               month: "2-digit",
           });
-    const collapsedTitle = city ? `${city}, ${selectedDateLabel}` : selectedDateLabel;
+    const collapsedTitle = city
+        ? `${city}, ${selectedDateLabel}`
+        : selectedDateLabel;
     const expandedDateLabel = formatPtBrFullDate(selectedDate);
 
     const clampDateToForecastRange = useCallback(
@@ -408,11 +410,14 @@ function MainScreenContent({ weather }) {
                                 >
                                     {collapsedTitle}
                                 </Text>
-                                
+
                                 <Text
                                     style={[
                                         styles.locationActionText,
-                                        { fontSize: 12, color: theme.colors.textMuted },
+                                        {
+                                            fontSize: 12,
+                                            color: theme.colors.textMuted,
+                                        },
                                     ]}
                                 >
                                     {"  "}•{"  "}alterar região
@@ -504,9 +509,21 @@ function MainScreenContent({ weather }) {
                         </Animated.View>
                     )}
 
-                    <Text style={styles.sectionTitle}>
-                        Histórico de Atividade
-                    </Text>
+                    <View style={styles.historyTitleRow}>
+                        <MaterialCommunityIcons
+                            name="history"
+                            size={20}
+                            color={theme.colors.textDark}
+                        />
+                        <Text
+                            style={[
+                                styles.sectionTitle,
+                                styles.historyTitleText,
+                            ]}
+                        >
+                            Histórico de atividade
+                        </Text>
+                    </View>
                     {MOCK_HISTORY.map((item) => (
                         <View key={item.id} style={styles.historyCard}>
                             <Text style={styles.historyText}>{item.label}</Text>
@@ -647,6 +664,17 @@ const styles = StyleSheet.create({
         color: theme.colors.textDark,
         marginTop: 10,
         marginBottom: 15,
+    },
+    historyTitleRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+        marginTop: 10,
+        marginBottom: 15,
+    },
+    historyTitleText: {
+        marginTop: 0,
+        marginBottom: 0,
     },
     collapsedTitleText: {
         marginTop: 0,

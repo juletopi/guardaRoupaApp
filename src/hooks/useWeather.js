@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
 import { useEffect, useState } from "react";
+import { LOCATION_OPTIONS } from "../data/locationOptions";
 import {
     fetchCityName,
     fetchCurrentWeather,
@@ -25,6 +26,41 @@ const DEFAULT_LOCATION = {
 };
 const DEFAULT_LOCATION_KEY = "defaultLocationPreference";
 
+function normalizeText(value) {
+    return String(value ?? "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim();
+}
+
+function findRegisteredLocationByCity(cityName) {
+    const targetCity = normalizeText(cityName);
+    if (!targetCity) return null;
+
+    for (const country of LOCATION_OPTIONS) {
+        for (const state of country.states) {
+            const matchedCity = state.cities.find(
+                (city) => normalizeText(city.name) === targetCity,
+            );
+            if (matchedCity) {
+                return {
+                    countryCode: country.code,
+                    countryName: country.name,
+                    stateCode: state.code,
+                    stateName: state.name,
+                    city: matchedCity.name,
+                    cityName: matchedCity.name,
+                    latitude: matchedCity.latitude,
+                    longitude: matchedCity.longitude,
+                };
+            }
+        }
+    }
+
+    return null;
+}
+
 export function useWeather() {
     const [manualLocation, setManualLocation] = useState(null);
     const [defaultLocation, setDefaultLocation] = useState(DEFAULT_LOCATION);
@@ -44,7 +80,8 @@ export function useWeather() {
 
         async function getPersistedDefaultLocation() {
             try {
-                const rawValue = await AsyncStorage.getItem(DEFAULT_LOCATION_KEY);
+                const rawValue =
+                    await AsyncStorage.getItem(DEFAULT_LOCATION_KEY);
                 if (!rawValue) return DEFAULT_LOCATION;
                 const parsed = JSON.parse(rawValue);
                 if (
@@ -65,8 +102,7 @@ export function useWeather() {
                     setState((prev) => ({
                         ...prev,
                         isLoading: false,
-                        error:
-                            "Erro ao tentar acessar a previsão do tempo com a API OpenWeatherMap. Verifique a configuração da sua chave da API e tente novamente.",
+                        error: "Erro ao tentar acessar a previsão do tempo com a API OpenWeatherMap. Verifique a configuração da sua chave da API e tente novamente.",
                     }));
                 }
                 return;
@@ -77,8 +113,10 @@ export function useWeather() {
                 setDefaultLocation(resolvedDefaultLocation);
             }
 
-            let lat = manualLocation?.latitude ?? resolvedDefaultLocation.latitude;
-            let lon = manualLocation?.longitude ?? resolvedDefaultLocation.longitude;
+            let lat =
+                manualLocation?.latitude ?? resolvedDefaultLocation.latitude;
+            let lon =
+                manualLocation?.longitude ?? resolvedDefaultLocation.longitude;
             let usedFallbackLocation = false;
             const usedManualLocation = Boolean(manualLocation);
 
@@ -102,13 +140,17 @@ export function useWeather() {
                     }
                 } catch (locationError) {
                     usedFallbackLocation = true;
-                    const isKnownWebLocationFailure = locationError?.message?.includes(
-                        "Failed to query location from network service",
-                    );
+                    const isKnownWebLocationFailure =
+                        locationError?.message?.includes(
+                            "Failed to query location from network service",
+                        );
                     if (__DEV__ && !isKnownWebLocationFailure) {
-                        console.warn("[useWeather] Falha ao obter localização:", {
-                            message: locationError?.message,
-                        });
+                        console.warn(
+                            "[useWeather] Falha ao obter localização:",
+                            {
+                                message: locationError?.message,
+                            },
+                        );
                     }
                 }
             }
@@ -130,7 +172,34 @@ export function useWeather() {
                 fetchHourlyForecast(lat, lon),
             ]);
 
-            const city = manualLocation?.city ?? resolvedCity;
+            const cityFromApi = resolvedCity ?? current?.city ?? null;
+            const resolvedDefaultFromDevice =
+                !usedManualLocation && !usedFallbackLocation
+                    ? findRegisteredLocationByCity(cityFromApi)
+                    : null;
+            const nextDefaultLocation =
+                resolvedDefaultFromDevice ?? DEFAULT_LOCATION;
+
+            if (!usedManualLocation && !cancelled) {
+                const defaultChanged =
+                    resolvedDefaultLocation.cityName !==
+                        nextDefaultLocation.cityName ||
+                    resolvedDefaultLocation.stateCode !==
+                        nextDefaultLocation.stateCode ||
+                    resolvedDefaultLocation.countryCode !==
+                        nextDefaultLocation.countryCode;
+
+                if (defaultChanged) {
+                    await setDefaultLocationPreference(nextDefaultLocation);
+                    if (__DEV__) {
+                        console.log(
+                            `[useWeather] Local padrão atualizado automaticamente: ${nextDefaultLocation.cityName}`,
+                        );
+                    }
+                }
+            }
+
+            const city = manualLocation?.city ?? cityFromApi;
             const hourlyForecast = getForecastItemsForDate(
                 forecastList,
                 new Date(),
@@ -141,11 +210,6 @@ export function useWeather() {
                 console.log(
                     `[useWeather] Cidade (OWM reverse geocoding): ${resolvedCity}`,
                 );
-                if (manualLocation?.city) {
-                    console.log(
-                        `[useWeather] Cidade manual selecionada: ${manualLocation.city}`,
-                    );
-                }
                 console.log(
                     `[useWeather] Clima: ${current.description} (${current.icon}) → condition=${condition}`,
                 );
@@ -188,7 +252,9 @@ export function useWeather() {
                     "";
                 message = `Erro na API (HTTP ${status}).${details ? ` ${details}` : ""}`;
             } else if (
-                err?.message?.includes("Failed to query location from network service")
+                err?.message?.includes(
+                    "Failed to query location from network service",
+                )
             ) {
                 message =
                     "Não foi possível usar sua localização agora. Tente novamente em instantes.";

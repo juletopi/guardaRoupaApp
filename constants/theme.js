@@ -1,22 +1,33 @@
+import { Platform } from "react-native";
+
 export const theme = {
     colors: {
         sky: {
-            sunny: ['#6ab0f3', '#b783ff', '#ff8b8b'],
-            rainy: ['#4a5568', '#2d3748', '#1a202c'],
-            night: ['#0f2027', '#203a43', '#2c5364'],
+            sunny: ["#6ab0f3", "#b783ff", "#ff8b8b"],
+            rainy: ["#4a5568", "#2d3748", "#1a202c"],
+            night: ["#0f2027", "#203a43", "#2c5364"],
         },
-        surface: '#ffffff',
-        backgroundAlt: '#f7fafc',
-        textDark: '#2d3748',
-        textMuted: '#4b5e75',
-        calendarDayText: '#304258',
-        textLight: '#ffffff',
-        primary: '#2d3748',
-        accent: '#4fd1c5',
+        surface: "#ffffff",
+        backgroundAlt: "#f7fafc",
+        textDark: "#2d3748",
+        textMuted: "#4b5e75",
+        calendarDayText: "#304258",
+        textLight: "#ffffff",
+        primary: "#2d3748",
+        accent: "#4fd1c5",
     },
     fonts: {
-        regular: 'Nunito_400Regular',
-        bold: 'Nunito_700Bold',
-        black: 'Nunito_900Black',
+        regular:
+            Platform.OS === "web"
+                ? "system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+                : "Nunito_400Regular",
+        bold:
+            Platform.OS === "web"
+                ? "system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+                : "Nunito_700Bold",
+        black:
+            Platform.OS === "web"
+                ? "system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+                : "Nunito_900Black",
     },
 };

@@ -2,6 +2,67 @@
 
 <details open>
 <summary>
+  <h3 style="display: inline-block;">[v0.2.3] - 30/03/2026</h3>
+</summary>
+
+<h3>Adicionado</h3>
+
+<h4>Integração Arduino ponta a ponta</h4>
+
+- Firmware em <code>Arduino/Arduino.ino</code> com:
+    - Controle de motor de passo para estender/recolher varal
+    - Leitura de sensor ultrassônico (detecção de roupa)
+    - Leitura de sensor de chuva
+    - Protocolo serial por comandos (<code>E</code>, <code>R</code>, <code>S</code>) e resposta em JSON
+
+- API local em <code>Arduino-api/server.js</code> usando <code>Express</code> + <code>serialport</code>:
+    - <code>GET /status</code> para leitura de estado atual do Arduino
+    - <code>POST /command</code> para envio de comandos de estender/recolher
+    - Polling periódico de status (<code>S</code>) na serial para manter estado sincronizado
+
+- Serviço <code>src/services/arduinoService.js</code> integrado ao app para comunicação HTTP com a API local
+
+<h3>Alterado</h3>
+
+<h4>Componente <code>ToggleVaralBtn</code></h4>
+
+- Deixa de atuar apenas como toggle visual e passa a refletir estado real do hardware
+- Consulta status do Arduino periodicamente (intervalo de 3s)
+- Envia comandos reais (<code>E</code> / <code>R</code>) ao backend local
+- Regra de segurança no app: bloqueia estender quando está chovendo
+- Confirmação explícita do usuário ao estender sem roupa detectada (alert nativo / confirm no web)
+
+<h4>Dependências</h4>
+
+- Inclusão de <code>express</code>, <code>cors</code> e <code>serialport</code> para suportar a API local do Arduino
+- Ajuste de compatibilidade do Expo: <code>@react-native-async-storage/async-storage</code> para <code>^2.2.0</code>
+
+<h3>Corrigido</h3>
+
+<h4>Validação de região local</h4>
+
+- Correção no fluxo de atualização automática do local padrão a partir da localização real do dispositivo
+- Quando há match válido na base, o app persiste automaticamente o local padrão correto; quando não há, aplica fallback seguro
+
+<h4>Compatibilidade de fontes</h4>
+
+- Correção de timeout de fonte no Web: o carregamento das fontes do Google passa a ser ignorado na plataforma web
+- Fallback para fontes de sistema no web em <code>theme.fonts</code>, evitando quebra visual quando as fontes remotas não são observadas/carregadas
+- Ajuste no layout inicial para continuar o bootstrap mesmo com erro de fonte, evitando bloqueio da tela de carregamento
+
+<h3>Outros</h3>
+
+- Estrutura do projeto expandida com diretórios dedicados ao firmware (<code>Arduino/</code>) e à API local (<code>Arduino-api/</code>)
+- Base pronta para evolução de automações físicas no fluxo do varal
+
+</details>
+
+<br>
+
+---
+
+<details>
+<summary>
   <h3 style="display: inline-block;">[v0.2.2] - 23/03/2026</h3>
 </summary>
 
@@ -41,10 +102,6 @@
 - Dependência <code>@react-native-async-storage/async-storage</code> no projeto
 
 </details>
-
-<br>
-
----
 
 <details>
 <summary>

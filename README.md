@@ -45,7 +45,8 @@ A ideia central é combinar uma **API de clima em tempo real** com um **módulo 
 - **Local manual**: toque no título com cidade para abrir modal (País → Estado → Município); opção de **local padrão** e botão para voltar à **localização atual** (GPS)
 - Menu inferior animado com dois estados: **recolhido** (~20% da tela) e **expandido** (~90%)
 - Botão flutuante **RECOLHER / EXPOR** na divisa do menu, com animação de linhas irradiando
-- Toggle manual do estado do varal (exposto/recolhido)
+- Integração em tempo real com módulo Arduino via API local: leitura periódica de **status do varal** (estendido, chuva, roupa detectada)
+- Regras de segurança no controle do varal: bloqueio para estender em caso de chuva e confirmação do usuário quando não há roupa detectada
 
 ### Tecnologias utilizadas
 
@@ -93,6 +94,12 @@ A ideia central é combinar uma **API de clima em tempo real** com um **módulo 
 <a href="https://github.com/react-native-async-storage/async-storage">
    <img src="https://img.shields.io/badge/Async_Storage-1.x-20232A?style=for-the-badge&logo=react&logoColor=white" alt="AsyncStorage-badge">
 </a>
+<a href="https://expressjs.com/">
+   <img src="https://img.shields.io/badge/Express-5.x-000000?style=for-the-badge&logo=express&logoColor=white" alt="Express-badge">
+</a>
+<a href="https://serialport.io/">
+   <img src="https://img.shields.io/badge/serialport-13.x-1f6feb?style=for-the-badge" alt="SerialPort-badge">
+</a>
 
 <div align="left">
    <h6><a href="#guarda-roupa"> Voltar para o início ↺</a></h6>
@@ -105,6 +112,10 @@ guardaRoupaApp/
 ├── app/                              # Roteamento (Expo Router)
 │   ├── _layout.jsx                   # Fontes Nunito, loading inicial, StatusBar, Stack
 │   └── index.jsx                     # Rota inicial → MainScreen
+├── Arduino/
+│   └── Arduino.ino                   # Firmware: motor + sensores + protocolo serial (E/R/S)
+├── Arduino-api/
+│   └── server.js                     # API local (Express) de ponte entre App e Arduino via porta serial
 ├── src/
 │   ├── components/
 │   │   ├── ExpandMenuBtn.jsx         # Botão expandir/recolher menu
@@ -120,7 +131,7 @@ guardaRoupaApp/
 │   ├── screens/
 │   │   └── MainScreen.jsx            # Céu + menu, data selecionada, clima carregado e exibido
 │   ├── services/
-│   │   ├── arduinoService.js         # Arduino (placeholder)
+│   │   ├── arduinoService.js         # Cliente HTTP para API local do Arduino (/status e /command)
 │   │   └── weatherService.js         # OpenWeatherMap: clima atual, previsão 5d/3h, reverse geocoding (cidade)
 │   └── utils/
 │       ├── forecastDateUtils.js      # Datas PT-BR, grade do calendário, itens horários (incl. precipitação pop)
@@ -198,6 +209,49 @@ O app usa a API **OpenWeatherMap**. Sem chave, a previsão não carrega.
 4. **Reinicie o bundler** (`Ctrl+C` e `npm start` de novo). Variáveis `EXPO_PUBLIC_*` só entram após reiniciar o Expo.
 
 5. No dispositivo/emulador, **permita localização** quando o app pedir (o clima usa GPS).
+
+### Módulo Arduino (API local + firmware)
+
+O controle físico do varal funciona em 3 camadas:
+
+1. **App Expo** envia/consulta estado via HTTP
+2. **API local Node/Express** (ponte serial) converte HTTP para comandos da serial
+3. **Arduino** executa o movimento e responde status em JSON
+
+#### 1) Suba o firmware no Arduino
+
+- Abra o arquivo `Arduino/Arduino.ino` na IDE do Arduino
+- Conecte o hardware (motor de passo + sensor ultrassônico + sensor de chuva)
+- Faça upload para a placa
+
+#### 2) Configure e rode a API local
+
+1. Ajuste a porta serial no arquivo `Arduino-api/server.js` (ex.: `COM3`, `COM9`, `/dev/ttyACM0`)
+2. Inicie a API na raiz do projeto:
+
+   ```bash
+   node Arduino-api/server.js
+   ```
+
+3. A API sobe na porta `3000` com endpoints:
+   - `GET /status` → retorna `{ estendido, chuva, roupa }`
+   - `POST /command` com `{ "action": "E" }` ou `{ "action": "R" }`
+
+#### 3) Ajuste de rede para teste em celular físico
+
+- Em `src/services/arduinoService.js`, troque `http://localhost:3000` pelo IP da máquina que roda a API (ex.: `http://192.168.1.15:3000`)
+- Celular e computador precisam estar na mesma rede local
+
+#### Protocolo serial usado
+
+- `E`: estender varal
+- `R`: recolher varal
+- `S`: solicitar status atual
+- Resposta do Arduino: JSON em linha única, por exemplo:
+
+  ```json
+  {"estendido":true,"chuva":false,"roupa":true}
+  ```
 
 <div align="left">
    <h6><a href="#guarda-roupa"> Voltar para o início ↺</a></h6>

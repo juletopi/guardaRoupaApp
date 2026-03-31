@@ -1,13 +1,14 @@
-import React, { useCallback } from "react";
-import { Pressable, Text, StyleSheet, View } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import { Alert, Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, {
-    useSharedValue,
-    useAnimatedStyle,
-    withTiming,
-    interpolate,
     Easing,
+    interpolate,
+    useAnimatedStyle,
+    useSharedValue,
+    withTiming,
 } from "react-native-reanimated";
 import { theme } from "../../constants/theme";
+import { fetchArduinoStatus, sendCommandToArduino } from '../services/arduinoService';
 
 const LINES_COUNT = 8;
 const OUTER_RADIUS = 82;
@@ -45,17 +46,84 @@ function Line({ angle, progress }) {
     return <Animated.View style={[styles.line, style]} />;
 }
 
-export default function WardrobeButton({ isExposed, onPress }) {
+export default function WardrobeButton() {
+    const [status, setStatus] = useState({ estendido: false, chuva: false, roupa: false });
     const progress = useSharedValue(0);
 
-    const handlePress = useCallback(() => {
+    // Consulta periodicamente o Arduino
+    useEffect(() => {
+        const interval = setInterval(async () => {
+            const currentStatus = await fetchArduinoStatus();
+            if (currentStatus) setStatus(currentStatus);
+        }, 3000);
+        return () => clearInterval(interval);
+    }, []);
+
+    // Animação visual isolada
+    const triggerAnimation = useCallback(() => {
         progress.value = 0;
         progress.value = withTiming(1, {
             duration: ANIMATION_DURATION,
             easing: Easing.inOut(Easing.cubic),
         });
-        onPress();
-    }, [onPress, progress]);
+    }, [progress]);
+
+    // Lógica principal do botão
+    const handlePress = useCallback(async () => {
+        console.log("Status atual antes do clique:", status);
+
+        if (status.estendido) {
+            console.log("Enviando comando: RECOLHER");
+            triggerAnimation();
+            await sendCommandToArduino('R');
+            setStatus(prev => ({ ...prev, estendido: false }));
+        } else {
+            if (status.chuva) {
+                if (Platform.OS === 'web') {
+                    window.alert("Operação Bloqueada: Está chovendo. Não é possível estender o varal agora.");
+                } else {
+                    Alert.alert("Operação Bloqueada", "Está chovendo. Não é possível estender o varal agora.");
+                }
+                return;
+            }
+
+            if (!status.roupa) {
+                console.log("Aviso de falta de roupa disparado.");
+
+                if (Platform.OS === 'web') {
+                    const confirmou = window.confirm("Nenhuma roupa foi detectada no varal. Deseja estender mesmo assim?");
+                    if (confirmou) {
+                        console.log("Usuário confirmou via web. Enviando: ESTENDER");
+                        triggerAnimation();
+                        await sendCommandToArduino('E');
+                        setStatus(prev => ({ ...prev, estendido: true }));
+                    }
+                } else {
+                    Alert.alert(
+                        "Aviso de Confirmação",
+                        "Nenhuma roupa foi detectada no varal. Deseja estender mesmo assim?",
+                        [
+                            { text: "Cancelar", style: "cancel" },
+                            {
+                                text: "Sim, Estender",
+                                onPress: async () => {
+                                    console.log("Usuário confirmou via celular. Enviando: ESTENDER");
+                                    triggerAnimation();
+                                    await sendCommandToArduino('E');
+                                    setStatus(prev => ({ ...prev, estendido: true }));
+                                }
+                            }
+                        ]
+                    );
+                }
+            } else {
+                console.log("Condições ideais. Enviando: ESTENDER");
+                triggerAnimation();
+                await sendCommandToArduino('E');
+                setStatus(prev => ({ ...prev, estendido: true }));
+            }
+        }
+    }, [status, triggerAnimation]);
 
     const angles = Array.from(
         { length: LINES_COUNT },
@@ -71,16 +139,15 @@ export default function WardrobeButton({ isExposed, onPress }) {
                     {
                         backgroundColor: pressed
                             ? "#1a202c"
-                            : theme.colors.primary,
+                            : status.estendido ? "#F44336" : theme.colors.primary,
                     },
                 ]}
             >
                 <Text style={styles.label}>
-                    {isExposed ? "RECOLHER" : "EXPOR"}
+                    {status.estendido ? "RECOLHER" : "EXPOR"}
                 </Text>
             </Pressable>
 
-            {/* Rendered after button so lines appear in front */}
             <View style={styles.linesLayer} pointerEvents="none">
                 {angles.map((angle, i) => (
                     <Line key={i} angle={angle} progress={progress} />

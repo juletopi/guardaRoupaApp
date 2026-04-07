@@ -29,7 +29,7 @@
    <a href="#changelog">Changelog</a>
 </div>
 
-----
+---
 
 ## Sobre o projeto
 
@@ -125,16 +125,20 @@ guardaRoupaApp/
 │   │   └── ToggleVaralBtn.jsx        # Botão de toggle recolher/expor varal
 │   ├── data/
 │   │   ├── locationOptions.js        # Opções encadeadas para seleção de local na modal
+│   │   ├── clotheslineHistory.json   # Histórico persistido em JSON durante a execução
 │   │   └── mockData.js               # Dados mockados
 │   ├── hooks/
+│   │   ├── useClotheslineHistoryTracker.js # Rastreador de mudanças no estado do varal
 │   │   └── useWeather.js             # GPS/manual, local padrão (AsyncStorage), OWM (clima + /forecast + cidade)
 │   ├── screens/
 │   │   └── MainScreen.jsx            # Céu + menu, data selecionada, clima carregado e exibido
 │   ├── services/
 │   │   ├── arduinoService.js         # Cliente HTTP para API local do Arduino (/status e /command)
+│   │   ├── clotheslineHistoryService.js # Persistência em memória/AsyncStorage do histórico do varal
 │   │   └── weatherService.js         # OpenWeatherMap: clima atual, previsão 5d/3h, reverse geocoding (cidade)
 │   └── utils/
 │       ├── forecastDateUtils.js      # Datas PT-BR, grade do calendário, itens horários (incl. precipitação pop)
+│       ├── historyUtils.js           # Formatação e helpers do histórico de atividade
 │       ├── timeUtils.js              # Formatação de horários
 │       └── weatherUtils.js           # Gradiente do céu, ícones e texto de condição
 ├── constants/

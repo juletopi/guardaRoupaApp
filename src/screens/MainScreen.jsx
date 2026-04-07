@@ -1,4 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 import React, {
     useCallback,
@@ -34,22 +35,34 @@ import LocationSelectModal from "../components/LocationSelectModal";
 import ToggleVaralBtn, {
     WRAPPER_HALF_HEIGHT,
 } from "../components/ToggleVaralBtn";
-import { MOCK_HISTORY } from "../data/mockData";
+import { useClotheslineHistoryTracker } from "../hooks/useClotheslineHistoryTracker";
 import { useWeather } from "../hooks/useWeather";
+import { useClotheslineHistory } from "../services/clotheslineHistoryService";
 import {
     formatPtBrFullDate,
+    formatRelativeDayLabel,
     getForecastItemsForDate,
-    isSameDay,
     startOfDay,
 } from "../utils/forecastDateUtils";
+import { formatHistoryEntryLabel } from "../utils/historyUtils";
 import { getSkyColors } from "../utils/weatherUtils";
 
 const TOGGLE_HALF_HEIGHT = WRAPPER_HALF_HEIGHT;
 const SKY_EXPANDED_HEIGHT = 100;
+const CLOTHESLINE_STATE_KEY = "@clothesline/isExposed";
+const HISTORY_PAGE_SIZE = 5;
 const TIMING_CONFIG = {
     duration: 650,
     easing: Easing.inOut(Easing.cubic),
 };
+
+function areSameDay(a, b) {
+    return (
+        a.getFullYear() === b.getFullYear() &&
+        a.getMonth() === b.getMonth() &&
+        a.getDate() === b.getDate()
+    );
+}
 
 function MainScreenContent({ weather }) {
     const { height: screenHeight } = useWindowDimensions();
@@ -74,8 +87,24 @@ function MainScreenContent({ weather }) {
     const [selectedDate, setSelectedDate] = useState(startOfDay(new Date()));
     const [selectedForecast, setSelectedForecast] = useState(hourlyForecast);
     const [isDateLoading, setIsDateLoading] = useState(false);
+    const [historyPage, setHistoryPage] = useState(1);
+    const [isClotheslineStateHydrated, setIsClotheslineStateHydrated] =
+        useState(false);
     const [isLocationModalVisible, setIsLocationModalVisible] = useState(false);
     const modalCloseLockUntilRef = useRef(0);
+    const scrollViewRef = useRef(null);
+    const {
+        history,
+        isLoading: isHistoryLoading,
+        isRefreshing: isHistoryRefreshing,
+        reloadHistory,
+    } = useClotheslineHistory();
+
+    useClotheslineHistoryTracker(
+        isClotheslineExposed,
+        "Manual",
+        isClotheslineStateHydrated,
+    );
 
     const skyHeight = useSharedValue(SKY_COLLAPSED_HEIGHT);
     const expandedProgress = useSharedValue(0);
@@ -98,12 +127,7 @@ function MainScreenContent({ weather }) {
         };
     }, [forecastList]);
 
-    const selectedDateLabel = isSameDay(selectedDate, startOfDay(new Date()))
-        ? "Hoje"
-        : selectedDate.toLocaleDateString("pt-BR", {
-              day: "2-digit",
-              month: "2-digit",
-          });
+    const selectedDateLabel = formatRelativeDayLabel(selectedDate);
     const collapsedTitle = city
         ? `${city}, ${selectedDateLabel}`
         : selectedDateLabel;
@@ -128,7 +152,7 @@ function MainScreenContent({ weather }) {
                 return;
             }
 
-            if (isSameDay(targetDate, startOfDay(new Date()))) {
+            if (areSameDay(targetDate, startOfDay(new Date()))) {
                 setSelectedForecast(hourlyForecast);
                 return;
             }
@@ -143,7 +167,7 @@ function MainScreenContent({ weather }) {
             const normalizedDate = startOfDay(nextDate);
             const clampedDate = clampDateToForecastRange(normalizedDate);
 
-            if (isSameDay(clampedDate, selectedDate)) return;
+            if (areSameDay(clampedDate, selectedDate)) return;
 
             setSelectedDate(clampedDate);
             setIsDateLoading(true);
@@ -198,7 +222,9 @@ function MainScreenContent({ weather }) {
         const clampedToday = clampDateToForecastRange(today);
 
         setSelectedDate((previousDate) =>
-            isSameDay(previousDate, clampedToday) ? previousDate : clampedToday,
+            areSameDay(previousDate, clampedToday)
+                ? previousDate
+                : clampedToday,
         );
         setForecastForDate(clampedToday);
         setIsDateLoading(false);
@@ -218,6 +244,40 @@ function MainScreenContent({ weather }) {
     }, []);
 
     useEffect(() => {
+        let isMounted = true;
+
+        const loadPersistedClotheslineState = async () => {
+            try {
+                const persistedState = await AsyncStorage.getItem(
+                    CLOTHESLINE_STATE_KEY,
+                );
+
+                if (
+                    isMounted &&
+                    (persistedState === "true" || persistedState === "false")
+                ) {
+                    setIsClotheslineExposed(persistedState === "true");
+                }
+            } catch (storageError) {
+                console.error(
+                    "Erro ao carregar estado persistido do varal:",
+                    storageError,
+                );
+            } finally {
+                if (isMounted) {
+                    setIsClotheslineStateHydrated(true);
+                }
+            }
+        };
+
+        loadPersistedClotheslineState();
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
+
+    useEffect(() => {
         isExpandedRef.current = isExpanded;
     }, [isExpanded]);
 
@@ -232,6 +292,11 @@ function MainScreenContent({ weather }) {
         const willExpand = !isExpanded;
         setIsExpanded(willExpand);
 
+        if (!willExpand) {
+            setHistoryPage(1);
+            scrollViewRef.current?.scrollTo({ y: 0, animated: false });
+        }
+
         skyHeight.value = withTiming(
             willExpand ? SKY_EXPANDED_HEIGHT : SKY_COLLAPSED_HEIGHT,
             TIMING_CONFIG,
@@ -242,6 +307,52 @@ function MainScreenContent({ weather }) {
             easing: Easing.inOut(Easing.cubic),
         });
     };
+
+    const handleToggleClothesline = useCallback((nextStateFromButton) => {
+        setIsClotheslineExposed((previousState) => {
+            const nextState =
+                typeof nextStateFromButton === "boolean"
+                    ? nextStateFromButton
+                    : !previousState;
+
+            AsyncStorage.setItem(
+                CLOTHESLINE_STATE_KEY,
+                String(nextState),
+            ).catch((storageError) => {
+                console.error(
+                    "Erro ao persistir estado do varal:",
+                    storageError,
+                );
+            });
+
+            return nextState;
+        });
+    }, []);
+
+    const handleReloadHistory = useCallback(async () => {
+        await reloadHistory();
+    }, [reloadHistory]);
+
+    const handleLoadMoreHistory = useCallback(() => {
+        setHistoryPage((previousPage) => previousPage + 1);
+    }, []);
+
+    const isHistoryBusy = isHistoryLoading || isHistoryRefreshing;
+    const visibleHistory = useMemo(
+        () => history.slice(0, historyPage * HISTORY_PAGE_SIZE),
+        [history, historyPage],
+    );
+    const hasMoreHistory = visibleHistory.length < history.length;
+
+    useEffect(() => {
+        const maxHistoryPage = Math.max(
+            1,
+            Math.ceil(history.length / HISTORY_PAGE_SIZE),
+        );
+        setHistoryPage((previousPage) =>
+            Math.min(previousPage, maxHistoryPage),
+        );
+    }, [history.length]);
 
     const skyWrapperStyle = useAnimatedStyle(() => ({
         height: skyHeight.value,
@@ -379,6 +490,7 @@ function MainScreenContent({ weather }) {
                 />
 
                 <ScrollView
+                    ref={scrollViewRef}
                     style={styles.scrollView}
                     contentContainerStyle={styles.scrollContent}
                     showsVerticalScrollIndicator={false}
@@ -523,12 +635,65 @@ function MainScreenContent({ weather }) {
                         >
                             Histórico de atividade
                         </Text>
+
+                        <TouchableOpacity
+                            activeOpacity={0.6}
+                            onPress={handleReloadHistory}
+                        >
+                            <Text style={styles.reloadHistoryText}>
+                                •{"  "}
+                                {isHistoryRefreshing
+                                    ? "recarregando..."
+                                    : "recarregar"}
+                            </Text>
+                        </TouchableOpacity>
                     </View>
-                    {MOCK_HISTORY.map((item) => (
-                        <View key={item.id} style={styles.historyCard}>
-                            <Text style={styles.historyText}>{item.label}</Text>
-                        </View>
-                    ))}
+
+                    <View style={styles.historySectionWrapper}>
+                        {visibleHistory.map((item) => (
+                            <View key={item.id} style={styles.historyCard}>
+                                <Text style={styles.historyText}>
+                                    {formatHistoryEntryLabel(item)}
+                                </Text>
+                            </View>
+                        ))}
+
+                        {!isHistoryBusy && visibleHistory.length === 0 && (
+                            <View style={styles.historyCard}>
+                                <Text style={styles.historyText}>
+                                    Sem atividade registrada ainda.
+                                </Text>
+                            </View>
+                        )}
+
+                        {!isHistoryBusy && hasMoreHistory && (
+                            <TouchableOpacity
+                                activeOpacity={0.7}
+                                style={styles.loadMoreHistoryBtn}
+                                onPress={handleLoadMoreHistory}
+                            >
+                                <Text style={styles.loadMoreHistoryText}>
+                                    Carregar mais
+                                </Text>
+                            </TouchableOpacity>
+                        )}
+
+                        {isHistoryBusy && (
+                            <Animated.View
+                                entering={FadeInDown.duration(180)}
+                                exiting={FadeOutUp.duration(140)}
+                                style={styles.historyLoadingOverlay}
+                            >
+                                <ActivityIndicator
+                                    size="small"
+                                    color={theme.colors.textDark}
+                                />
+                                <Text style={styles.historyLoadingText}>
+                                    Carregando histórico...
+                                </Text>
+                            </Animated.View>
+                        )}
+                    </View>
                 </ScrollView>
             </View>
 
@@ -538,9 +703,7 @@ function MainScreenContent({ weather }) {
             >
                 <ToggleVaralBtn
                     isExposed={isClotheslineExposed}
-                    onPress={() =>
-                        setIsClotheslineExposed(!isClotheslineExposed)
-                    }
+                    onPress={handleToggleClothesline}
                 />
             </Animated.View>
 
@@ -676,6 +839,11 @@ const styles = StyleSheet.create({
         marginTop: 0,
         marginBottom: 0,
     },
+    reloadHistoryText: {
+        fontFamily: theme.fonts.regular,
+        fontSize: 12,
+        color: theme.colors.textMuted,
+    },
     collapsedTitleText: {
         marginTop: 0,
         marginBottom: 0,
@@ -726,6 +894,37 @@ const styles = StyleSheet.create({
         fontFamily: theme.fonts.regular,
         color: theme.colors.textMuted,
         fontSize: 15,
+    },
+    historySectionWrapper: {
+        position: "relative",
+        minHeight: 76,
+    },
+    historyLoadingOverlay: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: "rgba(255, 255, 255, 0.78)",
+        borderRadius: 16,
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 8,
+    },
+    historyLoadingText: {
+        fontFamily: theme.fonts.regular,
+        color: theme.colors.textDark,
+        fontSize: 13,
+    },
+    loadMoreHistoryBtn: {
+        alignSelf: "center",
+        marginTop: 4,
+        marginBottom: 8,
+        paddingHorizontal: 14,
+        paddingVertical: 8,
+        borderRadius: 999,
+        backgroundColor: theme.colors.backgroundAlt,
+    },
+    loadMoreHistoryText: {
+        fontFamily: theme.fonts.bold,
+        fontSize: 13,
+        color: theme.colors.textDark,
     },
     floatingToggleWrapper: {
         position: "absolute",

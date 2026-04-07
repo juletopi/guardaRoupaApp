@@ -1,5 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Alert, Platform, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+    Alert,
+    Platform,
+    Pressable,
+    StyleSheet,
+    Text,
+    View,
+} from "react-native";
 import Animated, {
     Easing,
     interpolate,
@@ -8,7 +15,10 @@ import Animated, {
     withTiming,
 } from "react-native-reanimated";
 import { theme } from "../../constants/theme";
-import { fetchArduinoStatus, sendCommandToArduino } from '../services/arduinoService';
+import {
+    fetchArduinoStatus,
+    sendCommandToArduino,
+} from "../services/arduinoService";
 
 const LINES_COUNT = 8;
 const OUTER_RADIUS = 82;
@@ -46,9 +56,15 @@ function Line({ angle, progress }) {
     return <Animated.View style={[styles.line, style]} />;
 }
 
-export default function WardrobeButton() {
-    const [status, setStatus] = useState({ estendido: false, chuva: false, roupa: false });
+export default function WardrobeButton({ isExposed, onPress }) {
+    const [status, setStatus] = useState({
+        estendido: false,
+        chuva: false,
+        roupa: false,
+    });
     const progress = useSharedValue(0);
+    const isControlled = typeof isExposed === "boolean";
+    const currentIsExposed = isControlled ? isExposed : status.estendido;
 
     // Consulta periodicamente o Arduino
     useEffect(() => {
@@ -72,17 +88,23 @@ export default function WardrobeButton() {
     const handlePress = useCallback(async () => {
         console.log("Status atual antes do clique:", status);
 
-        if (status.estendido) {
+        if (currentIsExposed) {
             console.log("Enviando comando: RECOLHER");
             triggerAnimation();
-            await sendCommandToArduino('R');
-            setStatus(prev => ({ ...prev, estendido: false }));
+            await sendCommandToArduino("R");
+            setStatus((prev) => ({ ...prev, estendido: false }));
+            onPress?.(false);
         } else {
             if (status.chuva) {
-                if (Platform.OS === 'web') {
-                    window.alert("Operação Bloqueada: Está chovendo. Não é possível estender o varal agora.");
+                if (Platform.OS === "web") {
+                    window.alert(
+                        "Operação Bloqueada: Está chovendo. Não é possível estender o varal agora.",
+                    );
                 } else {
-                    Alert.alert("Operação Bloqueada", "Está chovendo. Não é possível estender o varal agora.");
+                    Alert.alert(
+                        "Operação Bloqueada",
+                        "Está chovendo. Não é possível estender o varal agora.",
+                    );
                 }
                 return;
             }
@@ -90,13 +112,18 @@ export default function WardrobeButton() {
             if (!status.roupa) {
                 console.log("Aviso de falta de roupa disparado.");
 
-                if (Platform.OS === 'web') {
-                    const confirmou = window.confirm("Nenhuma roupa foi detectada no varal. Deseja estender mesmo assim?");
+                if (Platform.OS === "web") {
+                    const confirmou = window.confirm(
+                        "Nenhuma roupa foi detectada no varal. Deseja estender mesmo assim?",
+                    );
                     if (confirmou) {
-                        console.log("Usuário confirmou via web. Enviando: ESTENDER");
+                        console.log(
+                            "Usuário confirmou via web. Enviando: ESTENDER",
+                        );
                         triggerAnimation();
-                        await sendCommandToArduino('E');
-                        setStatus(prev => ({ ...prev, estendido: true }));
+                        await sendCommandToArduino("E");
+                        setStatus((prev) => ({ ...prev, estendido: true }));
+                        onPress?.(true);
                     }
                 } else {
                     Alert.alert(
@@ -107,23 +134,30 @@ export default function WardrobeButton() {
                             {
                                 text: "Sim, Estender",
                                 onPress: async () => {
-                                    console.log("Usuário confirmou via celular. Enviando: ESTENDER");
+                                    console.log(
+                                        "Usuário confirmou via celular. Enviando: ESTENDER",
+                                    );
                                     triggerAnimation();
-                                    await sendCommandToArduino('E');
-                                    setStatus(prev => ({ ...prev, estendido: true }));
-                                }
-                            }
-                        ]
+                                    await sendCommandToArduino("E");
+                                    setStatus((prev) => ({
+                                        ...prev,
+                                        estendido: true,
+                                    }));
+                                    onPress?.(true);
+                                },
+                            },
+                        ],
                     );
                 }
             } else {
                 console.log("Condições ideais. Enviando: ESTENDER");
                 triggerAnimation();
-                await sendCommandToArduino('E');
-                setStatus(prev => ({ ...prev, estendido: true }));
+                await sendCommandToArduino("E");
+                setStatus((prev) => ({ ...prev, estendido: true }));
+                onPress?.(true);
             }
         }
-    }, [status, triggerAnimation]);
+    }, [currentIsExposed, onPress, status, triggerAnimation]);
 
     const angles = Array.from(
         { length: LINES_COUNT },
@@ -139,12 +173,14 @@ export default function WardrobeButton() {
                     {
                         backgroundColor: pressed
                             ? "#1a202c"
-                            : status.estendido ? "#F44336" : theme.colors.primary,
+                            : currentIsExposed
+                              ? "#F44336"
+                              : theme.colors.primary,
                     },
                 ]}
             >
                 <Text style={styles.label}>
-                    {status.estendido ? "RECOLHER" : "EXPOR"}
+                    {currentIsExposed ? "RECOLHER" : "EXPOR"}
                 </Text>
             </Pressable>
 

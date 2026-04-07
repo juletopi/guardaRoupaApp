@@ -12,6 +12,25 @@ export function isSameDay(a, b) {
     );
 }
 
+export function formatRelativeDayLabel(date, referenceDate = new Date()) {
+    const today = startOfDay(referenceDate);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    if (isSameDay(date, today)) {
+        return "Hoje";
+    }
+
+    if (isSameDay(date, tomorrow)) {
+        return "Amanhã";
+    }
+
+    return date.toLocaleDateString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+    });
+}
+
 export function formatPtBrFullDate(date) {
     const formatter = new Intl.DateTimeFormat("pt-BR", {
         weekday: "long",

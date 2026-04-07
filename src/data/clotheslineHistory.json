@@ -1,0 +1,28 @@
+{
+    "history": [
+        {
+            "id": "1",
+            "timestamp": "2026-04-07T09:00:00",
+            "isExposed": true,
+            "status": "Automático"
+        },
+        {
+            "id": "2",
+            "timestamp": "2026-04-06T18:30:00",
+            "isExposed": false,
+            "status": "Chuva detectada"
+        },
+        {
+            "id": "3",
+            "timestamp": "2026-04-06T08:15:00",
+            "isExposed": true,
+            "status": "Automático"
+        },
+        {
+            "id": "4",
+            "timestamp": "2026-03-02T19:00:00",
+            "isExposed": false,
+            "status": "Fim do dia"
+        }
+    ]
+}

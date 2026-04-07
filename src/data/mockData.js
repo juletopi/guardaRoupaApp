@@ -44,13 +44,32 @@ export const MOCK_HOURLY_FORECAST = [
 ];
 
 export const MOCK_HISTORY = [
-    { id: "1", label: "Hoje, 09:00 - Exposto (Automático)" },
-    { id: "2", label: "Ontem, 18:30 - Recolhido (Chuva leve)" },
-    { id: "3", label: "Ontem, 08:15 - Exposto (Automático)" },
-    { id: "4", label: "02 de Mar, 19:00 - Recolhido (Fim do dia)" },
+    {
+        id: "1",
+        timestamp: "2026-04-07T09:00:00",
+        isExposed: true,
+        status: "Automático",
+    },
+    {
+        id: "2",
+        timestamp: "2026-04-06T18:30:00",
+        isExposed: false,
+        status: "Chuva detectada",
+    },
+    {
+        id: "3",
+        timestamp: "2026-04-06T08:15:00",
+        isExposed: true,
+        status: "Automático",
+    },
+    {
+        id: "4",
+        timestamp: "2026-03-02T19:00:00",
+        isExposed: false,
+        status: "Fim do dia",
+    },
 ];
 
-// Estado mockado do Arduino
 export const MOCK_ARDUINO_STATE = {
     isClotheslineExposed: true,
     lastUpdated: "09:00",

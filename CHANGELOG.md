@@ -2,6 +2,38 @@
 
 <details open>
 <summary>
+  <h3 style="display: inline-block;">[v0.2.4] - 06/04/2026</h3>
+</summary>
+
+<h3>Adicionado</h3>
+
+<h4>Histórico de atividade do varal</h4>
+
+- Persistência local do histórico em JSON para execução atual, com hidratação via AsyncStorage
+- Estrutura de item de histórico refinada para incluir <code>id</code>, <code>timestamp</code>, <code>isExposed</code> e <code>status</code>
+- Formatação dinâmica de data e hora no histórico usando os utilitários de data do projeto
+- Paginação da listagem do histórico em blocos de 5 itens
+
+<h3>Alterado</h3>
+
+<h4>Tela <code>MainScreen</code></h4>
+
+- Histórico passou a refletir o estado real do botão de recolher/expor, com sincronização do varal e atualização em tempo real
+- Botão de recarregar histórico ganhou estado de refresh e overlay de loading sobre a seção
+- Ao recolher e reabrir o menu, a paginação do histórico é resetada para a primeira página
+
+<h4>Botão do varal</h4>
+
+- <code>ToggleVaralBtn</code> passa a respeitar o estado controlado pela tela e notifica o próximo estado ao final da ação
+
+</details>
+
+<br>
+
+---
+
+<details>
+<summary>
   <h3 style="display: inline-block;">[v0.2.3] - 30/03/2026</h3>
 </summary>
 
@@ -56,10 +88,6 @@
 - Base pronta para evolução de automações físicas no fluxo do varal
 
 </details>
-
-<br>
-
----
 
 <details>
 <summary>

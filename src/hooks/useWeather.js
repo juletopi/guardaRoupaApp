@@ -10,6 +10,7 @@ import {
 } from "../services/weatherService";
 import { getForecastItemsForDate } from "../utils/forecastDateUtils";
 import {
+    getEffectiveCondition,
     getSkyConditionFromIcon,
     getWeatherStatusText,
 } from "../utils/weatherUtils";
@@ -206,12 +207,13 @@ export function useWeather() {
             );
 
             const condition = getSkyConditionFromIcon(current.icon);
+            const effectiveCondition = getEffectiveCondition(condition);
             if (__DEV__) {
                 console.log(
                     `[useWeather] Cidade (OWM reverse geocoding): ${resolvedCity}`,
                 );
                 console.log(
-                    `[useWeather] Clima: ${current.description} (${current.icon}) → condition=${condition}`,
+                    `[useWeather] Clima: ${current.description} (${current.icon}) → condition=${condition} | effective=${effectiveCondition}`,
                 );
                 console.log(`[useWeather] Temp atual: ${current.temp}°C`);
                 console.log(
@@ -221,8 +223,8 @@ export function useWeather() {
 
             if (!cancelled) {
                 setState({
-                    condition,
-                    statusText: getWeatherStatusText(condition),
+                    condition: effectiveCondition,
+                    statusText: getWeatherStatusText(effectiveCondition),
                     city,
                     forecastList,
                     hourlyForecast,

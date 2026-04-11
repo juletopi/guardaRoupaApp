@@ -1,7 +1,17 @@
 import { theme } from "../../constants/theme";
 
+// Default = null
+// Use "rainy", "sunny" ou "night" para teste manual
+export const DEBUG_CONDITION_OVERRIDE = "rainy";
+
+export function getEffectiveCondition(condition) {
+    return DEBUG_CONDITION_OVERRIDE ?? condition;
+}
+
 export function getSkyColors(condition) {
-    switch (condition) {
+    const effectiveCondition = getEffectiveCondition(condition);
+
+    switch (effectiveCondition) {
         case "rainy":
             return theme.colors.sky.rainy;
         case "night":
@@ -13,7 +23,9 @@ export function getSkyColors(condition) {
 }
 
 export function getWeatherStatusText(condition) {
-    switch (condition) {
+    const effectiveCondition = getEffectiveCondition(condition);
+
+    switch (effectiveCondition) {
         case "rainy":
             return "Chuva Detectada";
         case "night":
@@ -30,6 +42,10 @@ export function getSkyConditionFromIcon(icon) {
     const code = icon.slice(0, 2);
     if (["09", "10", "11"].includes(code)) return "rainy";
     return "sunny";
+}
+
+export function isRainyCondition(condition) {
+    return getEffectiveCondition(condition) === "rainy";
 }
 
 export function getIconColor(apiIcon) {

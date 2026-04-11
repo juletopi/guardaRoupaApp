@@ -32,6 +32,7 @@ import ExpandMenuBtn from "../components/ExpandMenuBtn";
 import ForecastCalendar from "../components/ForecastCalendar";
 import HourlyForecast from "../components/HourlyForecast";
 import LocationSelectModal from "../components/LocationSelectModal";
+import WeatherBackdropAnimation from "../components/WeatherBackdropAnimation";
 import ToggleVaralBtn, {
     WRAPPER_HALF_HEIGHT,
 } from "../components/ToggleVaralBtn";
@@ -453,6 +454,8 @@ function MainScreenContent({ weather }) {
             />
 
             <Animated.View style={[styles.skyWrapper, skyWrapperStyle]}>
+                <WeatherBackdropAnimation condition={condition} />
+
                 <Animated.View
                     style={[
                         StyleSheet.absoluteFillObject,

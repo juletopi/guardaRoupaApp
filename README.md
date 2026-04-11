@@ -120,13 +120,24 @@ guardaRoupaApp/
 │   └── Arduino.ino                   # Firmware: motor + sensores + protocolo serial (E/R/S)
 ├── Arduino-api/
 │   └── server.js                     # API local (Express) de ponte entre App e Arduino via porta serial
+├── assets/
+│   ├── animations/                   # Animações para as diferentes condições de clima
+│   │   ├── clouds.json
+│   │   ├── night.json
+│   │   ├── rain.json
+│   │   └── sunny.json
+│   └── images/                       # Logo do projeto
+│       └── guarda-roupa-logo.png
+├── constants/
+│   └── theme.js                      # Paleta, fontes e tokens visuais
 ├── src/
 │   ├── components/
 │   │   ├── ExpandMenuBtn.jsx         # Botão expandir/recolher menu
 │   │   ├── ForecastCalendar.jsx      # Calendário mensal, navegação de mês e seleção de dia (integrado à API)
 │   │   ├── HourlyForecast.jsx        # Lista horizontal: hora, ícone, precipitação (%)
 │   │   ├── LocationSelectModal.jsx   # Modal: local manual (país/estado/município) e local padrão
-│   │   └── ToggleVaralBtn.jsx        # Botão de toggle recolher/expor varal
+│   │   ├── ToggleVaralBtn.jsx        # Botão de toggle recolher/expor varal
+│   │   └── WeatherBackdropAnimation.jsx # Fundo animado por condição climática
 │   ├── data/
 │   │   ├── locationOptions.js        # Opções encadeadas para seleção de local na modal
 │   │   ├── clotheslineHistory.json   # Histórico persistido em JSON durante a execução
@@ -145,13 +156,13 @@ guardaRoupaApp/
 │       ├── historyUtils.js           # Formatação e helpers do histórico de atividade
 │       ├── timeUtils.js              # Formatação de horários
 │       └── weatherUtils.js           # Gradiente do céu, ícones e texto de condição
-├── constants/
-│   └── theme.js                      # Paleta, fontes
 ├── .editorconfig
 ├── .env.example
 ├── CHANGELOG.md
 ├── eslint.config.js
+├── metro.config.js
 ├── package.json
+├── tsconfig.json
 └── README.md
 ```
 
@@ -175,22 +186,26 @@ guardaRoupaApp/
 > </a>
 
 1. Clone o repositório
+
 ```bash
 git clone https://github.com/seu-usuario/guardaRoupaApp.git
 cd guardaRoupaApp
 ```
 
 2. Instale as dependências do projeto
+
 ```bash
 npm install
 ```
 
 3. Instale o Expo CLI globalmente (caso não tenha)
+
 ```bash
 npm install -g expo-cli
 ```
 
 4. Inicie o projeto
+
 ```bash
 npm start
 ```
@@ -204,15 +219,15 @@ O app usa a API **OpenWeatherMap**. Sem chave, a previsão não carrega.
 1. Crie uma conta em [openweathermap.org/api](https://openweathermap.org/api) e gere uma **API key** (plano gratuito já satisfaz casos de teste do app).
 2. Na raiz do projeto, copie o exemplo e crie o arquivo `.env`:
 
-   ```bash
-   cp .env.example .env
-   ```
+    ```bash
+    cp .env.example .env
+    ```
 
 3. Edite `.env` e defina:
 
-   ```
-   EXPO_PUBLIC_OWM_API_KEY=sua_chave_aqui
-   ```
+    ```
+    EXPO_PUBLIC_OWM_API_KEY=sua_chave_aqui
+    ```
 
 4. **Reinicie o bundler** (`Ctrl+C` e `npm start` de novo). Variáveis `EXPO_PUBLIC_*` só entram após reiniciar o Expo.
 
@@ -237,13 +252,13 @@ O controle físico do varal funciona em 3 camadas:
 1. Ajuste a porta serial no arquivo `Arduino-api/server.js` (ex.: `COM3`, `COM9`, `/dev/ttyACM0`)
 2. Inicie a API na raiz do projeto:
 
-   ```bash
-   node Arduino-api/server.js
-   ```
+    ```bash
+    node Arduino-api/server.js
+    ```
 
 3. A API sobe na porta `3000` com endpoints:
-   - `GET /status` → retorna `{ estendido, chuva, roupa }`
-   - `POST /command` com `{ "action": "E" }` ou `{ "action": "R" }`
+    - `GET /status` → retorna `{ estendido, chuva, roupa }`
+    - `POST /command` com `{ "action": "E" }` ou `{ "action": "R" }`
 
 #### 3) Ajuste de rede para teste em celular físico
 
@@ -257,9 +272,9 @@ O controle físico do varal funciona em 3 camadas:
 - `S`: solicitar status atual
 - Resposta do Arduino: JSON em linha única, por exemplo:
 
-  ```json
-  {"estendido":true,"chuva":false,"roupa":true}
-  ```
+    ```json
+    { "estendido": true, "chuva": false, "roupa": true }
+    ```
 
 <div align="left">
    <h6><a href="#guarda-roupa"> Voltar para o início ↺</a></h6>

@@ -14,6 +14,7 @@ import {
     Text,
     View,
 } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { theme } from "../constants/theme";
 
 export default function Layout() {
@@ -29,21 +30,26 @@ export default function Layout() {
 
     if (!fontsLoaded && !fontError) {
         return (
-            <View style={styles.loadingRoot} accessibilityLabel="Carregando">
-                <ActivityIndicator
-                    size="large"
-                    color={theme.colors.textLight}
-                />
-                <Text style={styles.loadingText}>Carregando…</Text>
-            </View>
+            <SafeAreaProvider>
+                <View
+                    style={styles.loadingRoot}
+                    accessibilityLabel="Carregando"
+                >
+                    <ActivityIndicator
+                        size="large"
+                        color={theme.colors.textLight}
+                    />
+                    <Text style={styles.loadingText}>Carregando…</Text>
+                </View>
+            </SafeAreaProvider>
         );
     }
 
     return (
-        <>
-            <StatusBar style="light" />
+        <SafeAreaProvider>
+            <StatusBar style="light" translucent={false} />
             <Stack screenOptions={{ headerShown: false }} />
-        </>
+        </SafeAreaProvider>
     );
 }
 

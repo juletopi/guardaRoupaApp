@@ -7,9 +7,11 @@ import {
     StyleSheet,
     Text,
     TouchableOpacity,
+    useWindowDimensions,
     View,
 } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { theme } from "../../constants/theme";
 import { LOCATION_OPTIONS } from "../data/locationOptions";
 
@@ -26,7 +28,10 @@ function OptionList({ options, selectedValue, onSelect, emptyLabel }) {
                     <TouchableOpacity
                         key={option.code}
                         activeOpacity={0.75}
-                        style={[styles.optionBtn, isActive && styles.optionBtnActive]}
+                        style={[
+                            styles.optionBtn,
+                            isActive && styles.optionBtnActive,
+                        ]}
                         onPress={() => onSelect(option.code)}
                     >
                         <Text
@@ -52,10 +57,31 @@ export default function LocationSelectModal({
     currentSelection,
     defaultLocation,
 }) {
+    const insets = useSafeAreaInsets();
+    const { height: windowHeight } = useWindowDimensions();
     const [selectedCountry, setSelectedCountry] = useState(null);
     const [selectedState, setSelectedState] = useState(null);
     const [selectedCity, setSelectedCity] = useState(null);
     const [shouldSaveAsDefault, setShouldSaveAsDefault] = useState(false);
+
+    const backdropVerticalPadding = useMemo(
+        () => ({
+            paddingTop: Math.max(16, insets.top + 8),
+            paddingBottom: Math.max(16, insets.bottom + 8),
+        }),
+        [insets.bottom, insets.top],
+    );
+
+    const cardDynamicSize = useMemo(() => {
+        const availableHeight =
+            windowHeight -
+            (Math.max(16, insets.top + 8) + Math.max(16, insets.bottom + 8));
+
+        return {
+            height: Math.min(580, availableHeight),
+            maxHeight: availableHeight,
+        };
+    }, [insets.bottom, insets.top, windowHeight]);
 
     useEffect(() => {
         if (!visible) return;
@@ -72,21 +98,31 @@ export default function LocationSelectModal({
     );
 
     const states = useMemo(() => {
-        const country = LOCATION_OPTIONS.find((item) => item.code === selectedCountry);
+        const country = LOCATION_OPTIONS.find(
+            (item) => item.code === selectedCountry,
+        );
         if (!country) return [];
         return country.states.map(({ code, name }) => ({ code, name }));
     }, [selectedCountry]);
 
     const cities = useMemo(() => {
-        const country = LOCATION_OPTIONS.find((item) => item.code === selectedCountry);
-        const state = country?.states.find((item) => item.code === selectedState);
+        const country = LOCATION_OPTIONS.find(
+            (item) => item.code === selectedCountry,
+        );
+        const state = country?.states.find(
+            (item) => item.code === selectedState,
+        );
         if (!state) return [];
         return state.cities.map(({ name }) => ({ code: name, name }));
     }, [selectedCountry, selectedState]);
 
     const selectedPayload = useMemo(() => {
-        const country = LOCATION_OPTIONS.find((item) => item.code === selectedCountry);
-        const state = country?.states.find((item) => item.code === selectedState);
+        const country = LOCATION_OPTIONS.find(
+            (item) => item.code === selectedCountry,
+        );
+        const state = country?.states.find(
+            (item) => item.code === selectedState,
+        );
         const city = state?.cities.find((item) => item.name === selectedCity);
         if (!country || !state || !city) return null;
         return {
@@ -126,18 +162,22 @@ export default function LocationSelectModal({
             onRequestClose={onClose}
         >
             <Pressable
-                style={styles.backdrop}
+                style={[styles.backdrop, backdropVerticalPadding]}
                 onPress={(event) => {
                     event.stopPropagation();
                     onClose();
                 }}
             >
-                <Pressable onPress={(event) => event.stopPropagation()}>
-                    <View style={styles.card}>
+                <Pressable
+                    style={styles.cardWrapper}
+                    onPress={(event) => event.stopPropagation()}
+                >
+                    <View style={[styles.card, cardDynamicSize]}>
                         <View style={styles.header}>
                             <Text style={styles.title}>Selecionar local</Text>
                             <Text style={styles.subtitle}>
-                                Local padrão: {defaultLocation?.city ?? "São Paulo"}
+                                Local padrão:{" "}
+                                {defaultLocation?.city ?? "São Paulo"}
                             </Text>
                         </View>
 
@@ -157,9 +197,7 @@ export default function LocationSelectModal({
                             </View>
 
                             {selectedCountry && (
-                                <Animated.View
-                                    entering={FadeIn.duration(180)}
-                                >
+                                <Animated.View entering={FadeIn.duration(180)}>
                                     <View style={styles.divider} />
                                     <Text style={styles.label}>Estado</Text>
                                     <OptionList
@@ -172,9 +210,7 @@ export default function LocationSelectModal({
                             )}
 
                             {selectedState && (
-                                <Animated.View
-                                    entering={FadeIn.duration(180)}
-                                >
+                                <Animated.View entering={FadeIn.duration(180)}>
                                     <View style={styles.divider} />
                                     <Text style={styles.label}>Município</Text>
                                     <OptionList
@@ -189,7 +225,9 @@ export default function LocationSelectModal({
                                         style={styles.defaultQuestionRow}
                                         onPress={() =>
                                             selectedPayload &&
-                                            setShouldSaveAsDefault((prev) => !prev)
+                                            setShouldSaveAsDefault(
+                                                (prev) => !prev,
+                                            )
                                         }
                                         disabled={!selectedPayload}
                                     >
@@ -222,7 +260,12 @@ export default function LocationSelectModal({
                             )}
                         </ScrollView>
 
-                        <View style={styles.actions}>
+                        <View
+                            style={[
+                                styles.actions,
+                                { paddingBottom: Math.max(0, insets.bottom) },
+                            ]}
+                        >
                             <TouchableOpacity
                                 style={[styles.actionBtn, styles.secondaryBtn]}
                                 onPress={() => {
@@ -239,12 +282,15 @@ export default function LocationSelectModal({
                                 style={[
                                     styles.actionBtn,
                                     styles.primaryBtn,
-                                    !selectedPayload && styles.primaryBtnDisabled,
+                                    !selectedPayload &&
+                                        styles.primaryBtnDisabled,
                                 ]}
                                 onPress={handleConfirm}
                                 disabled={!selectedPayload}
                             >
-                                <Text style={styles.primaryBtnText}>Confirmar</Text>
+                                <Text style={styles.primaryBtnText}>
+                                    Confirmar
+                                </Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -260,19 +306,22 @@ const styles = StyleSheet.create({
         backgroundColor: "rgba(0,0,0,0.5)",
         alignItems: "center",
         justifyContent: "center",
-        paddingHorizontal: 20,
+        paddingHorizontal: 16,
+    },
+    cardWrapper: {
+        width: "100%",
+        alignItems: "center",
     },
     card: {
         width: "100%",
         maxWidth: 570,
         height: 580,
-        maxHeight: "85%",
         backgroundColor: theme.colors.surface,
         borderRadius: 24,
         paddingTop: 20,
         paddingBottom: 16,
         paddingHorizontal: 20,
-        overflow: "hidden", 
+        overflow: "hidden",
     },
     header: {
         marginBottom: 10,
@@ -312,6 +361,7 @@ const styles = StyleSheet.create({
         alignItems: "flex-start",
     },
     optionBtn: {
+        maxWidth: "100%",
         paddingHorizontal: 14,
         paddingVertical: 8,
         borderRadius: 12,
@@ -324,6 +374,7 @@ const styles = StyleSheet.create({
         borderColor: theme.colors.primary,
     },
     optionText: {
+        flexShrink: 1,
         fontFamily: theme.fonts.regular,
         fontSize: 13,
         color: theme.colors.textDark,

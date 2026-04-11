@@ -27,15 +27,17 @@ import Animated, {
     useSharedValue,
     withTiming,
 } from "react-native-reanimated";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { theme } from "../../constants/theme";
+import ArduinoConnectionStatus from "../components/ArduinoConnectionStatus";
 import ExpandMenuBtn from "../components/ExpandMenuBtn";
 import ForecastCalendar from "../components/ForecastCalendar";
 import HourlyForecast from "../components/HourlyForecast";
 import LocationSelectModal from "../components/LocationSelectModal";
-import WeatherBackdropAnimation from "../components/WeatherBackdropAnimation";
 import ToggleVaralBtn, {
     WRAPPER_HALF_HEIGHT,
 } from "../components/ToggleVaralBtn";
+import WeatherBackdropAnimation from "../components/WeatherBackdropAnimation";
 import { useClotheslineHistoryTracker } from "../hooks/useClotheslineHistoryTracker";
 import { useWeather } from "../hooks/useWeather";
 import { useClotheslineHistory } from "../services/clotheslineHistoryService";
@@ -45,7 +47,10 @@ import {
     getForecastItemsForDate,
     startOfDay,
 } from "../utils/forecastDateUtils";
-import { formatHistoryEntryLabel } from "../utils/historyUtils";
+import {
+    formatHistoryEntryLabel,
+    getStatusBadgeConfig,
+} from "../utils/historyUtils";
 import { getSkyColors } from "../utils/weatherUtils";
 
 const TOGGLE_HALF_HEIGHT = WRAPPER_HALF_HEIGHT;
@@ -88,12 +93,20 @@ function MainScreenContent({ weather }) {
     const [selectedDate, setSelectedDate] = useState(startOfDay(new Date()));
     const [selectedForecast, setSelectedForecast] = useState(hourlyForecast);
     const [isDateLoading, setIsDateLoading] = useState(false);
+    const [arduinoStatus, setArduinoStatus] = useState({
+        estendido: false,
+        chuva: false,
+        roupa: false,
+    });
     const [historyPage, setHistoryPage] = useState(1);
+    const [isLoadingMoreHistory, setIsLoadingMoreHistory] = useState(false);
     const [isClotheslineStateHydrated, setIsClotheslineStateHydrated] =
         useState(false);
     const [isLocationModalVisible, setIsLocationModalVisible] = useState(false);
     const modalCloseLockUntilRef = useRef(0);
     const scrollViewRef = useRef(null);
+    const loadMoreHistoryTimeoutRef = useRef(null);
+    const collapseMenuTimeoutRef = useRef(null);
     const {
         history,
         isLoading: isHistoryLoading,
@@ -109,6 +122,7 @@ function MainScreenContent({ weather }) {
 
     const skyHeight = useSharedValue(SKY_COLLAPSED_HEIGHT);
     const expandedProgress = useSharedValue(0);
+    const collapsibleContentProgress = useSharedValue(0);
     const dateLoadingTimeoutRef = useRef(null);
     const isExpandedRef = useRef(isExpanded);
 
@@ -218,6 +232,11 @@ function MainScreenContent({ weather }) {
         setIsLocationModalVisible(false);
     }, []);
 
+    const handleArduinoStatusChange = useCallback((nextStatus) => {
+        if (!nextStatus) return;
+        setArduinoStatus((previous) => ({ ...previous, ...nextStatus }));
+    }, []);
+
     useEffect(() => {
         const today = startOfDay(new Date());
         const clampedToday = clampDateToForecastRange(today);
@@ -240,6 +259,10 @@ function MainScreenContent({ weather }) {
         return () => {
             if (dateLoadingTimeoutRef.current) {
                 clearTimeout(dateLoadingTimeoutRef.current);
+            }
+
+            if (collapseMenuTimeoutRef.current) {
+                clearTimeout(collapseMenuTimeoutRef.current);
             }
         };
     }, []);
@@ -291,22 +314,47 @@ function MainScreenContent({ weather }) {
 
     const handleSheetToggle = () => {
         const willExpand = !isExpanded;
-        setIsExpanded(willExpand);
 
-        if (!willExpand) {
-            setHistoryPage(1);
-            scrollViewRef.current?.scrollTo({ y: 0, animated: false });
+        if (collapseMenuTimeoutRef.current) {
+            clearTimeout(collapseMenuTimeoutRef.current);
+            collapseMenuTimeoutRef.current = null;
         }
 
-        skyHeight.value = withTiming(
-            willExpand ? SKY_EXPANDED_HEIGHT : SKY_COLLAPSED_HEIGHT,
-            TIMING_CONFIG,
-        );
+        if (willExpand) {
+            setIsExpanded(true);
 
-        expandedProgress.value = withTiming(willExpand ? 1 : 0, {
-            duration: 320,
-            easing: Easing.inOut(Easing.cubic),
+            collapsibleContentProgress.value = withTiming(1, {
+                duration: 140,
+                easing: Easing.out(Easing.cubic),
+            });
+
+            skyHeight.value = withTiming(SKY_EXPANDED_HEIGHT, TIMING_CONFIG);
+
+            expandedProgress.value = withTiming(1, {
+                duration: 320,
+                easing: Easing.inOut(Easing.cubic),
+            });
+
+            return;
+        }
+
+        collapsibleContentProgress.value = withTiming(0, {
+            duration: 150,
+            easing: Easing.in(Easing.cubic),
         });
+
+        collapseMenuTimeoutRef.current = setTimeout(() => {
+            setIsExpanded(false);
+            setHistoryPage(1);
+            scrollViewRef.current?.scrollTo({ y: 0, animated: false });
+
+            skyHeight.value = withTiming(SKY_COLLAPSED_HEIGHT, TIMING_CONFIG);
+
+            expandedProgress.value = withTiming(0, {
+                duration: 320,
+                easing: Easing.inOut(Easing.cubic),
+            });
+        }, 150);
     };
 
     const handleToggleClothesline = useCallback((nextStateFromButton) => {
@@ -335,8 +383,20 @@ function MainScreenContent({ weather }) {
     }, [reloadHistory]);
 
     const handleLoadMoreHistory = useCallback(() => {
-        setHistoryPage((previousPage) => previousPage + 1);
-    }, []);
+        if (isLoadingMoreHistory || !hasMoreHistory) return;
+
+        setIsLoadingMoreHistory(true);
+
+        if (loadMoreHistoryTimeoutRef.current) {
+            clearTimeout(loadMoreHistoryTimeoutRef.current);
+        }
+
+        loadMoreHistoryTimeoutRef.current = setTimeout(() => {
+            setHistoryPage((previousPage) => previousPage + 1);
+            setIsLoadingMoreHistory(false);
+            loadMoreHistoryTimeoutRef.current = null;
+        }, 180);
+    }, [hasMoreHistory, isLoadingMoreHistory]);
 
     const isHistoryBusy = isHistoryLoading || isHistoryRefreshing;
     const visibleHistory = useMemo(
@@ -354,6 +414,14 @@ function MainScreenContent({ weather }) {
             Math.min(previousPage, maxHistoryPage),
         );
     }, [history.length]);
+
+    useEffect(() => {
+        return () => {
+            if (loadMoreHistoryTimeoutRef.current) {
+                clearTimeout(loadMoreHistoryTimeoutRef.current);
+            }
+        };
+    }, []);
 
     const skyWrapperStyle = useAnimatedStyle(() => ({
         height: skyHeight.value,
@@ -446,6 +514,44 @@ function MainScreenContent({ weather }) {
         ),
     }));
 
+    const collapsibleContentStyle = useAnimatedStyle(() => ({
+        opacity: interpolate(
+            collapsibleContentProgress.value,
+            [0, 1],
+            [0, 1],
+            Extrapolation.CLAMP,
+        ),
+        transform: [
+            {
+                translateY: interpolate(
+                    collapsibleContentProgress.value,
+                    [0, 1],
+                    [6, 0],
+                    Extrapolation.CLAMP,
+                ),
+            },
+        ],
+    }));
+
+    const connectionBadgeStyle = useAnimatedStyle(() => ({
+        opacity: interpolate(
+            expandedProgress.value,
+            [0, 1],
+            [1, 0],
+            Extrapolation.CLAMP,
+        ),
+        transform: [
+            {
+                translateY: interpolate(
+                    expandedProgress.value,
+                    [0, 1],
+                    [0, -8],
+                    Extrapolation.CLAMP,
+                ),
+            },
+        ],
+    }));
+
     return (
         <View style={styles.container}>
             <LinearGradient
@@ -454,6 +560,15 @@ function MainScreenContent({ weather }) {
             />
 
             <WeatherBackdropAnimation condition={condition} />
+
+            <Animated.View
+                style={[styles.connectionBadgeWrapper, connectionBadgeStyle]}
+                pointerEvents={isExpanded ? "none" : "auto"}
+            >
+                <ArduinoConnectionStatus
+                    onStatusChange={handleArduinoStatusChange}
+                />
+            </Animated.View>
 
             <Animated.View style={[styles.skyWrapper, skyWrapperStyle]}>
                 <Animated.View
@@ -606,97 +721,138 @@ function MainScreenContent({ weather }) {
                         error={error}
                     />
 
-                    {isExpanded && (
-                        <Animated.View
-                            entering={FadeInDown.duration(300).easing(
-                                Easing.out(Easing.cubic),
-                            )}
-                            exiting={FadeOutUp.duration(260).easing(
-                                Easing.in(Easing.cubic),
-                            )}
-                        >
-                            <ForecastCalendar
-                                selectedDate={selectedDate}
-                                onSelectDate={handleSelectDate}
-                                minDate={availableRange.minDate}
-                                maxDate={availableRange.maxDate}
-                            />
-                        </Animated.View>
-                    )}
-
-                    <View style={styles.historyTitleRow}>
-                        <MaterialCommunityIcons
-                            name="history"
-                            size={20}
-                            color={theme.colors.textDark}
-                        />
-                        <Text
-                            style={[
-                                styles.sectionTitle,
-                                styles.historyTitleText,
-                            ]}
-                        >
-                            Histórico de atividade
-                        </Text>
-
-                        <TouchableOpacity
-                            activeOpacity={0.6}
-                            onPress={handleReloadHistory}
-                        >
-                            <Text style={styles.reloadHistoryText}>
-                                •{"  "}
-                                {isHistoryRefreshing
-                                    ? "recarregando..."
-                                    : "recarregar"}
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
-
-                    <View style={styles.historySectionWrapper}>
-                        {visibleHistory.map((item) => (
-                            <View key={item.id} style={styles.historyCard}>
-                                <Text style={styles.historyText}>
-                                    {formatHistoryEntryLabel(item)}
-                                </Text>
-                            </View>
-                        ))}
-
-                        {!isHistoryBusy && visibleHistory.length === 0 && (
-                            <View style={styles.historyCard}>
-                                <Text style={styles.historyText}>
-                                    Sem atividade registrada ainda.
-                                </Text>
-                            </View>
-                        )}
-
-                        {!isHistoryBusy && hasMoreHistory && (
-                            <TouchableOpacity
-                                activeOpacity={0.7}
-                                style={styles.loadMoreHistoryBtn}
-                                onPress={handleLoadMoreHistory}
-                            >
-                                <Text style={styles.loadMoreHistoryText}>
-                                    Carregar mais
-                                </Text>
-                            </TouchableOpacity>
-                        )}
-
-                        {isHistoryBusy && (
+                    <Animated.View
+                        style={collapsibleContentStyle}
+                        pointerEvents={isExpanded ? "auto" : "none"}
+                    >
+                        {isExpanded && (
                             <Animated.View
-                                entering={FadeInDown.duration(180)}
-                                exiting={FadeOutUp.duration(140)}
-                                style={styles.historyLoadingOverlay}
+                                entering={FadeInDown.duration(220).easing(
+                                    Easing.out(Easing.cubic),
+                                )}
+                                exiting={FadeOutUp.duration(180).easing(
+                                    Easing.in(Easing.cubic),
+                                )}
                             >
-                                <ActivityIndicator
-                                    size="small"
-                                    color={theme.colors.textDark}
+                                <ForecastCalendar
+                                    selectedDate={selectedDate}
+                                    onSelectDate={handleSelectDate}
+                                    minDate={availableRange.minDate}
+                                    maxDate={availableRange.maxDate}
                                 />
-                                <Text style={styles.historyLoadingText}>
-                                    Carregando histórico...
-                                </Text>
                             </Animated.View>
                         )}
-                    </View>
+
+                        <View style={styles.historyTitleRow}>
+                            <MaterialCommunityIcons
+                                name="history"
+                                size={20}
+                                color={theme.colors.textDark}
+                            />
+                            <Text
+                                style={[
+                                    styles.sectionTitle,
+                                    styles.historyTitleText,
+                                ]}
+                            >
+                                Histórico de atividade
+                            </Text>
+
+                            <TouchableOpacity
+                                activeOpacity={0.6}
+                                onPress={handleReloadHistory}
+                            >
+                                <Text style={styles.reloadHistoryText}>
+                                    •{"  "}
+                                    {isHistoryRefreshing
+                                        ? "recarregando..."
+                                        : "recarregar"}
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        <View style={styles.historySectionWrapper}>
+                            {visibleHistory.map((item) => {
+                                const badgeConfig = getStatusBadgeConfig(
+                                    item.status,
+                                );
+
+                                return (
+                                    <View
+                                        key={item.id}
+                                        style={styles.historyCard}
+                                    >
+                                        <Text style={styles.historyText}>
+                                            {formatHistoryEntryLabel(item)}
+                                        </Text>
+
+                                        <View
+                                            style={[
+                                                styles.historyStatusBadge,
+                                                {
+                                                    backgroundColor:
+                                                        badgeConfig.backgroundColor,
+                                                },
+                                            ]}
+                                        >
+                                            <MaterialCommunityIcons
+                                                name={badgeConfig.iconName}
+                                                size={14}
+                                                color={badgeConfig.textColor}
+                                            />
+                                            <Text
+                                                style={[
+                                                    styles.historyStatusBadgeText,
+                                                    {
+                                                        color: badgeConfig.textColor,
+                                                    },
+                                                ]}
+                                            >
+                                                {badgeConfig.label}
+                                            </Text>
+                                        </View>
+                                    </View>
+                                );
+                            })}
+
+                            {!isHistoryBusy && visibleHistory.length === 0 && (
+                                <View style={styles.historyCard}>
+                                    <Text style={styles.historyText}>
+                                        Sem atividade registrada ainda.
+                                    </Text>
+                                </View>
+                            )}
+
+                            {!isHistoryBusy && hasMoreHistory && (
+                                <TouchableOpacity
+                                    activeOpacity={0.7}
+                                    style={styles.loadMoreHistoryBtn}
+                                    onPress={handleLoadMoreHistory}
+                                    disabled={isLoadingMoreHistory}
+                                >
+                                    <Text style={styles.loadMoreHistoryText}>
+                                        Carregar mais
+                                    </Text>
+                                </TouchableOpacity>
+                            )}
+
+                            {(isHistoryBusy || isLoadingMoreHistory) && (
+                                <Animated.View
+                                    entering={FadeInDown.duration(160)}
+                                    exiting={FadeOutUp.duration(120)}
+                                    style={styles.historyLoadingOverlay}
+                                >
+                                    <ActivityIndicator
+                                        size="small"
+                                        color={theme.colors.textDark}
+                                    />
+                                    <Text style={styles.historyLoadingText}>
+                                        Carregando histórico...
+                                    </Text>
+                                </Animated.View>
+                            )}
+                        </View>
+                    </Animated.View>
                 </ScrollView>
             </View>
 
@@ -707,6 +863,7 @@ function MainScreenContent({ weather }) {
                 <ToggleVaralBtn
                     isExposed={isClotheslineExposed}
                     onPress={handleToggleClothesline}
+                    arduinoStatus={arduinoStatus}
                 />
             </Animated.View>
 
@@ -726,7 +883,8 @@ export default function MainScreen() {
     const weather = useWeather();
     if (weather.isLoading) {
         return (
-            <View
+            <SafeAreaView
+                edges={["top", "bottom"]}
                 style={styles.loadingRoot}
                 accessibilityLabel="Carregando clima"
             >
@@ -735,10 +893,17 @@ export default function MainScreen() {
                     color={theme.colors.textLight}
                 />
                 <Text style={styles.loadingText}>Carregando…</Text>
-            </View>
+            </SafeAreaView>
         );
     }
-    return <MainScreenContent weather={weather} />;
+    return (
+        <View style={styles.screenRoot}>
+            <SafeAreaView edges={["top"]} style={styles.container}>
+                <MainScreenContent weather={weather} />
+            </SafeAreaView>
+            <SafeAreaView edges={["bottom"]} style={styles.bottomSafeArea} />
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
@@ -757,6 +922,19 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
+    },
+    screenRoot: {
+        flex: 1,
+        backgroundColor: "#f8fafc",
+    },
+    bottomSafeArea: {
+        backgroundColor: theme.colors.backgroundTransparent,
+    },
+    connectionBadgeWrapper: {
+        position: "absolute",
+        top: 12,
+        right: 16,
+        zIndex: 30,
     },
     skyWrapper: {
         overflow: "hidden",
@@ -867,7 +1045,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
-        gap: 4,
+        gap: 14,
     },
     expandedDateText: {
         marginTop: 0,
@@ -877,9 +1055,9 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
     dateChevronBtn: {
-        width: 30,
-        height: 30,
-        borderRadius: 15,
+        width: 34,
+        height: 34,
+        borderRadius: 17,
         backgroundColor: theme.colors.backgroundAlt,
         alignItems: "center",
         justifyContent: "center",
@@ -897,6 +1075,21 @@ const styles = StyleSheet.create({
         fontFamily: theme.fonts.regular,
         color: theme.colors.textMuted,
         fontSize: 15,
+    },
+    historyStatusBadge: {
+        alignSelf: "flex-start",
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 6,
+        marginTop: 10,
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+        borderRadius: 999,
+    },
+    historyStatusBadgeText: {
+        fontFamily: theme.fonts.bold,
+        fontSize: 12,
+        letterSpacing: 0.3,
     },
     historySectionWrapper: {
         position: "relative",

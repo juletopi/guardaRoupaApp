@@ -453,9 +453,9 @@ function MainScreenContent({ weather }) {
                 style={StyleSheet.absoluteFillObject}
             />
 
-            <Animated.View style={[styles.skyWrapper, skyWrapperStyle]}>
-                <WeatherBackdropAnimation condition={condition} />
+            <WeatherBackdropAnimation condition={condition} />
 
+            <Animated.View style={[styles.skyWrapper, skyWrapperStyle]}>
                 <Animated.View
                     style={[
                         StyleSheet.absoluteFillObject,
@@ -799,16 +799,16 @@ const styles = StyleSheet.create({
     },
     bottomSheet: {
         flex: 1,
-        backgroundColor: theme.colors.surface,
+        backgroundColor: theme.colors.backgroundTransparent,
         borderTopLeftRadius: 36,
         borderTopRightRadius: 36,
+        position: "relative",
+        zIndex: 1,
         paddingHorizontal: 25,
         overflow: "visible",
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: -4 },
-        shadowOpacity: 0.08,
-        shadowRadius: 12,
-        elevation: 10,
+        shadowOpacity: 0,
+        shadowRadius: 0,
+        elevation: 0,
     },
     scrollContent: {
         paddingTop: 10,

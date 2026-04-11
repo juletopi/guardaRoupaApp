@@ -2,7 +2,7 @@ import { theme } from "../../constants/theme";
 
 // Default = null
 // Use "rainy", "sunny" ou "night" para teste manual
-export const DEBUG_CONDITION_OVERRIDE = "rainy";
+export const DEBUG_CONDITION_OVERRIDE = null;
 
 export function getEffectiveCondition(condition) {
     return DEBUG_CONDITION_OVERRIDE ?? condition;

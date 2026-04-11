@@ -42,6 +42,7 @@ export default function WeatherBackdropAnimation({ condition }) {
                 style={[styles.container, styles.overlayContainer]}
             >
                 <LottieView
+                    key={`clouds-${effectiveCondition}`}
                     source={CLOUDS_ANIMATION}
                     autoPlay
                     loop
@@ -50,6 +51,7 @@ export default function WeatherBackdropAnimation({ condition }) {
                     style={[styles.animation, styles.cloudsLayer]}
                 />
                 <LottieView
+                    key={`rain-${effectiveCondition}`}
                     source={RAIN_ANIMATION}
                     autoPlay
                     loop
@@ -72,6 +74,7 @@ export default function WeatherBackdropAnimation({ condition }) {
             ]}
         >
             <LottieView
+                key={`animation-${effectiveCondition}`}
                 source={animationSource}
                 autoPlay
                 loop

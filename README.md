@@ -39,10 +39,11 @@ A ideia central é combinar uma **API de clima em tempo real** com um **módulo 
 
 ### Funcionalidades
 
-- Tela principal com gradiente dinâmico de fundo (baseado na condição climática real)
+- Tela principal com animações de fundo dinâmicas (baseado na condição climática real)
 - Seção **"Hoje"** com previsão climática horária horizontal via API OpenWeatherMap (**probabilidade de chuva** por hora, campo `pop`, em vez de temperatura no card)
 - Menu expandido com **calendário**: escolha de dia e previsão horária filtrada a partir do mesmo payload `/forecast`
 - **Local manual**: toque no título com cidade para abrir modal (País → Estado → Município); opção de **local padrão** e botão para voltar à **localização atual** (GPS)
+- Histórico de detecção de mudanças no varal (recolhido/expandido e forma de mudança manual/chuva/fim do dia)
 - Menu inferior animado com dois estados: **recolhido** (~20% da tela) e **expandido** (~90%)
 - Botão flutuante **RECOLHER / EXPOR** na divisa do menu, com animação de linhas irradiando
 - Integração em tempo real com módulo Arduino via API local: leitura periódica de **status do varal** (estendido, chuva, roupa detectada)
@@ -66,6 +67,9 @@ A ideia central é combinar uma **API de clima em tempo real** com um **módulo 
 
 <a href="https://docs.swmansion.com/react-native-reanimated/">
    <img src="https://img.shields.io/badge/Reanimated-4.1+-20232A?style=for-the-badge&logo=react&logoColor=white" alt="Reanimated-badge">
+</a>
+<a href="https://github.com/lottie-react-native/lottie-react-native">
+   <img src="https://img.shields.io/badge/Lottie%20React%20Native-6.x-1f6feb?style=for-the-badge&logo=react&logoColor=white" alt="LottieReactNative-badge">
 </a>
 <a href="https://docs.expo.dev/versions/latest/sdk/linear-gradient/">
    <img src="https://img.shields.io/badge/Expo_Linear_Gradient-15+-5A29E4?style=for-the-badge&logo=expo&logoColor=white" alt="ExpoLinearGradient-badge">

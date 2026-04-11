@@ -75,7 +75,6 @@ export default function WardrobeButton({ isExposed, onPress }) {
         return () => clearInterval(interval);
     }, []);
 
-    // Animação visual isolada
     const triggerAnimation = useCallback(() => {
         progress.value = 0;
         progress.value = withTiming(1, {
@@ -84,7 +83,6 @@ export default function WardrobeButton({ isExposed, onPress }) {
         });
     }, [progress]);
 
-    // Lógica principal do botão
     const handlePress = useCallback(async () => {
         console.log("Status atual antes do clique:", status);
 

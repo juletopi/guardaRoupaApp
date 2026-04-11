@@ -56,7 +56,7 @@ function Line({ angle, progress }) {
     return <Animated.View style={[styles.line, style]} />;
 }
 
-export default function WardrobeButton({ isExposed, onPress }) {
+export default function WardrobeButton({ isExposed, onPress, arduinoStatus }) {
     const [status, setStatus] = useState({
         estendido: false,
         chuva: false,
@@ -64,16 +64,25 @@ export default function WardrobeButton({ isExposed, onPress }) {
     });
     const progress = useSharedValue(0);
     const isControlled = typeof isExposed === "boolean";
+    const hasExternalStatus = Boolean(arduinoStatus);
     const currentIsExposed = isControlled ? isExposed : status.estendido;
 
-    // Consulta periodicamente o Arduino
     useEffect(() => {
+        if (!hasExternalStatus) return;
+        setStatus((previous) => ({ ...previous, ...arduinoStatus }));
+    }, [arduinoStatus, hasExternalStatus]);
+
+    // Consulta periodicamente o Arduino quando nao houver status externo
+    useEffect(() => {
+        if (hasExternalStatus) return undefined;
+
         const interval = setInterval(async () => {
             const currentStatus = await fetchArduinoStatus();
             if (currentStatus) setStatus(currentStatus);
         }, 3000);
+
         return () => clearInterval(interval);
-    }, []);
+    }, [hasExternalStatus]);
 
     const triggerAnimation = useCallback(() => {
         progress.value = 0;

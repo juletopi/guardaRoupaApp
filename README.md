@@ -18,6 +18,9 @@
    <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript">
       <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript-badge" style="max-width: 100%;">
    </a>
+   <a href="https://isocpp.org/">
+      <img src="https://img.shields.io/badge/C%2B%2B-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white" alt="Cpp-badge" style="max-width: 100%;">
+   </a>
 </div>
 
 <br>
@@ -103,6 +106,12 @@ A ideia central é combinar uma **API de clima em tempo real** com um **módulo 
 </a>
 <a href="https://docs.expo.dev/versions/latest/sdk/location/">
    <img src="https://img.shields.io/badge/Expo_Location-5A29E4?style=for-the-badge&logo=expo&logoColor=white" alt="ExpoLocation-badge">
+</a>
+
+#### Hardware e embarcados
+
+<a href="https://www.arduino.cc/">
+   <img src="https://img.shields.io/badge/Arduino-00979D?style=for-the-badge&logo=arduino&logoColor=white" alt="Arduino-badge">
 </a>
 
 <div align="left">

@@ -3,11 +3,18 @@ import { Platform } from "react-native";
 export const theme = {
     colors: {
         sky: {
-            sunny: ["#6ab0f3", "#b783ff", "#ff8b8b"],
+            sunny: ["#87c7ed", "#cfdfbb", "#f8eeae"],
             rainy: ["#4a5568", "#2d3748", "#1a202c"],
-            night: ["#0f2027", "#203a43", "#2c5364"],
+            night: ["#040a2d", "#0f1737", "#242b3b"],
         },
         surface: "#ffffff",
+        backgroundTransparent: "rgba(248, 250, 252, 0.88)",
+        toggleMenuGradient: {
+            baseHex: "#ffffff",
+            topOpacity: 1,
+            middleOpacity: 1,
+            bottomOpacity: 0.5,
+        },
         backgroundAlt: "#f7fafc",
         textDark: "#2d3748",
         textMuted: "#4b5e75",

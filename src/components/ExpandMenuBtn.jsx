@@ -13,9 +13,10 @@ const BUTTON_PATH =
 const VIEWBOX = "-0.65 -0.04 2.38 1.14";
 
 export default function ExpandMenuBtn({ isExpanded, onPress }) {
-    const gradId = useRef(
-        `expandBtnGrad-${Math.random().toString(36).slice(2, 11)}`,
-    ).current;
+    const gradId = useRef({
+        normal: `expandBtnGrad-normal-${Math.random().toString(36).slice(2, 11)}`,
+        pressed: `expandBtnGrad-pressed-${Math.random().toString(36).slice(2, 11)}`,
+    }).current;
 
     return (
         <Pressable
@@ -34,7 +35,31 @@ export default function ExpandMenuBtn({ isExpanded, onPress }) {
                     >
                         <Defs>
                             <LinearGradient
-                                id={gradId}
+                                id={gradId.normal}
+                                x1="0"
+                                y1="0"
+                                x2="0"
+                                y2="1"
+                                gradientUnits="objectBoundingBox"
+                            >
+                                <Stop
+                                    offset="0"
+                                    stopColor={theme.colors.surface}
+                                    stopOpacity={1}
+                                />
+                                <Stop
+                                    offset="0.66"
+                                    stopColor={theme.colors.surface}
+                                    stopOpacity={1}
+                                />
+                                <Stop
+                                    offset="1"
+                                    stopColor={theme.colors.surface}
+                                    stopOpacity={0}
+                                />
+                            </LinearGradient>
+                            <LinearGradient
+                                id={gradId.pressed}
                                 x1="0"
                                 y1="0"
                                 x2="0"
@@ -45,7 +70,8 @@ export default function ExpandMenuBtn({ isExpanded, onPress }) {
                                 <Stop offset="0.45" stopColor="#e8ecf0" />
                                 <Stop
                                     offset="1"
-                                    stopColor={theme.colors.surface}
+                                    stopColor="#f8fafc"
+                                    stopOpacity={0.88}
                                 />
                             </LinearGradient>
                         </Defs>
@@ -53,8 +79,8 @@ export default function ExpandMenuBtn({ isExpanded, onPress }) {
                             d={BUTTON_PATH}
                             fill={
                                 pressed
-                                    ? `url(#${gradId})`
-                                    : theme.colors.surface
+                                    ? `url(#${gradId.pressed})`
+                                    : `url(#${gradId.normal})`
                             }
                         />
                     </Svg>
@@ -73,16 +99,19 @@ export default function ExpandMenuBtn({ isExpanded, onPress }) {
 const styles = StyleSheet.create({
     hitArea: {
         position: "absolute",
-        top: -32,
+        top: -33,
         right: 28,
         width: W,
         height: H,
-        zIndex: 10,
+        zIndex: 200,
+        elevation: 200,
     },
     layer: {
         width: W,
         height: H,
         alignItems: "center",
+        zIndex: 200,
+        elevation: 200,
     },
     icon: {
         position: "absolute",

@@ -219,6 +219,8 @@ npm install -g expo-cli
 npm start
 ```
 
+O comando `npm start` foi configurado para abrir o Expo em modo túnel por padrão.
+
 5. Abra no dispositivo escaneando o QR code com o **Expo Go**, ou pressione `w` para abrir no navegador.
 
 ### API de clima (OpenWeatherMap)
@@ -271,7 +273,8 @@ O controle físico do varal funciona em 3 camadas:
 
 #### 3) Ajuste de rede para teste em celular físico
 
-- Em `src/services/arduinoService.js`, troque `http://localhost:3000` pelo IP da máquina que roda a API (ex.: `http://192.168.1.15:3000`)
+- Defina `EXPO_PUBLIC_ARDUINO_API_URL` no `.env` com o IP da máquina que roda a API (ex.: `http://192.168.1.15:3000`)
+- Se o Expo Go continuar falhando na LAN, use o túnel do Expo com `npm start` ou `npm run start:clear` e reinsira o QR code
 - Celular e computador precisam estar na mesma rede local
 
 #### Protocolo serial usado

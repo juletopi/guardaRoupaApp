@@ -1,6 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
+import { StatusBar } from "expo-status-bar";
 import React, {
     useCallback,
     useEffect,
@@ -881,6 +882,9 @@ function MainScreenContent({ weather }) {
 
 export default function MainScreen() {
     const weather = useWeather();
+    const topSafeAreaColor =
+        getSkyColors(weather.condition)?.[0] ?? theme.colors.sky.sunny[0];
+
     if (weather.isLoading) {
         return (
             <SafeAreaView
@@ -898,7 +902,18 @@ export default function MainScreen() {
     }
     return (
         <View style={styles.screenRoot}>
-            <SafeAreaView edges={["top"]} style={styles.container}>
+            <StatusBar
+                style="light"
+                translucent={false}
+                backgroundColor={topSafeAreaColor}
+            />
+            <SafeAreaView
+                edges={["top"]}
+                style={[
+                    styles.container,
+                    { backgroundColor: topSafeAreaColor },
+                ]}
+            >
                 <MainScreenContent weather={weather} />
             </SafeAreaView>
             <SafeAreaView edges={["bottom"]} style={styles.bottomSafeArea} />
@@ -925,10 +940,10 @@ const styles = StyleSheet.create({
     },
     screenRoot: {
         flex: 1,
-        backgroundColor: "#f8fafc",
+        backgroundColor: theme.colors.backgroundAlt,
     },
     bottomSafeArea: {
-        backgroundColor: theme.colors.backgroundTransparent,
+        backgroundColor: theme.colors.backgroundAlt,
     },
     connectionBadgeWrapper: {
         position: "absolute",

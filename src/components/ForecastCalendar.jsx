@@ -7,6 +7,7 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { theme } from "../../constants/theme";
 import {
     buildMonthGrid,
@@ -110,6 +111,11 @@ export default function ForecastCalendar({
                         )
                     }
                 >
+                    <MaterialCommunityIcons
+                        name="chevron-left"
+                        size={18}
+                        color={theme.colors.textLight}
+                    />
                     <Text style={styles.monthNavText}>Mês anterior</Text>
                 </Pressable>
 
@@ -134,6 +140,11 @@ export default function ForecastCalendar({
                     }
                 >
                     <Text style={styles.monthNavText}>Próximo mês</Text>
+                    <MaterialCommunityIcons
+                        name="chevron-right"
+                        size={18}
+                        color={theme.colors.textLight}
+                    />
                 </Pressable>
             </View>
 
@@ -247,7 +258,11 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.primary,
         borderRadius: 8,
         paddingVertical: 7,
+        paddingHorizontal: 14,
+        flexDirection: "row",
         alignItems: "center",
+        justifyContent: "center",
+        gap: 10,
     },
     navBtnDisabled: {
         opacity: 0.45,

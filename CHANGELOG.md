@@ -2,6 +2,41 @@
 
 <details open>
 <summary>
+  <h3 style="display: inline-block;">[v0.2.5] - 11/04/2026</h3>
+</summary>
+
+<h3>Adicionado</h3>
+
+<h4>Animações climáticas com Lottie</h4>
+
+- Camada dedicada de animações de clima com os assets <code>clouds.json</code>, <code>rain.json</code>, <code>sunny.json</code> e <code>night.json</code>
+- Novo componente <code>WeatherBackdropAnimation</code> para renderização do fundo animado por condição climática
+
+<h3>Alterado</h3>
+
+<h4>Tema visual e paleta de cores</h4>
+
+- Ajustes nas cores de gradiente e no comportamento visual entre os estados <code>sunny</code>, <code>rainy</code> e <code>night</code>
+- Refinamento de opacidade no modo de sobreposição para melhor leitura do conteúdo da tela
+
+<h4>Composição das animações</h4>
+
+- Ajustes de escala e alinhamento dos assets para manter enquadramento consistente no fundo
+
+<h3>Corrigido</h3>
+
+<h4>Troca de condição climática em tempo real</h4>
+
+- Correção de re-render na mudança de condição
+
+</details>
+
+<br>
+
+---
+
+<details>
+<summary>
   <h3 style="display: inline-block;">[v0.2.4] - 06/04/2026</h3>
 </summary>
 
@@ -27,10 +62,6 @@
 - <code>ToggleVaralBtn</code> passa a respeitar o estado controlado pela tela e notifica o próximo estado ao final da ação
 
 </details>
-
-<br>
-
----
 
 <details>
 <summary>

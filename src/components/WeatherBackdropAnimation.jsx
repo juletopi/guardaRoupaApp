@@ -1,6 +1,6 @@
 import LottieView from "lottie-react-native";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import { getEffectiveCondition } from "../utils/weatherUtils";
 
 const RAIN_ANIMATION = require("../../assets/animations/rain.json");
@@ -19,6 +19,14 @@ const CONDITION_MODES = {
     sunny: "full",
     night: "full",
 };
+
+function getRenderMode(condition) {
+    if (Platform.OS === "android" && condition === "night") {
+        return "SOFTWARE";
+    }
+
+    return "AUTOMATIC";
+}
 
 export default function WeatherBackdropAnimation({ condition }) {
     const [hasAnimationError, setHasAnimationError] = useState(false);
@@ -46,7 +54,9 @@ export default function WeatherBackdropAnimation({ condition }) {
                     source={CLOUDS_ANIMATION}
                     autoPlay
                     loop
-                    resizeMode="cover"
+                    resizeMode="contain"
+                    renderMode={getRenderMode(effectiveCondition)}
+                    enableMergePathsAndroidForKitKatAndAbove
                     onAnimationFailure={() => setHasAnimationError(true)}
                     style={[styles.animation, styles.cloudsLayer]}
                 />
@@ -56,6 +66,8 @@ export default function WeatherBackdropAnimation({ condition }) {
                     autoPlay
                     loop
                     resizeMode="cover"
+                    renderMode={getRenderMode(effectiveCondition)}
+                    enableMergePathsAndroidForKitKatAndAbove
                     onAnimationFailure={() => setHasAnimationError(true)}
                     style={styles.animation}
                 />
@@ -79,6 +91,8 @@ export default function WeatherBackdropAnimation({ condition }) {
                 autoPlay
                 loop
                 resizeMode="cover"
+                renderMode={getRenderMode(effectiveCondition)}
+                enableMergePathsAndroidForKitKatAndAbove
                 onAnimationFailure={() => setHasAnimationError(true)}
                 style={styles.animation}
             />
@@ -89,6 +103,7 @@ export default function WeatherBackdropAnimation({ condition }) {
 const styles = StyleSheet.create({
     container: {
         ...StyleSheet.absoluteFillObject,
+        overflow: "hidden",
     },
     overlayContainer: {
         opacity: 0.7,
@@ -99,5 +114,13 @@ const styles = StyleSheet.create({
     animation: {
         width: "100%",
         height: "100%",
+    },
+    cloudsLayer: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        height: "40%",
+        width: "190%",
     },
 });

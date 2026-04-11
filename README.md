@@ -86,23 +86,23 @@ A ideia central é combinar uma **API de clima em tempo real** com um **módulo 
 
 #### Dependências externas
 
-<a href="https://openweathermap.org/api">
-   <img src="https://img.shields.io/badge/OpenWeatherMap-E96E4E?style=for-the-badge&logo=rainyun&logoColor=white" alt="OpenWeatherMap-badge">
-</a>
-<a href="https://docs.expo.dev/versions/latest/sdk/location/">
-   <img src="https://img.shields.io/badge/Expo_Location-5A29E4?style=for-the-badge&logo=expo&logoColor=white" alt="ExpoLocation-badge">
-</a>
-<a href="https://axios-http.com">
-   <img src="https://img.shields.io/badge/axios-1.x-5A29E4?style=for-the-badge&logo=axios&logoColor=white" alt="Axios-badge">
-</a>
 <a href="https://github.com/react-native-async-storage/async-storage">
    <img src="https://img.shields.io/badge/Async_Storage-1.x-20232A?style=for-the-badge&logo=react&logoColor=white" alt="AsyncStorage-badge">
 </a>
 <a href="https://expressjs.com/">
    <img src="https://img.shields.io/badge/Express-5.x-000000?style=for-the-badge&logo=express&logoColor=white" alt="Express-badge">
 </a>
+<a href="https://axios-http.com">
+   <img src="https://img.shields.io/badge/axios-1.x-5A29E4?style=for-the-badge&logo=axios&logoColor=white" alt="Axios-badge">
+</a>
 <a href="https://serialport.io/">
    <img src="https://img.shields.io/badge/serialport-13.x-1f6feb?style=for-the-badge" alt="SerialPort-badge">
+</a>
+<a href="https://openweathermap.org/api">
+   <img src="https://img.shields.io/badge/OpenWeatherMap-E96E4E?style=for-the-badge&logo=rainyun&logoColor=white" alt="OpenWeatherMap-badge">
+</a>
+<a href="https://docs.expo.dev/versions/latest/sdk/location/">
+   <img src="https://img.shields.io/badge/Expo_Location-5A29E4?style=for-the-badge&logo=expo&logoColor=white" alt="ExpoLocation-badge">
 </a>
 
 <div align="left">

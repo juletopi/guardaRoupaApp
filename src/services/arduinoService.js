@@ -1,7 +1,8 @@
 import axios from "axios";
 
-// ATENÇÃO: Se for testar no celular físico via Wi-Fi, troque localhost pelo seu IP (ex: "http://192.168.1.15:3000")
-const API_URL = "http://localhost:3000";
+const DEFAULT_API_URL = "http://localhost:3000";
+const API_URL =
+    process.env.EXPO_PUBLIC_ARDUINO_API_URL?.trim() || DEFAULT_API_URL;
 
 export async function fetchArduinoStatus() {
     try {

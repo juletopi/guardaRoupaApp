@@ -1,4 +1,5 @@
 import { Platform } from "react-native";
+import { crooglaFonts } from "./typography";
 
 export const theme = {
     colors: {
@@ -26,15 +27,15 @@ export const theme = {
     fonts: {
         regular:
             Platform.OS === "web"
-                ? "system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
-                : "Nunito_400Regular",
+                ? `${crooglaFonts.regular}, system-ui, -apple-system, Segoe UI, Roboto, sans-serif`
+                : crooglaFonts.regular,
         bold:
             Platform.OS === "web"
-                ? "system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
-                : "Nunito_700Bold",
+                ? `${crooglaFonts.bold}, system-ui, -apple-system, Segoe UI, Roboto, sans-serif`
+                : crooglaFonts.bold,
         black:
             Platform.OS === "web"
-                ? "system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
-                : "Nunito_900Black",
+                ? `${crooglaFonts.bold}, system-ui, -apple-system, Segoe UI, Roboto, sans-serif`
+                : crooglaFonts.bold,
     },
 };

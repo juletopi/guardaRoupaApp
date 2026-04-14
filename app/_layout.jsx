@@ -64,8 +64,8 @@ const styles = StyleSheet.create({
     },
     loadingText: {
         marginTop: 16,
+        fontFamily: theme.fonts.bold,
         fontSize: 15,
-        fontWeight: "700",
         color: theme.colors.textLight,
         opacity: 0.9,
     },

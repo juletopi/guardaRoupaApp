@@ -221,7 +221,7 @@ npm start
 
 O comando `npm start` foi configurado para abrir o Expo em modo túnel por padrão.
 
-5. Abra no dispositivo escaneando o QR code com o **Expo Go**, ou pressione `w` para abrir no navegador.
+5. Abra no dispositivo escaneando o QR code com o **Expo Go**, [(leia o item 'Ajuste de rede para teste em celular físico', para configurar o teste em dispositivos mobile)](#3-ajuste-de-rede-para-teste-em-celular-físico) ou pressione `w` para abrir no navegador.
 
 ### API de clima (OpenWeatherMap)
 
@@ -276,6 +276,20 @@ O controle físico do varal funciona em 3 camadas:
 - Se quiser testar com seu celular, defina `EXPO_PUBLIC_ARDUINO_API_URL` no `.env` com o IP da máquina que roda a API, não com `localhost` (ex.: `http://10.50.64.251:3000`).
 - Celular e computador precisam estar na mesma rede local ou na mesma VPN que alcance esse IP
 - Depois de alterar o `.env`, reinicie o Expo com cache limpo para recompilar as variáveis públicas
+- Para abrir e testar, use o **Expo Go** no celular:
+
+<div align="center">
+   <a href="https://apps.apple.com/app/expo-go/id982107779" target="_blank" rel="noopener noreferrer">
+      <img src="./assets/docs/apple-app-store.png" alt="Baixar Expo Go na Apple Store" width="260">
+   </a>
+   <a href="https://play.google.com/store/apps/details?id=host.exp.exponent" target="_blank" rel="noopener noreferrer">
+      <img src="./assets/docs/google-play-app-store.png" alt="Baixar Expo Go no Google Play" width="280">
+   </a>
+</div>
+
+1. Instale o Expo Go (App Store ou Google Play).
+2. Rode `npm start` na raiz do projeto.
+3. Abra o Expo Go no celular e escaneie o QR code mostrado no terminal.
 
 #### Protocolo serial usado
 

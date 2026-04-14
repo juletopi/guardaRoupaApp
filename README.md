@@ -309,7 +309,7 @@ O controle físico do varal funciona em 3 camadas:
 - Depois de alterar o `.env`, reinicie o Expo com cache limpo para recompilar as variáveis públicas
 - Para abrir e testar, use o **Expo Go** no celular:
 
-<div align="center">
+<div align="left">
    <a href="https://apps.apple.com/app/expo-go/id982107779" target="_blank" rel="noopener noreferrer">
       <img src="./assets/docs/apple-app-store.png" alt="Baixar Expo Go na Apple Store" width="160">
    </a>

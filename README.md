@@ -219,9 +219,12 @@ npm install -g expo-cli
 npm start
 ```
 
-O comando `npm start` foi configurado para abrir o Expo em modo túnel por padrão.
+> [!NOTE]
+> O comando `npm start` foi configurado para abrir o Expo em modo túnel por padrão.
 
-5. Abra no dispositivo escaneando o QR code com o **Expo Go**, [(leia o item 'Ajuste de rede para teste em celular físico', para configurar o teste em dispositivos mobile)](#3-ajuste-de-rede-para-teste-em-celular-físico) ou pressione `w` para abrir no navegador.
+5. Abra no dispositivo escaneando o QR code com o **Expo Go**.
+   Para configurar o teste em celular físico, leia [Ajuste de rede para teste em celular físico](#3-ajuste-de-rede-para-teste-em-celular-físico).
+   Se preferir abrir no navegador, pressione `w`.
 
 ### API de clima (OpenWeatherMap)
 

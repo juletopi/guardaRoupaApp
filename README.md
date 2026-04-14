@@ -222,9 +222,10 @@ npm start
 > [!NOTE]
 > O comando `npm start` foi configurado para abrir o Expo em modo túnel por padrão.
 
-5. Abra no dispositivo escaneando o QR code com o **Expo Go**.
-   Para configurar o teste em celular físico, leia [Ajuste de rede para teste em celular físico](#3-ajuste-de-rede-para-teste-em-celular-físico).
-   Se preferir abrir no navegador, pressione `w`.
+5. Para abrir no navegador desktop, pressione `w`.
+
+> [!TIP]
+> Para configurar o teste em celular físico, leia [Ajuste de rede para teste em celular físico](#3-ajuste-de-rede-para-teste-em-celular-físico).
 
 ### API de clima (OpenWeatherMap)
 
@@ -283,10 +284,10 @@ O controle físico do varal funciona em 3 camadas:
 
 <div align="center">
    <a href="https://apps.apple.com/app/expo-go/id982107779" target="_blank" rel="noopener noreferrer">
-      <img src="./assets/docs/apple-app-store.png" alt="Baixar Expo Go na Apple Store" width="260">
+      <img src="./assets/docs/apple-app-store.png" alt="Baixar Expo Go na Apple Store" width="160">
    </a>
    <a href="https://play.google.com/store/apps/details?id=host.exp.exponent" target="_blank" rel="noopener noreferrer">
-      <img src="./assets/docs/google-play-app-store.png" alt="Baixar Expo Go no Google Play" width="280">
+      <img src="./assets/docs/google-play-app-store.png" alt="Baixar Expo Go no Google Play" width="160">
    </a>
 </div>
 

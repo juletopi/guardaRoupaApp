@@ -38,12 +38,12 @@
 
 O **Guarda-roupa** é um aplicativo mobile que resolve um problema cotidiano: recolher ou expor roupas no varal sem depender de "achismos" sobre o tempo antes de ser tarde demais.
 
-A ideia central é combinar uma **API de clima em tempo real** com um **módulo Arduino físico** para automatizar (ou pelo menos facilitar) a decisão de expor e recolher roupas.
+A ideia central é combinar uma **API de clima em tempo real** com um **módulo Arduino físico** e o controle por aplicativo para automatizar de forma inteligente a decisão de expor e recolher roupas no varal.
 
 ### Funcionalidades
 
-- Tela principal com animações de fundo dinâmicas, baseadas na condição climática real.
-- Meu recolhido:
+- Tela principal com animações de fundo dinâmicas, baseadas na condição climática real e horário do dia.
+- Menu recolhido:
    - Texto info de **Data + local** e seção com previsão horária via OpenWeatherMap
    - Seleção de região por modal:
       - Fluxo País → Estado → Município.

@@ -383,6 +383,13 @@ function MainScreenContent({ weather }) {
         await reloadHistory();
     }, [reloadHistory]);
 
+    const isHistoryBusy = isHistoryLoading || isHistoryRefreshing;
+    const visibleHistory = useMemo(
+        () => history.slice(0, historyPage * HISTORY_PAGE_SIZE),
+        [history, historyPage],
+    );
+    const hasMoreHistory = visibleHistory.length < history.length;
+
     const handleLoadMoreHistory = useCallback(() => {
         if (isLoadingMoreHistory || !hasMoreHistory) return;
 
@@ -398,13 +405,6 @@ function MainScreenContent({ weather }) {
             loadMoreHistoryTimeoutRef.current = null;
         }, 180);
     }, [hasMoreHistory, isLoadingMoreHistory]);
-
-    const isHistoryBusy = isHistoryLoading || isHistoryRefreshing;
-    const visibleHistory = useMemo(
-        () => history.slice(0, historyPage * HISTORY_PAGE_SIZE),
-        [history, historyPage],
-    );
-    const hasMoreHistory = visibleHistory.length < history.length;
 
     useEffect(() => {
         const maxHistoryPage = Math.max(

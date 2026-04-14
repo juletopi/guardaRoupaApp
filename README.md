@@ -83,8 +83,8 @@ A ideia central é combinar uma **API de clima em tempo real** com um **módulo 
 <a href="https://icons.expo.fyi/">
    <img src="https://img.shields.io/badge/expo/vector--icons-13.x-5A29E4?style=for-the-badge&logo=expo&logoColor=white" alt="ExpoVectorIcons-badge">
 </a>
-<a href="https://fonts.google.com/specimen/Nunito">
-  <img src="https://img.shields.io/badge/google_fonts_(Nunito)-4285F4?style=for-the-badge&logo=googlefonts&logoColor=white" alt="VT323-badge" style="max-width: 100%;">
+<a href="https://fonnts.com/croogla-4f/">
+  <img src="https://img.shields.io/badge/custom_font_(Croogla)-4285F4?style=for-the-badge&logo=textpattern&logoColor=white" alt="Croogla-badge" style="max-width: 100%;">
 </a>
 
 #### Dependências externas
@@ -123,7 +123,7 @@ A ideia central é combinar uma **API de clima em tempo real** com um **módulo 
 ```
 guardaRoupaApp/
 ├── app/                              # Roteamento (Expo Router)
-│   ├── _layout.jsx                   # Fontes Nunito, loading inicial, StatusBar, Stack
+│   ├── _layout.jsx                   # Carregar fontes, loading inicial, StatusBar, Stack
 │   └── index.jsx                     # Rota inicial → MainScreen
 ├── Arduino/
 │   └── Arduino.ino                   # Firmware: motor + sensores + protocolo serial (E/R/S)
@@ -135,10 +135,17 @@ guardaRoupaApp/
 │   │   ├── night.json
 │   │   ├── rain.json
 │   │   └── sunny.json
+│   ├── fonts/                        # Fontes customizadas
+│   │   ├── croogla-bold.otf
+│   │   ├── croogla-extralight.otf
+│   │   ├── croogla-light.otf
+│   │   ├── croogla-medium.otf
+│   │   └── croogla-regular.otf
 │   └── images/                       # Logo do projeto
 │       └── guarda-roupa-logo.png
 ├── constants/
-│   └── theme.js                      # Paleta, fontes e tokens visuais
+│   ├── theme.js                      # Paleta, cores e tokens visuais
+│   └── typography.js                 # Sistema de tipografia com variantes de fonte Croogla
 ├── src/
 │   ├── components/
 │   │   ├── ExpandMenuBtn.jsx         # Botão expandir/recolher menu

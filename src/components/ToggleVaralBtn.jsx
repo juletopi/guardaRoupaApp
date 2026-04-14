@@ -92,6 +92,36 @@ export default function WardrobeButton({ isExposed, onPress, arduinoStatus }) {
         });
     }, [progress]);
 
+    const confirmExtendAnyway = useCallback(
+        async (message) => {
+            if (Platform.OS === "web") {
+                const confirmou = window.confirm(message);
+                if (!confirmou) return false;
+            } else {
+                const confirmou = await new Promise((resolve) => {
+                    Alert.alert("Aviso de Confirmação", message, [
+                        {
+                            text: "Cancelar",
+                            style: "cancel",
+                            onPress: () => resolve(false),
+                        },
+                        { text: "Sim, Estender", onPress: () => resolve(true) },
+                    ]);
+                });
+
+                if (!confirmou) return false;
+            }
+
+            console.log("Usuário confirmou a ação. Enviando: ESTENDER");
+            triggerAnimation();
+            await sendCommandToArduino("E");
+            setStatus((prev) => ({ ...prev, estendido: true }));
+            onPress?.(true);
+            return true;
+        },
+        [onPress, triggerAnimation],
+    );
+
     const handlePress = useCallback(async () => {
         console.log("Status atual antes do clique:", status);
 
@@ -103,59 +133,18 @@ export default function WardrobeButton({ isExposed, onPress, arduinoStatus }) {
             onPress?.(false);
         } else {
             if (status.chuva) {
-                if (Platform.OS === "web") {
-                    window.alert(
-                        "Operação Bloqueada: Está chovendo. Não é possível estender o varal agora.",
-                    );
-                } else {
-                    Alert.alert(
-                        "Operação Bloqueada",
-                        "Está chovendo. Não é possível estender o varal agora.",
-                    );
-                }
-                return;
+                const confirmou = await confirmExtendAnyway(
+                    "Está chovendo. Deseja estender mesmo assim?",
+                );
+                if (!confirmou) return;
             }
 
             if (!status.roupa) {
                 console.log("Aviso de falta de roupa disparado.");
 
-                if (Platform.OS === "web") {
-                    const confirmou = window.confirm(
-                        "Nenhuma roupa foi detectada no varal. Deseja estender mesmo assim?",
-                    );
-                    if (confirmou) {
-                        console.log(
-                            "Usuário confirmou via web. Enviando: ESTENDER",
-                        );
-                        triggerAnimation();
-                        await sendCommandToArduino("E");
-                        setStatus((prev) => ({ ...prev, estendido: true }));
-                        onPress?.(true);
-                    }
-                } else {
-                    Alert.alert(
-                        "Aviso de Confirmação",
-                        "Nenhuma roupa foi detectada no varal. Deseja estender mesmo assim?",
-                        [
-                            { text: "Cancelar", style: "cancel" },
-                            {
-                                text: "Sim, Estender",
-                                onPress: async () => {
-                                    console.log(
-                                        "Usuário confirmou via celular. Enviando: ESTENDER",
-                                    );
-                                    triggerAnimation();
-                                    await sendCommandToArduino("E");
-                                    setStatus((prev) => ({
-                                        ...prev,
-                                        estendido: true,
-                                    }));
-                                    onPress?.(true);
-                                },
-                            },
-                        ],
-                    );
-                }
+                await confirmExtendAnyway(
+                    "Nenhuma roupa foi detectada no varal. Deseja estender mesmo assim?",
+                );
             } else {
                 console.log("Condições ideais. Enviando: ESTENDER");
                 triggerAnimation();
@@ -164,7 +153,13 @@ export default function WardrobeButton({ isExposed, onPress, arduinoStatus }) {
                 onPress?.(true);
             }
         }
-    }, [currentIsExposed, onPress, status, triggerAnimation]);
+    }, [
+        confirmExtendAnyway,
+        currentIsExposed,
+        onPress,
+        status,
+        triggerAnimation,
+    ]);
 
     const angles = Array.from(
         { length: LINES_COUNT },

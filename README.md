@@ -273,9 +273,9 @@ O controle físico do varal funciona em 3 camadas:
 
 #### 3) Ajuste de rede para teste em celular físico
 
-- Defina `EXPO_PUBLIC_ARDUINO_API_URL` no `.env` com o IP da máquina que roda a API (ex.: `http://192.168.1.15:3000`)
-- Se o Expo Go continuar falhando na LAN, use o túnel do Expo com `npm start` ou `npm run start:clear` e reinsira o QR code
-- Celular e computador precisam estar na mesma rede local
+- Se quiser testar com seu celular, defina `EXPO_PUBLIC_ARDUINO_API_URL` no `.env` com o IP da máquina que roda a API, não com `localhost` (ex.: `http://10.50.64.251:3000`).
+- Celular e computador precisam estar na mesma rede local ou na mesma VPN que alcance esse IP
+- Depois de alterar o `.env`, reinicie o Expo com cache limpo para recompilar as variáveis públicas
 
 #### Protocolo serial usado
 

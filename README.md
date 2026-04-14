@@ -181,6 +181,8 @@ guardaRoupaApp/
 
 ## Instalação
 
+### Iniciando o projeto
+
 > [!IMPORTANT]
 > Certifique-se de ter os seguintes requisitos antes de iniciar:
 >
@@ -224,8 +226,7 @@ npm start
 
 5. Para abrir no navegador desktop, pressione `w`.
 
-> [!TIP]
-> Para configurar o teste em celular físico, leia [Ajuste de rede para teste em celular físico](#3-ajuste-de-rede-para-teste-em-celular-físico).
+6. Para configurar o teste em celular físico, leia [Ajuste de rede para teste em celular físico](#3-ajuste-de-rede-para-teste-em-celular-físico).
 
 <div align="left">
    <h6><a href="#guarda-roupa"> Voltar para o início ↺</a></h6>
@@ -303,7 +304,7 @@ O controle físico do varal funciona em 3 camadas:
 2. Rode `npm start` na raiz do projeto.
 3. Abra o Expo Go no celular e escaneie o QR code mostrado no terminal.
 
-#### Protocolo serial usado
+#### 4) Protocolo serial usado
 
 - `E`: estender varal
 - `R`: recolher varal

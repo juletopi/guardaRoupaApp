@@ -1,9 +1,4 @@
-import {
-    Nunito_400Regular,
-    Nunito_700Bold,
-    Nunito_900Black,
-    useFonts,
-} from "@expo-google-fonts/nunito";
+import * as Font from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
@@ -18,22 +13,29 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { theme } from "../constants/theme";
 
 export default function Layout() {
-    const [fontsLoaded, fontError] = useFonts(
-        Platform.OS === "web"
-            ? {}
-            : {
-                  Nunito_400Regular,
-                  Nunito_700Bold,
-                  Nunito_900Black,
-              },
-    );
+    // Font custom Croogla
+    const [customFontsLoaded, setCustomFontsLoaded] = React.useState(false);
 
-    if (!fontsLoaded && !fontError) {
+    React.useEffect(() => {
+        if (Platform.OS !== "web") {
+            Font.loadAsync({
+                "Croogla-ExtraLight": require("../assets/fonts/croogla-extralight.otf"),
+                "Croogla-Light": require("../assets/fonts/croogla-light.otf"),
+                "Croogla-Regular": require("../assets/fonts/croogla-regular.otf"),
+                "Croogla-Medium": require("../assets/fonts/croogla-medium.otf"),
+                "Croogla-Bold": require("../assets/fonts/croogla-bold.otf"),
+            }).then(() => setCustomFontsLoaded(true));
+        } else {
+            setCustomFontsLoaded(true);
+        }
+    }, []);
+
+    if (!customFontsLoaded) {
         return (
             <SafeAreaProvider>
                 <View
                     style={styles.loadingRoot}
-                    accessibilityLabel="Carregando"
+                    accessibilityLabel="Carregando fontes"
                 >
                     <ActivityIndicator
                         size="large"

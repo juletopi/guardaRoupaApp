@@ -227,6 +227,10 @@ npm start
 > [!TIP]
 > Para configurar o teste em celular físico, leia [Ajuste de rede para teste em celular físico](#3-ajuste-de-rede-para-teste-em-celular-físico).
 
+<div align="left">
+   <h6><a href="#guarda-roupa"> Voltar para o início ↺</a></h6>
+</div>
+
 ### API de clima (OpenWeatherMap)
 
 O app usa a API **OpenWeatherMap**. Sem chave, a previsão não carrega.
@@ -247,6 +251,10 @@ O app usa a API **OpenWeatherMap**. Sem chave, a previsão não carrega.
 4. **Reinicie o bundler** (`Ctrl+C` e `npm start` de novo). Variáveis `EXPO_PUBLIC_*` só entram após reiniciar o Expo.
 
 5. No dispositivo/emulador, **permita localização** quando o app pedir (o clima usa GPS).
+
+<div align="left">
+   <h6><a href="#guarda-roupa"> Voltar para o início ↺</a></h6>
+</div>
 
 ### Módulo Arduino (API local + firmware)
 

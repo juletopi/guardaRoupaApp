@@ -42,15 +42,26 @@ A ideia central é combinar uma **API de clima em tempo real** com um **módulo 
 
 ### Funcionalidades
 
-- Tela principal com animações de fundo dinâmicas (baseado na condição climática real)
-- Seção **"Hoje"** com previsão climática horária horizontal via API OpenWeatherMap (**probabilidade de chuva** por hora, campo `pop`, em vez de temperatura no card)
-- Menu expandido com **calendário**: escolha de dia e previsão horária filtrada a partir do mesmo payload `/forecast`
-- **Local manual**: toque no título com cidade para abrir modal (País → Estado → Município); opção de **local padrão** e botão para voltar à **localização atual** (GPS)
-- Histórico de detecção de mudanças no varal (recolhido/expandido e forma de mudança manual/chuva/fim do dia)
-- Menu inferior animado com dois estados: **recolhido** (~20% da tela) e **expandido** (~90%)
-- Botão flutuante **RECOLHER / EXPOR** na divisa do menu, com animação de linhas irradiando
-- Integração em tempo real com módulo Arduino via API local: leitura periódica de **status do varal** (estendido, chuva, roupa detectada)
-- Regras de segurança no controle do varal: bloqueio para estender em caso de chuva e confirmação do usuário quando não há roupa detectada
+- Tela principal com animações de fundo dinâmicas, baseadas na condição climática real.
+- Meu recolhido:
+   - Texto info de **Data + local** e seção com previsão horária via OpenWeatherMap
+   - Seleção de região por modal:
+      - Fluxo País → Estado → Município.
+      - Opção de definir **local padrão**.
+- Botão flutuante **RECOLHER / EXPOR** na divisa do menu, com animação de linhas irradiando.
+- Menu expandido:
+   - Seção de **calendário**:
+      - Escolha de dia.
+      - Previsão horária filtrada com base no mesmo payload.
+   - Seção de **Histórico do varal**:
+      - Registro de mudanças entre recolhido/expandido.
+      - Identificação da origem da mudança (manual, automático, chuva ou fim do dia).
+- Integração em tempo real com módulo Arduino via API local:
+   - Leitura periódica de status do varal (**estendido**, **chuva**, **roupa detectada**).
+   - Leitura ativa de comandos do botão **RECOLHER / EXPOR**
+- Regras de segurança no controle do varal:
+   - Confirmação para estender em caso de chuva.
+   - Confirmação quando não há roupa detectada.
 
 ### Tecnologias utilizadas
 

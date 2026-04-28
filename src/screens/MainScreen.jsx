@@ -11,6 +11,7 @@ import React, {
 } from "react";
 import {
     ActivityIndicator,
+    Platform,
     ScrollView,
     StyleSheet,
     Text,
@@ -1034,16 +1035,23 @@ const styles = StyleSheet.create({
     historyTitleText: {
         marginTop: 0,
         marginBottom: 0,
+        fontFamily: undefined,
+        fontWeight: "700",
     },
     reloadHistoryText: {
-        fontFamily: theme.fonts.regular,
         fontSize: 12,
         color: theme.colors.textMuted,
+        fontFamily: undefined,
     },
     collapsedTitleText: {
         marginTop: 0,
         marginBottom: 0,
         marginLeft: 6,
+        fontFamily:
+            Platform.OS === "web"
+                ? "system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+                : undefined,
+        fontWeight: "700",
     },
     collapsedTitleWrapper: {
         alignSelf: "flex-start",
@@ -1065,9 +1073,14 @@ const styles = StyleSheet.create({
     expandedDateText: {
         marginTop: 0,
         marginBottom: 0,
-        fontSize: 15,
+        fontSize: 14,
         maxWidth: "72%",
         textAlign: "center",
+        fontFamily:
+            Platform.OS === "web"
+                ? "system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+                : undefined,
+        fontWeight: "700",
     },
     dateChevronBtn: {
         width: 34,
@@ -1087,9 +1100,10 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     historyText: {
-        fontFamily: theme.fonts.regular,
         color: theme.colors.textMuted,
-        fontSize: 15,
+        fontSize: 14,
+        fontFamily: undefined,
+        fontWeight: "700",
     },
     historyStatusBadge: {
         alignSelf: "flex-start",
@@ -1125,16 +1139,17 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     historyLoadingText: {
-        fontFamily: theme.fonts.regular,
         color: theme.colors.textDark,
         fontSize: 13,
+        fontFamily: undefined,
+        fontWeight: "700",
     },
     loadMoreHistoryBtn: {
         alignSelf: "center",
         marginTop: 4,
         marginBottom: 8,
-        paddingHorizontal: 14,
-        paddingVertical: 8,
+        paddingHorizontal: 16,
+        paddingVertical: 10,
         borderRadius: 999,
         backgroundColor: theme.colors.backgroundAlt,
     },

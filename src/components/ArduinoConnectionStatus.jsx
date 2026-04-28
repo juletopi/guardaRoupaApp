@@ -531,32 +531,29 @@ const styles = StyleSheet.create({
         backgroundColor: "rgba(0,0,0,0.1)",
     },
     errorLabel: {
-        fontFamily: theme.fonts.bold,
         color: theme.colors.textMuted,
         fontSize: 12,
+        fontWeight: "bold",
         textTransform: "uppercase",
     },
     errorText: {
         marginTop: 6,
-        fontFamily: theme.fonts.regular,
         color: theme.colors.textDark,
         fontSize: 13,
     },
     errorTimeLabel: {
         marginTop: 6,
-        fontFamily: theme.fonts.regular,
         color: theme.colors.textMuted,
         fontSize: 12,
     },
     instructionLabel: {
-        fontFamily: theme.fonts.bold,
         color: theme.colors.textMuted,
         fontSize: 12,
+        fontWeight: "bold",
         textTransform: "uppercase",
     },
     instructionText: {
         marginTop: 6,
-        fontFamily: theme.fonts.regular,
         color: theme.colors.textDark,
         fontSize: 13,
     },
@@ -569,7 +566,6 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
     },
     closeBtnText: {
-        fontFamily: theme.fonts.bold,
         color: theme.colors.textLight,
         fontSize: 12,
     },

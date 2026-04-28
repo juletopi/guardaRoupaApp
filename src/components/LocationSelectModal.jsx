@@ -2,6 +2,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React, { useEffect, useMemo, useState } from "react";
 import {
     Modal,
+    Platform,
     Pressable,
     ScrollView,
     StyleSheet,
@@ -176,8 +177,12 @@ export default function LocationSelectModal({
                         <View style={styles.header}>
                             <Text style={styles.title}>Selecionar local</Text>
                             <Text style={styles.subtitle}>
-                                Local padrão:{" "}
-                                {defaultLocation?.city ?? "São Paulo"}
+                                <Text style={styles.subtitleLabel}>
+                                    Local padrão:{" "}
+                                </Text>
+                                <Text style={styles.subtitleCity}>
+                                    {defaultLocation?.city ?? "São Paulo"}
+                                </Text>
                             </Text>
                         </View>
 
@@ -333,9 +338,28 @@ const styles = StyleSheet.create({
     },
     subtitle: {
         marginTop: 2,
-        fontFamily: theme.fonts.regular,
         fontSize: 13,
         color: theme.colors.textMuted,
+        fontFamily:
+            Platform.OS === "web"
+                ? "system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+                : undefined,
+    },
+    subtitleLabel: {
+        fontSize: 13,
+        color: theme.colors.textMuted,
+        fontFamily:
+            Platform.OS === "web"
+                ? "system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+                : undefined,
+    },
+    subtitleCity: {
+        fontSize: 13,
+        color: theme.colors.textDark,
+        fontFamily:
+            Platform.OS === "web"
+                ? "system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+                : undefined,
     },
     content: {
         flexGrow: 1,
@@ -375,13 +399,21 @@ const styles = StyleSheet.create({
     },
     optionText: {
         flexShrink: 1,
-        fontFamily: theme.fonts.regular,
         fontSize: 13,
         color: theme.colors.textDark,
+        fontFamily:
+            Platform.OS === "web"
+                ? "system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+                : undefined,
+        fontWeight: "700",
     },
     optionTextActive: {
         color: theme.colors.textLight,
-        fontFamily: theme.fonts.bold,
+        fontFamily:
+            Platform.OS === "web"
+                ? "system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+                : undefined,
+        fontWeight: "700",
     },
     emptyText: {
         fontFamily: theme.fonts.regular,
@@ -400,9 +432,13 @@ const styles = StyleSheet.create({
     },
     defaultQuestionText: {
         flex: 1,
-        fontFamily: theme.fonts.bold,
         fontSize: 13,
         color: theme.colors.textDark,
+        fontFamily:
+            Platform.OS === "web"
+                ? "system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+                : undefined,
+        fontWeight: "700",
     },
     defaultQuestionTextDisabled: {
         fontFamily: theme.fonts.regular,

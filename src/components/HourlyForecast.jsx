@@ -2,6 +2,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
 import {
     ActivityIndicator,
+    Platform,
     ScrollView,
     StyleSheet,
     Text,
@@ -28,7 +29,9 @@ export default function HourlyForecast({
 
     if (error) {
         return (
-            <View style={[styles.container, styles.center, styles.feedbackState]}>
+            <View
+                style={[styles.container, styles.center, styles.feedbackState]}
+            >
                 <Text style={styles.feedbackText}>{error}</Text>
             </View>
         );
@@ -36,7 +39,9 @@ export default function HourlyForecast({
 
     if (!items || items.length === 0) {
         return (
-            <View style={[styles.container, styles.center, styles.feedbackState]}>
+            <View
+                style={[styles.container, styles.center, styles.feedbackState]}
+            >
                 <Text style={styles.feedbackText}>Sem previsão disponível</Text>
             </View>
         );
@@ -106,10 +111,14 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
     },
     time: {
-        fontFamily: theme.fonts.bold,
-        fontSize: 12,
+        fontSize: 11,
         color: theme.colors.textMuted,
-        marginBottom: 8,
+        marginBottom: 6,
+        fontFamily:
+            Platform.OS === "web"
+                ? "system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+                : undefined,
+        fontWeight: "700",
     },
     icon: {
         marginBottom: 8,
@@ -118,9 +127,13 @@ const styles = StyleSheet.create({
         marginBottom: 2,
     },
     precipitation: {
-        fontFamily: theme.fonts.bold,
-        fontSize: 14,
+        fontSize: 11,
         color: theme.colors.textMuted,
+        fontFamily:
+            Platform.OS === "web"
+                ? "system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+                : undefined,
+        fontWeight: "700",
     },
     separator: {
         width: 1,

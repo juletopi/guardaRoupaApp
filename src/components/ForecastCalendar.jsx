@@ -1,13 +1,13 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React, { useEffect, useMemo, useState } from "react";
 import {
+    Platform,
     Pressable,
     StyleSheet,
     Text,
     TextInput,
-    TouchableOpacity,
-    View,
+    View
 } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { theme } from "../../constants/theme";
 import {
     buildMonthGrid,
@@ -243,10 +243,14 @@ const styles = StyleSheet.create({
         marginBottom: 18,
     },
     monthLabel: {
-        fontFamily: theme.fonts.bold,
         color: theme.colors.textDark,
-        fontSize: 15,
+        fontSize: 14,
         marginBottom: 10,
+        fontFamily:
+            Platform.OS === "web"
+                ? "system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+                : undefined,
+        fontWeight: "700",
     },
     monthNavRow: {
         flexDirection: "row",
@@ -282,8 +286,9 @@ const styles = StyleSheet.create({
         width: "14.28%",
         textAlign: "center",
         fontFamily: theme.fonts.bold,
-        fontSize: 12,
+        fontSize: 14,
         color: theme.colors.textMuted,
+        marginTop: 7,
     },
     weekRow: {
         flexDirection: "row",
@@ -304,9 +309,13 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.textDark,
     },
     dayText: {
-        fontFamily: theme.fonts.bold,
         color: theme.colors.calendarDayText,
         fontSize: 13,
+        fontFamily:
+            Platform.OS === "web"
+                ? "system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+                : undefined,
+        fontWeight: "700",
     },
     dayTextOutsideMonth: {
         color: theme.colors.calendarDayText,
@@ -328,9 +337,13 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         paddingHorizontal: 12,
         paddingVertical: 10,
-        fontFamily: theme.fonts.regular,
         color: theme.colors.textDark,
-        fontSize: 14,
+        fontSize: 13,
+        fontFamily:
+            Platform.OS === "web"
+                ? "system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+                : undefined,
+        fontWeight: "400",
     },
     searchBtn: {
         backgroundColor: theme.colors.textDark,

@@ -92,6 +92,20 @@ export default function WardrobeButton({ isExposed, onPress, arduinoStatus }) {
         });
     }, [progress]);
 
+    const executeCommandAndSync = useCallback(
+        async (action) => {
+            triggerAnimation();
+            const ok = await sendCommandToArduino(action);
+            if (!ok) return false;
+
+            const exposed = action === "E";
+            setStatus((prev) => ({ ...prev, estendido: exposed }));
+            onPress?.(exposed);
+            return true;
+        },
+        [onPress, triggerAnimation],
+    );
+
     const confirmExtendAnyway = useCallback(
         async (message) => {
             if (Platform.OS === "web") {
@@ -113,13 +127,9 @@ export default function WardrobeButton({ isExposed, onPress, arduinoStatus }) {
             }
 
             console.log("Usuário confirmou a ação. Enviando: ESTENDER");
-            triggerAnimation();
-            await sendCommandToArduino("E");
-            setStatus((prev) => ({ ...prev, estendido: true }));
-            onPress?.(true);
-            return true;
+            return executeCommandAndSync("E");
         },
-        [onPress, triggerAnimation],
+        [executeCommandAndSync],
     );
 
     const handlePress = useCallback(async () => {
@@ -127,10 +137,7 @@ export default function WardrobeButton({ isExposed, onPress, arduinoStatus }) {
 
         if (currentIsExposed) {
             console.log("Enviando comando: RECOLHER");
-            triggerAnimation();
-            await sendCommandToArduino("R");
-            setStatus((prev) => ({ ...prev, estendido: false }));
-            onPress?.(false);
+            await executeCommandAndSync("R");
         } else {
             if (status.chuva) {
                 const confirmou = await confirmExtendAnyway(
@@ -147,18 +154,15 @@ export default function WardrobeButton({ isExposed, onPress, arduinoStatus }) {
                 );
             } else {
                 console.log("Condições ideais. Enviando: ESTENDER");
-                triggerAnimation();
-                await sendCommandToArduino("E");
-                setStatus((prev) => ({ ...prev, estendido: true }));
-                onPress?.(true);
+                await executeCommandAndSync("E");
             }
         }
     }, [
         confirmExtendAnyway,
         currentIsExposed,
+        executeCommandAndSync,
         onPress,
         status,
-        triggerAnimation,
     ]);
 
     const angles = Array.from(

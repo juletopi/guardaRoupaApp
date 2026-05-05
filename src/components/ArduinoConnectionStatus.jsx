@@ -1,3 +1,4 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React, {
     useCallback,
     useEffect,
@@ -13,7 +14,6 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Animated, {
     cancelAnimation,
     Easing,
@@ -57,6 +57,8 @@ export default function ArduinoConnectionStatus({
         useState(false);
     const commandAlertTimeoutRef = useRef(null);
     const commandAlertVisibleRef = useRef(false);
+    const pollingTimeoutRef = useRef(null);
+    const isPollingActiveRef = useRef(false);
     const commandAlertProgress = useSharedValue(0);
     const commandAlertPulse = useSharedValue(0);
 
@@ -72,30 +74,48 @@ export default function ArduinoConnectionStatus({
 
     useEffect(() => {
         let mounted = true;
+        isPollingActiveRef.current = true;
 
-        const checkConnection = async () => {
-            const { data, error } = await fetchArduinoStatusVerbose();
-            if (!mounted) return;
+        const runPolling = async () => {
+            while (isPollingActiveRef.current && mounted) {
+                const { data, error, isOnline: nextIsOnline } =
+                    await fetchArduinoStatusVerbose();
+                if (!mounted) break;
 
-            if (data) {
-                setIsOnline(true);
-                setLastError("Nenhum erro registrado.");
-                setLastErrorAt(null);
-                onStatusChange?.(data);
-                return;
+                if (nextIsOnline) {
+                    setIsOnline(true);
+                    setLastError("Nenhum erro registrado.");
+                    setLastErrorAt(null);
+                    onStatusChange?.(data);
+                } else {
+                    setIsOnline(false);
+                    setLastError(error ?? "Network Error");
+                    setLastErrorAt(new Date());
+                    onStatusChange?.(data);
+                }
+
+                await new Promise((resolve) => {
+                    pollingTimeoutRef.current = setTimeout(
+                        resolve,
+                        pollInterval,
+                    );
+                });
+                if (pollingTimeoutRef.current) {
+                    clearTimeout(pollingTimeoutRef.current);
+                    pollingTimeoutRef.current = null;
+                }
             }
-
-            setIsOnline(false);
-            setLastError(error ?? "Network Error");
-            setLastErrorAt(new Date());
         };
 
-        checkConnection();
-        const intervalId = setInterval(checkConnection, pollInterval);
+        runPolling();
 
         return () => {
             mounted = false;
-            clearInterval(intervalId);
+            isPollingActiveRef.current = false;
+            if (pollingTimeoutRef.current) {
+                clearTimeout(pollingTimeoutRef.current);
+                pollingTimeoutRef.current = null;
+            }
         };
     }, [onStatusChange, pollInterval]);
 

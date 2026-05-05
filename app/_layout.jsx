@@ -24,7 +24,12 @@ export default function Layout() {
                 "Croogla-Regular": require("../assets/fonts/croogla-regular.otf"),
                 "Croogla-Medium": require("../assets/fonts/croogla-medium.otf"),
                 "Croogla-Bold": require("../assets/fonts/croogla-bold.otf"),
-            }).then(() => setCustomFontsLoaded(true));
+            })
+                .then(() => setCustomFontsLoaded(true))
+                .catch((err) => {
+                    console.error("Erro ao carregar fontes:", err);
+                    setCustomFontsLoaded(true); // Prossegue o app mesmo sem as fontes
+                });
         } else {
             setCustomFontsLoaded(true);
         }

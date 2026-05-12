@@ -29,7 +29,13 @@ function initializeArduino() {
         return;
     }
     try {
-        port = new SerialPort({ path: "COM9", baudRate: 9600 });
+        // Porta serial do Arduino. Permite override via env (ARDUINO_PORT)
+        // e cai no default por plataforma:
+        //   - Linux: /dev/ttyACM0 (placas com USB-CDC nativo, ex.: Uno/Nano clone)
+        //   - Windows: COM9
+        const defaultPath = process.platform === "win32" ? "COM9" : "/dev/ttyACM0";
+        const serialPath = process.env.ARDUINO_PORT || defaultPath;
+        port = new SerialPort({ path: serialPath, baudRate: 9600 });
         parser = port.pipe(new ReadlineParser({ delimiter: "\r\n" }));
 
         parser.on("data", (data) => {
@@ -111,7 +117,10 @@ app.post("/command", (req, res) => {
     }
 
     if (action === "E" || action === "R") {
-        port.write(action, (err) => {
+        // O firmware do Arduino aceita '1' para ESTENDER e '2' para RECOLHER.
+        // Mantemos o contrato da API com "E"/"R" e traduzimos aqui no envio serial.
+        const comandoSerial = action === "E" ? "1" : "2";
+        port.write(comandoSerial, (err) => {
             if (err) {
                 console.error(
                     "[API] Erro ao enviar para o Arduino:",
@@ -120,7 +129,7 @@ app.post("/command", (req, res) => {
                 return res.status(500).json({ error: "Erro na porta serial." });
             }
             console.log(
-                `[API] Comando '${action}' enviado ao Arduino com sucesso!`,
+                `[API] Comando '${action}' (serial '${comandoSerial}') enviado ao Arduino com sucesso!`,
             );
             res.json({ success: true, message: `Comando ${action} enviado.` });
         });

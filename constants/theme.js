@@ -1,6 +1,9 @@
 import { Platform } from "react-native";
 import { crooglaFonts } from "./typography";
 
+const systemFontStack =
+    "system-ui, -apple-system, Segoe UI, Roboto, sans-serif";
+
 export const theme = {
     colors: {
         sky: {
@@ -25,17 +28,8 @@ export const theme = {
         accent: "#4fd1c5",
     },
     fonts: {
-        regular:
-            Platform.OS === "web"
-                ? `${crooglaFonts.regular}, system-ui, -apple-system, Segoe UI, Roboto, sans-serif`
-                : crooglaFonts.regular,
-        bold:
-            Platform.OS === "web"
-                ? `${crooglaFonts.bold}, system-ui, -apple-system, Segoe UI, Roboto, sans-serif`
-                : crooglaFonts.bold,
-        black:
-            Platform.OS === "web"
-                ? `${crooglaFonts.bold}, system-ui, -apple-system, Segoe UI, Roboto, sans-serif`
-                : crooglaFonts.bold,
+        regular: Platform.OS === "web" ? systemFontStack : crooglaFonts.regular,
+        bold: Platform.OS === "web" ? systemFontStack : crooglaFonts.bold,
+        black: Platform.OS === "web" ? systemFontStack : crooglaFonts.bold,
     },
 };

@@ -13,18 +13,31 @@ const DEBUG_MOCK_OVERRIDE = null;
 const ENV_MOCK_ENABLED = process.env.ARDUINO_API_MOCK === "1";
 const USE_MOCK = DEBUG_MOCK_OVERRIDE ?? ENV_MOCK_ENABLED;
 
+// O Arduino emite status JSON automaticamente a cada 2s. Se ficarmos mais
+// que esse limite sem receber, consideramos o Arduino offline.
+const STATUS_TIMEOUT_MS = 6000;
+
 let port = null;
 let parser = null;
 let isArduinoConnected = false;
+let lastStatusAt = 0;
 
 let arduinoStatus = { estendido: false, chuva: false, roupa: false };
+
+function arduinoAtivo() {
+    if (USE_MOCK) return isArduinoConnected;
+    if (!port || !port.isOpen) return false;
+    return Date.now() - lastStatusAt < STATUS_TIMEOUT_MS;
+}
 
 function initializeArduino() {
     if (USE_MOCK) {
         console.log("[API] Modo MOCK ativado: servindo status falso para desenvolvimento");
         isArduinoConnected = true;
+        lastStatusAt = Date.now();
         setInterval(() => {
             arduinoStatus.chuva = !arduinoStatus.chuva;
+            lastStatusAt = Date.now();
         }, 5000);
         return;
     }
@@ -43,10 +56,15 @@ function initializeArduino() {
                 if (data.startsWith("{")) {
                     arduinoStatus = JSON.parse(data);
                     isArduinoConnected = true;
+                    lastStatusAt = Date.now();
                 }
             } catch (e) {
                 console.error("Erro ao parsear dados do Arduino:", data);
             }
+        });
+
+        port.on("open", () => {
+            console.log("[API] Porta serial aberta — aguardando heartbeat do Arduino...");
         });
 
         port.on("error", (err) => {
@@ -58,15 +76,6 @@ function initializeArduino() {
             console.log("[API] Porta serial fechada");
             isArduinoConnected = false;
         });
-
-        setInterval(() => {
-            if (port && port.isOpen) {
-                port.write("S");
-            }
-        }, 2000); // Intervalo de status a cada 2 seg
-
-        console.log("[API] Arduino conectado com sucesso!");
-        isArduinoConnected = true;
     } catch (error) {
         console.warn("[API] Arduino não detectado:", error.message);
         console.warn(
@@ -80,7 +89,8 @@ initializeArduino();
 
 // Ler o status no App
 app.get("/status", (req, res) => {
-    if (!isArduinoConnected) {
+    const online = arduinoAtivo();
+    if (!online) {
         return res.json({
             online: false,
             error: "Arduino desconectado ou não detectado. Verifique a conexão USB e a porta serial configurada.",
@@ -101,7 +111,7 @@ app.post("/command", (req, res) => {
         `\n[API] Recebeu pedido do App para: ${action === "E" ? "ESTENDER" : "RECOLHER"}`,
     );
 
-    if (!isArduinoConnected) {
+    if (!arduinoAtivo()) {
         console.warn("[API] Tentativa de enviar comando sem Arduino conectado");
         if (USE_MOCK) {
             // Em modo mock aceitamos o comando e simulamos sucesso

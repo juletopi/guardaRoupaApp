@@ -52,14 +52,20 @@ function initializeArduino() {
         parser = port.pipe(new ReadlineParser({ delimiter: "\r\n" }));
 
         parser.on("data", (data) => {
+            const line = data.trim();
+            if (!line) return;
             try {
-                if (data.startsWith("{")) {
-                    arduinoStatus = JSON.parse(data);
+                if (line.startsWith("{")) {
+                    arduinoStatus = JSON.parse(line);
                     isArduinoConnected = true;
                     lastStatusAt = Date.now();
+                } else {
+                    // Logs textuais do firmware (println não-JSON): úteis para
+                    // depurar regras automáticas (chuva detectada, recolhendo, etc.)
+                    console.log(`[Arduino] ${line}`);
                 }
             } catch (e) {
-                console.error("Erro ao parsear dados do Arduino:", data);
+                console.error("Erro ao parsear dados do Arduino:", line);
             }
         });
 

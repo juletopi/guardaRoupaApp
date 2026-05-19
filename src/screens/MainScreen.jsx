@@ -234,10 +234,35 @@ function MainScreenContent({ weather }) {
         setIsLocationModalVisible(false);
     }, []);
 
-    const handleArduinoStatusChange = useCallback((nextStatus) => {
-        if (!nextStatus) return;
-        setArduinoStatus((previous) => ({ ...previous, ...nextStatus }));
-    }, []);
+    const handleArduinoStatusChange = useCallback(
+        (nextStatus) => {
+            if (!nextStatus) return;
+            setArduinoStatus((previous) => {
+                const merged = { ...previous, ...nextStatus };
+                // Sincroniza UI com o estado físico vindo do Arduino — cobre
+                // recolhimentos automáticos (regra de chuva) sem precisar
+                // do usuário tocar no botão.
+                if (
+                    isClotheslineStateHydrated &&
+                    typeof merged.estendido === "boolean" &&
+                    merged.estendido !== previous.estendido
+                ) {
+                    setIsClotheslineExposed(merged.estendido);
+                    AsyncStorage.setItem(
+                        CLOTHESLINE_STATE_KEY,
+                        String(merged.estendido),
+                    ).catch((storageError) => {
+                        console.error(
+                            "Erro ao persistir estado do varal (sync Arduino):",
+                            storageError,
+                        );
+                    });
+                }
+                return merged;
+            });
+        },
+        [isClotheslineStateHydrated],
+    );
 
     useEffect(() => {
         const today = startOfDay(new Date());
@@ -587,6 +612,56 @@ function MainScreenContent({ weather }) {
                                 ? "VARAL EXPOSTO"
                                 : "GUARDADO"}
                         </Text>
+
+                        <View style={styles.sensorChipsRow}>
+                            <View
+                                style={[
+                                    styles.sensorChip,
+                                    arduinoStatus.chuva
+                                        ? styles.sensorChipActive
+                                        : styles.sensorChipInactive,
+                                ]}
+                            >
+                                <MaterialCommunityIcons
+                                    name={
+                                        arduinoStatus.chuva
+                                            ? "weather-pouring"
+                                            : "weather-sunny"
+                                    }
+                                    size={14}
+                                    color={theme.colors.textLight}
+                                />
+                                <Text style={styles.sensorChipText}>
+                                    {arduinoStatus.chuva
+                                        ? "CHUVA"
+                                        : "SEM CHUVA"}
+                                </Text>
+                            </View>
+
+                            <View
+                                style={[
+                                    styles.sensorChip,
+                                    arduinoStatus.roupa
+                                        ? styles.sensorChipActive
+                                        : styles.sensorChipInactive,
+                                ]}
+                            >
+                                <MaterialCommunityIcons
+                                    name={
+                                        arduinoStatus.roupa
+                                            ? "tshirt-crew"
+                                            : "tshirt-crew-outline"
+                                    }
+                                    size={14}
+                                    color={theme.colors.textLight}
+                                />
+                                <Text style={styles.sensorChipText}>
+                                    {arduinoStatus.roupa
+                                        ? "COM ROUPA"
+                                        : "SEM ROUPA"}
+                                </Text>
+                            </View>
+                        </View>
                     </View>
                 </Animated.View>
 
@@ -983,6 +1058,33 @@ const styles = StyleSheet.create({
         fontFamily: theme.fonts.bold,
         color: theme.colors.textLight,
         fontSize: 16,
+    },
+    sensorChipsRow: {
+        marginTop: 14,
+        flexDirection: "row",
+        gap: 8,
+        flexWrap: "wrap",
+        justifyContent: "center",
+    },
+    sensorChip: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 4,
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 999,
+    },
+    sensorChipActive: {
+        backgroundColor: "rgba(0,0,0,0.35)",
+    },
+    sensorChipInactive: {
+        backgroundColor: "rgba(255,255,255,0.18)",
+    },
+    sensorChipText: {
+        fontFamily: theme.fonts.bold,
+        color: theme.colors.textLight,
+        fontSize: 10,
+        letterSpacing: 0.6,
     },
     miniVaralText: {
         fontFamily: theme.fonts.bold,

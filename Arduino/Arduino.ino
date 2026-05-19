@@ -124,19 +124,20 @@ void loop() {
   }
 
   // Regra B: Se o varal foi recolhido pela chuva, e a chuva parou
+  // A flag `recolhidoPelaChuva` SÓ é zerada quando efetivamente estendemos
+  // de volta. Se ainda não houver roupa no momento em que a chuva passa,
+  // mantemos a flag para tentar novamente em loops futuros assim que o
+  // sensor ultrassônico detectar peça no varal.
   if (recolhidoPelaChuva && !chovendo) {
-    Serial.println("A chuva parou. Verificando se ainda ha roupas...");
-
     if (temRoupa) {
       Serial.println("Roupas detectadas! ESTENDENDO varal novamente.");
       meuMotor.step(passosPara90Graus);
       estaEstendido = true;
-    } else {
-      Serial.println("Nenhuma roupa detectada. O varal permanecera recolhido.");
+      recolhidoPelaChuva = false;
+      enviarStatusJson();
     }
-
-    recolhidoPelaChuva = false;
-    enviarStatusJson();
+    // Sem roupa: aguarda silenciosamente — o status periódico continua sendo
+    // emitido pela seção 4 abaixo, não precisamos floodar a serial aqui.
   }
 
   // 4. ENVIO PERIÓDICO DE STATUS DO ARDUINO

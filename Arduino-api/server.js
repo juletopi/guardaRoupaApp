@@ -13,34 +13,64 @@ const DEBUG_MOCK_OVERRIDE = null;
 const ENV_MOCK_ENABLED = process.env.ARDUINO_API_MOCK === "1";
 const USE_MOCK = DEBUG_MOCK_OVERRIDE ?? ENV_MOCK_ENABLED;
 
+// O Arduino emite status JSON automaticamente a cada 2s. Se ficarmos mais
+// que esse limite sem receber, consideramos o Arduino offline.
+const STATUS_TIMEOUT_MS = 6000;
+
 let port = null;
 let parser = null;
 let isArduinoConnected = false;
+let lastStatusAt = 0;
 
 let arduinoStatus = { estendido: false, chuva: false, roupa: false };
+
+function arduinoAtivo() {
+    if (USE_MOCK) return isArduinoConnected;
+    if (!port || !port.isOpen) return false;
+    return Date.now() - lastStatusAt < STATUS_TIMEOUT_MS;
+}
 
 function initializeArduino() {
     if (USE_MOCK) {
         console.log("[API] Modo MOCK ativado: servindo status falso para desenvolvimento");
         isArduinoConnected = true;
+        lastStatusAt = Date.now();
         setInterval(() => {
             arduinoStatus.chuva = !arduinoStatus.chuva;
+            lastStatusAt = Date.now();
         }, 5000);
         return;
     }
     try {
-        port = new SerialPort({ path: "COM9", baudRate: 9600 });
+        // Porta serial do Arduino. Permite override via env (ARDUINO_PORT)
+        // e cai no default por plataforma:
+        //   - Linux: /dev/ttyACM0 (placas com USB-CDC nativo, ex.: Uno/Nano clone)
+        //   - Windows: COM9
+        const defaultPath = process.platform === "win32" ? "COM9" : "/dev/ttyACM0";
+        const serialPath = process.env.ARDUINO_PORT || defaultPath;
+        port = new SerialPort({ path: serialPath, baudRate: 9600 });
         parser = port.pipe(new ReadlineParser({ delimiter: "\r\n" }));
 
         parser.on("data", (data) => {
+            const line = data.trim();
+            if (!line) return;
             try {
-                if (data.startsWith("{")) {
-                    arduinoStatus = JSON.parse(data);
+                if (line.startsWith("{")) {
+                    arduinoStatus = JSON.parse(line);
                     isArduinoConnected = true;
+                    lastStatusAt = Date.now();
+                } else {
+                    // Logs textuais do firmware (println não-JSON): úteis para
+                    // depurar regras automáticas (chuva detectada, recolhendo, etc.)
+                    console.log(`[Arduino] ${line}`);
                 }
             } catch (e) {
-                console.error("Erro ao parsear dados do Arduino:", data);
+                console.error("Erro ao parsear dados do Arduino:", line);
             }
+        });
+
+        port.on("open", () => {
+            console.log("[API] Porta serial aberta — aguardando heartbeat do Arduino...");
         });
 
         port.on("error", (err) => {
@@ -52,15 +82,6 @@ function initializeArduino() {
             console.log("[API] Porta serial fechada");
             isArduinoConnected = false;
         });
-
-        setInterval(() => {
-            if (port && port.isOpen) {
-                port.write("S");
-            }
-        }, 2000); // Intervalo de status a cada 2 seg
-
-        console.log("[API] Arduino conectado com sucesso!");
-        isArduinoConnected = true;
     } catch (error) {
         console.warn("[API] Arduino não detectado:", error.message);
         console.warn(
@@ -74,7 +95,8 @@ initializeArduino();
 
 // Ler o status no App
 app.get("/status", (req, res) => {
-    if (!isArduinoConnected) {
+    const online = arduinoAtivo();
+    if (!online) {
         return res.json({
             online: false,
             error: "Arduino desconectado ou não detectado. Verifique a conexão USB e a porta serial configurada.",
@@ -95,7 +117,7 @@ app.post("/command", (req, res) => {
         `\n[API] Recebeu pedido do App para: ${action === "E" ? "ESTENDER" : "RECOLHER"}`,
     );
 
-    if (!isArduinoConnected) {
+    if (!arduinoAtivo()) {
         console.warn("[API] Tentativa de enviar comando sem Arduino conectado");
         if (USE_MOCK) {
             // Em modo mock aceitamos o comando e simulamos sucesso
@@ -111,7 +133,10 @@ app.post("/command", (req, res) => {
     }
 
     if (action === "E" || action === "R") {
-        port.write(action, (err) => {
+        // O firmware do Arduino aceita '1' para ESTENDER e '2' para RECOLHER.
+        // Mantemos o contrato da API com "E"/"R" e traduzimos aqui no envio serial.
+        const comandoSerial = action === "E" ? "1" : "2";
+        port.write(comandoSerial, (err) => {
             if (err) {
                 console.error(
                     "[API] Erro ao enviar para o Arduino:",
@@ -120,7 +145,7 @@ app.post("/command", (req, res) => {
                 return res.status(500).json({ error: "Erro na porta serial." });
             }
             console.log(
-                `[API] Comando '${action}' enviado ao Arduino com sucesso!`,
+                `[API] Comando '${action}' (serial '${comandoSerial}') enviado ao Arduino com sucesso!`,
             );
             res.json({ success: true, message: `Comando ${action} enviado.` });
         });

@@ -1,8 +1,33 @@
 import axios from "axios";
+import { Platform } from "react-native";
 
-const DEFAULT_API_URL = "http://localhost:3000";
-const API_URL =
-    process.env.EXPO_PUBLIC_ARDUINO_API_URL?.trim() || DEFAULT_API_URL;
+const DEFAULT_API_PORT = 3000;
+const DEFAULT_API_URL = `http://localhost:${DEFAULT_API_PORT}`;
+
+// Resolução automática da URL da API:
+//   1. EXPO_PUBLIC_ARDUINO_API_URL no .env tem prioridade (override manual).
+//   2. Na web, deriva do host atual do navegador — abrindo o app em
+//      localhost:8081 bate em localhost:3000; abrindo do celular em
+//      http://<ip-da-LAN>:8081 bate em http://<ip-da-LAN>:3000 sem
+//      precisar trocar o .env entre PC e celular.
+//   3. Fallback final é localhost:3000.
+function resolveApiUrl() {
+    const fromEnv = process.env.EXPO_PUBLIC_ARDUINO_API_URL?.trim();
+    if (fromEnv) return fromEnv;
+
+    if (Platform.OS === "web" && typeof window !== "undefined") {
+        const hostname = window.location?.hostname;
+        if (hostname) {
+            const protocol = window.location?.protocol || "http:";
+            return `${protocol}//${hostname}:${DEFAULT_API_PORT}`;
+        }
+    }
+
+    return DEFAULT_API_URL;
+}
+
+const API_URL = resolveApiUrl();
+console.log("[arduinoService] API URL resolvida:", API_URL);
 
 const DEFAULT_TIMEOUT_MS = 10000;
 const API_TIMEOUT_MS =

@@ -1122,7 +1122,7 @@ const styles = StyleSheet.create({
     },
     sectionTitle: {
         fontFamily: theme.fonts.bold,
-        fontSize: 18,
+        fontSize: 14,
         color: theme.colors.textDark,
         marginTop: 10,
         marginBottom: 15,
@@ -1203,7 +1203,7 @@ const styles = StyleSheet.create({
     },
     historyText: {
         color: theme.colors.textMuted,
-        fontSize: 14,
+        fontSize: 12,
         fontFamily: undefined,
         fontWeight: "700",
     },
@@ -1219,7 +1219,7 @@ const styles = StyleSheet.create({
     },
     historyStatusBadgeText: {
         fontFamily: theme.fonts.bold,
-        fontSize: 12,
+        fontSize: 11,
         letterSpacing: 0.3,
     },
     historySectionWrapper: {

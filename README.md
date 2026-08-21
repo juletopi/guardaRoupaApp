@@ -27,9 +27,9 @@
 
 <div align="center">
    <a href="#sobre-o-projeto">Sobre</a> &#xa0; • &#xa0;
-   <a href="#estrutura-do-projeto">Estrutura</a> &#xa0; • &#xa0;
    <a href="#instalação">Instalação</a> &#xa0; • &#xa0;
-   <a href="#changelog">Changelog</a>
+   <a href="#changelog">Changelog</a>&#xa0; • &#xa0;
+   <a href="#aviso-legal-e-licença">Aviso legal e Licença</a>
 </div>
 
 ---
@@ -124,74 +124,6 @@ A ideia central é combinar uma **API de clima em tempo real** com um **módulo 
 <a href="https://www.arduino.cc/">
    <img src="https://img.shields.io/badge/Arduino-00979D?style=for-the-badge&logo=arduino&logoColor=white" alt="Arduino-badge">
 </a>
-
-<div align="left">
-   <h6><a href="#guarda-roupa"> Voltar para o início ↺</a></h6>
-</div>
-
-## Estrutura do projeto
-
-```
-guardaRoupaApp/
-├── app/                              # Roteamento (Expo Router)
-│   ├── _layout.jsx                   # Carregar fontes, loading inicial, StatusBar, Stack
-│   └── index.jsx                     # Rota inicial → MainScreen
-├── Arduino/
-│   └── Arduino.ino                   # Firmware: motor + sensores + protocolo serial (E/R/S)
-├── Arduino-api/
-│   └── server.js                     # API local (Express) de ponte entre App e Arduino via porta serial
-├── assets/
-│   ├── animations/                   # Animações para as diferentes condições de clima
-│   │   ├── clouds.json
-│   │   ├── night.json
-│   │   ├── rain.json
-│   │   └── sunny.json
-│   ├── fonts/                        # Fontes customizadas
-│   │   ├── croogla-bold.otf
-│   │   ├── croogla-extralight.otf
-│   │   ├── croogla-light.otf
-│   │   ├── croogla-medium.otf
-│   │   └── croogla-regular.otf
-│   └── images/                       # Logo do projeto
-│       └── guarda-roupa-logo.png
-├── constants/
-│   ├── theme.js                      # Paleta, cores e tokens visuais
-│   └── typography.js                 # Sistema de tipografia com variantes de fonte Croogla
-├── src/
-│   ├── components/
-│   │   ├── ExpandMenuBtn.jsx         # Botão expandir/recolher menu
-│   │   ├── ForecastCalendar.jsx      # Calendário mensal, navegação de mês e seleção de dia (integrado à API)
-│   │   ├── HourlyForecast.jsx        # Lista horizontal: hora, ícone, precipitação (%)
-│   │   ├── LocationSelectModal.jsx   # Modal: local manual (país/estado/município) e local padrão
-│   │   ├── ToggleVaralBtn.jsx        # Botão de toggle recolher/expor varal
-│   │   └── WeatherBackdropAnimation.jsx # Fundo animado por condição climática
-│   ├── data/
-│   │   ├── locationOptions.js        # Opções encadeadas para seleção de local na modal
-│   │   ├── clotheslineHistory.json   # Histórico persistido em JSON durante a execução
-│   │   └── mockData.js               # Dados mockados
-│   ├── hooks/
-│   │   ├── useClotheslineHistoryTracker.js # Rastreador de mudanças no estado do varal
-│   │   └── useWeather.js             # GPS/manual, local padrão (AsyncStorage), OWM (clima + /forecast + cidade)
-│   ├── screens/
-│   │   └── MainScreen.jsx            # Céu + menu, data selecionada, clima carregado e exibido
-│   ├── services/
-│   │   ├── arduinoService.js         # Cliente HTTP para API local do Arduino (/status e /command)
-│   │   ├── clotheslineHistoryService.js # Persistência em memória/AsyncStorage do histórico do varal
-│   │   └── weatherService.js         # OpenWeatherMap: clima atual, previsão 5d/3h, reverse geocoding (cidade)
-│   └── utils/
-│       ├── forecastDateUtils.js      # Datas PT-BR, grade do calendário, itens horários (incl. precipitação pop)
-│       ├── historyUtils.js           # Formatação e helpers do histórico de atividade
-│       ├── timeUtils.js              # Formatação de horários
-│       └── weatherUtils.js           # Gradiente do céu, ícones e texto de condição
-├── .editorconfig
-├── .env.example
-├── CHANGELOG.md
-├── eslint.config.js
-├── metro.config.js
-├── package.json
-├── tsconfig.json
-└── README.md
-```
 
 <div align="left">
    <h6><a href="#guarda-roupa"> Voltar para o início ↺</a></h6>
@@ -346,6 +278,22 @@ O projeto mantém um histórico de alterações detalhado para cada versão, inc
 - Correções de bugs
 
 Consulte o [CHANGELOG.md](CHANGELOG.md) para ver o histórico completo de alterações.
+
+<div align="left">
+   <h6><a href="#guarda-roupa-app"> Voltar para o início ↺</a></h6>
+</div>
+
+## Aviso legal e Licença
+
+Este projeto possui um aviso legal de propriedade intelectual, **registro de programa de computador no INPI** e diretrizes de uso institucional do nome e da tecnologia do projeto. Veja o arquivo [NOTICE.md](NOTICE.md) para mais detalhes.
+
+Este projeto esta licenciado sob a **Guarda-Roupa Non-Commercial License v1.0**. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+> [!NOTE]
+> Resumo prático da licença:
+> 
+> - **Permitido**: uso pessoal, acadêmico, estudo, modificação e compartilhamento sem fins comerciais.
+> - **Proibido sem autorização**: qualquer uso comercial, venda, sublicenciamento ou monetização direta/indireta do código e de derivados.
 
 <div align="left">
    <h6><a href="#guarda-roupa-app"> Voltar para o início ↺</a></h6>

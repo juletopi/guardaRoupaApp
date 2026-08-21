@@ -19,7 +19,7 @@ Conforme o certificado e a Lei 9.609/1998 (art. 2º, paragrafo 2º), o prazo de 
 > [!IMPORTANT]
 > - Este NOTICE não substitui uma licença de software.
 > - Este NOTICE não concede automaticamente direitos de uso, distribuição, modificação ou sublicenciamento.
-> - Direitos e permissões de terceiros dependem de instrumento jurídico próprio (licenca, contrato ou autorização expressa dos titulares).
+> - Direitos e permissões de terceiros dependem de instrumento jurídico próprio (licença, contrato ou autorização expressa dos titulares).
 
 ### Referências internas
 

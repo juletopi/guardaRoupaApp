@@ -285,9 +285,17 @@ Consulte o [CHANGELOG.md](CHANGELOG.md) para ver o histórico completo de altera
 
 ## Aviso legal e Licença
 
-Este projeto possui um aviso legal de propriedade intelectual, **registro de programa de computador no INPI** e diretrizes de uso institucional do nome e da tecnologia do projeto. Veja o arquivo [NOTICE.md](NOTICE.md) para mais detalhes.
+### Aviso legal
 
-Este projeto esta licenciado sob a **Guarda-Roupa Non-Commercial License v1.0**. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+Este projeto possui um aviso legal de propriedade intelectual, **registro de programa de computador no INPI** e diretrizes de uso institucional do nome e da tecnologia do projeto.
+
+Veja o arquivo [NOTICE.md](NOTICE.md) para mais detalhes.
+
+### Licença
+
+Este projeto esta licenciado sob a **Guarda-Roupa Non-Commercial License v1.0**.
+
+Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
 > [!NOTE]
 > Resumo prático da licença:

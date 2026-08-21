@@ -14,7 +14,7 @@
 
 ### Vigência
 
-Conforme o certificado e a Lei 9.609/1998 (art. 2º, paragrafo 2º), o prazo de proteção patrimonial e de 50 anos a partir de 1º de janeiro subsequente a data de publicação.
+Conforme o certificado e a Lei 9.609/1998 (art. 2º, paragrafo 2º), o prazo de proteção patrimonial é de 50 anos a partir de 1º de janeiro subsequente a data de publicação.
 
 > [!IMPORTANT]
 > - Este NOTICE não substitui uma licença de software.

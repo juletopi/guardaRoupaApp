@@ -23,4 +23,4 @@ Conforme o certificado e a Lei 9.609/1998 (art. 2º, paragrafo 2º), o prazo de 
 
 ### Referências internas
 
-- Documento de apoio: [assets\docs\certificado_5120260049461783437228616.pdf](https://github.com/juletopi/guardaRoupaApp/blob/master/assets/docs/certificado_5120260049461783437228616.pdf)
+- Documento de apoio: [assets\docs\certificado_5120260049461783437228616.pdf](https://github.com/juletopi/guardaRoupaApp/blob/main/assets/docs/certificado_5120260049461783437228616.pdf)

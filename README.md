@@ -36,12 +36,12 @@
 
 <div align="center">
   <p>
-    <img src="assets/docs/app_1.png" alt="Telas principais do app" width="380" />
-    <img src="assets/docs/app_2.png" alt="Menu e opções do app" width="380" />
+    <img src="assets/docs/app_1.png" alt="Telas principais do app" width="430" />
+    <img src="assets/docs/app_2.png" alt="Menu e opções do app" width="430" />
   </p>
   <p>
-    <img src="assets/docs/maquete_1.png" alt="Componentes arduíno do varal" width="430" />
-    <img src="assets/docs/maquete_2.png" alt="Roupas expsotas e recolhidas do varal" width="430" />
+    <img src="assets/docs/maquete_1.png" alt="Componentes arduíno do varal" width="280" />
+    <img src="assets/docs/maquete_2.png" alt="Roupas expsotas e recolhidas do varal" width="280" />
   </p>
 </div>
 

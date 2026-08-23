@@ -65,8 +65,8 @@ A ideia central é combinar uma **API de clima em tempo real** com um **módulo 
 
 <div align="center">
   <p>
-    <img src="assets/docs/app_1.png" alt="Telas principais do app" width="280" />
-    <img src="assets/docs/app_2.png" alt="Menu e opções do app" width="280" />
+    <img src="assets/docs/app_1.png" alt="Telas principais do app" width="340" />
+    <img src="assets/docs/app_2.png" alt="Menu e opções do app" width="340" />
   </p>
 </div>
 
@@ -274,8 +274,8 @@ O controle físico do varal funciona em 3 camadas:
 
 <div align="center">
   <p>
-    <img src="assets/docs/maquete_1.png" alt="Componentes arduíno do varal" width="280" />
-    <img src="assets/docs/maquete_2.png" alt="Roupas expsotas e recolhidas do varal" width="280" />
+    <img src="assets/docs/maquete_1.png" alt="Componentes arduíno do varal" width="340" />
+    <img src="assets/docs/maquete_2.png" alt="Roupas expsotas e recolhidas do varal" width="340" />
   </p>
 </div>
   

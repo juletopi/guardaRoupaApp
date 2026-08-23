@@ -36,8 +36,8 @@
 
 <div align="center">
   <p>
-    <img src="assets/docs/app_1.png" alt="Telas principais do app" width="430" />
-    <img src="assets/docs/app_2.png" alt="Menu e opções do app" width="430" />
+    <img src="assets/docs/app_1.png" alt="Telas principais do app" width="480" />
+    <img src="assets/docs/app_2.png" alt="Menu e opções do app" width="480" />
   </p>
   <p>
     <img src="assets/docs/maquete_1.png" alt="Componentes arduíno do varal" width="280" />

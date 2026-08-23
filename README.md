@@ -34,17 +34,6 @@
 
 ---
 
-<div align="center">
-  <p>
-    <img src="assets/docs/app_1.png" alt="Telas principais do app" width="480" />
-    <img src="assets/docs/app_2.png" alt="Menu e opções do app" width="480" />
-  </p>
-  <p>
-    <img src="assets/docs/maquete_1.png" alt="Componentes arduíno do varal" width="280" />
-    <img src="assets/docs/maquete_2.png" alt="Roupas expsotas e recolhidas do varal" width="280" />
-  </p>
-</div>
-
 ## Sobre o projeto
 
 O **Guarda-roupa** é um aplicativo mobile que resolve um problema cotidiano: recolher ou expor roupas no varal sem depender de "achismos" sobre o tempo antes de ser tarde demais.
@@ -73,6 +62,13 @@ A ideia central é combinar uma **API de clima em tempo real** com um **módulo 
 - Regras de segurança no controle do varal:
    - Confirmação para estender em caso de chuva.
    - Confirmação quando não há roupa detectada.
+
+<div align="center">
+  <p>
+    <img src="assets/docs/app_1.png" alt="Telas principais do app" width="280" />
+    <img src="assets/docs/app_2.png" alt="Menu e opções do app" width="280" />
+  </p>
+</div>
 
 ### Tecnologias utilizadas
 
@@ -276,6 +272,13 @@ O controle físico do varal funciona em 3 camadas:
     { "estendido": true, "chuva": false, "roupa": true }
     ```
 
+<div align="center">
+  <p>
+    <img src="assets/docs/maquete_1.png" alt="Componentes arduíno do varal" width="280" />
+    <img src="assets/docs/maquete_2.png" alt="Roupas expsotas e recolhidas do varal" width="280" />
+  </p>
+</div>
+  
 <div align="left">
    <h6><a href="#guarda-roupa"> Voltar para o início ↺</a></h6>
 </div>

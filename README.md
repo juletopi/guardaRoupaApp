@@ -44,24 +44,24 @@ A ideia central é combinar uma **API de clima em tempo real** com um **módulo 
 
 - Tela principal com animações de fundo dinâmicas, baseadas na condição climática real e horário do dia.
 - Menu recolhido:
-   - Texto info de **Data + local** e seção com previsão horária via OpenWeatherMap
-   - Seleção de região por modal:
-      - Fluxo País → Estado → Município.
-      - Opção de definir **local padrão**.
+    - Texto info de **Data + local** e seção com previsão horária via OpenWeatherMap
+    - Seleção de região por modal:
+        - Fluxo País → Estado → Município.
+        - Opção de definir **local padrão**.
 - Botão flutuante **RECOLHER / EXPOR** na divisa do menu, com animação de linhas irradiando.
 - Menu expandido:
-   - Seção de **calendário**:
-      - Escolha de dia.
-      - Previsão horária filtrada com base no mesmo payload.
-   - Seção de **Histórico do varal**:
-      - Registro de mudanças entre recolhido/expandido.
-      - Identificação da origem da mudança (manual, automático, chuva ou fim do dia).
+    - Seção de **calendário**:
+        - Escolha de dia.
+        - Previsão horária filtrada com base no mesmo payload.
+    - Seção de **Histórico do varal**:
+        - Registro de mudanças entre recolhido/expandido.
+        - Identificação da origem da mudança (manual, automático, chuva ou fim do dia).
 - Integração em tempo real com módulo Arduino via API local:
-   - Leitura periódica de status do varal (**estendido**, **chuva**, **roupa detectada**).
-   - Leitura ativa de comandos do botão **RECOLHER / EXPOR**
+    - Leitura periódica de status do varal (**estendido**, **chuva**, **roupa detectada**).
+    - Leitura ativa de comandos do botão **RECOLHER / EXPOR**
 - Regras de segurança no controle do varal:
-   - Confirmação para estender em caso de chuva.
-   - Confirmação quando não há roupa detectada.
+    - Confirmação para estender em caso de chuva.
+    - Confirmação quando não há roupa detectada.
 
 <div align="center">
   <p>
@@ -214,13 +214,34 @@ O app usa a API **OpenWeatherMap**. Sem chave, a previsão não carrega.
    <h6><a href="#guarda-roupa"> Voltar para o início ↺</a></h6>
 </div>
 
-### Módulo Arduino (API local + firmware)
+### Módulo Arduino (API local + firmware + hardware)
 
 O controle físico do varal funciona em 3 camadas:
 
 1. **App Expo** envia/consulta estado via HTTP
 2. **API local Node/Express** (ponte serial) converte HTTP para comandos da serial
-3. **Arduino** executa o movimento e responde status em JSON
+3. **Arduino** Arduino executa a lógica embarcada, controla os sensores/motor envia o estado pela comunicação serial
+
+```
+                     HTTP
+┌──────────────┐               ┌─────────────┐
+│ React Native │ ────────────► │ API Express │
+│     App      │ ◄──────────── │   :3000     │
+└──────────────┘               └──────┬──────┘
+                                      │
+                                   Serial
+                                    9600
+                                      │
+                                      ▼
+                                 ┌─────────┐
+                                 │ Arduino │
+                                 └────┬────┘
+                                      │
+                     ┌────────────────┼────────────────┐
+                     ▼                ▼                ▼
+                  HC-SR04           HL-83           28BYJ-48
+                  Roupas            Chuva             Motor
+```
 
 #### 1) Suba o firmware no Arduino
 
@@ -272,6 +293,17 @@ O controle físico do varal funciona em 3 camadas:
     { "estendido": true, "chuva": false, "roupa": true }
     ```
 
+#### 5) Hardware e componentes
+
+| Componente            | Qtd. | Função      | Descrição                                                                                   | Link                                                                                                                                                                                                                                                                                   |
+| --------------------- | ---: | ----------- | ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Arduino UNO           |    1 | Controle    | Microcontrolador principal do sistema embarcado.                                            | [Arduino Store](https://store.arduino.cc/collections/uno/products/arduino-uno-rev3)                                                                                                                                                                                                    |
+| HC-SR04               |    1 | Detecção    | Sensor ultrassônico utilizado para detectar a presença de roupas.                           | [Mercado Livre](https://www.mercadolivre.com.br/case-hcsr04-com-tampa--suporte-sensor-ultrassonico-arduino/up/MLBU3961484300?pdp_filters=item_id%3AMLB6745051264&matt_tool=38524122#origin=share&sid=share&wid=MLB6745051264&action=copy)                                              |
+| HL-83                 |    1 | Detecção    | Sensor utilizado para detectar chuva/umidade.                                               | [Mercado Livre](https://www.mercadolivre.com.br/sensor-de-chuva-com-rele/up/MLBU1718489592?pdp_filters=item_id%3AMLB1946113427&matt_tool=38524122&ua=2GpmuqXo4k9QWwFuXkpwHTkX7aBoWvXpJ1U_pkjFtbTyyUyj#origin=share&sid=share&wid=MLB1946113427&action=copy)                            |
+| 28BYJ-48              |    1 | Atuador     | Motor de passo responsável pela movimentação do varal.                                      | [Mercado Livre](https://www.mercadolivre.com.br/motor-de-passo-28byj-48-driver-uln2003-arduino-robotica/p/MLB32493377?pdp_filters=item_id%3AMLB3774275425&matt_tool=38524122&ua=vlZk0aTLEQU31QFYQsCgoZl9pWYv5UYNN4JkSJ-uIfZQHpAN#origin=share&sid=share&wid=MLB3774275425&action=copy) |
+| Protoboard 830 pontos |    1 | Montagem    | Base para montagem das conexões eletrônicas.                                                | [Mercado Livre](https://www.mercadolivre.com.br/protoboard-830-pontos-mb-102-placa-de-ensaio-eletronica/p/MLB28453899?pdp_filters=item_id%3AMLB5289141526&matt_tool=38524122&ua=FKHpu0bsADolJHW5bxgtKWP-L_vkt3cbdJIZ6TM_lIMpd2wC#origin=share&sid=share&wid=MLB5289141526&action=copy) |
+| Cabo USB 3.0 A/B      |    1 | Comunicação | Cabo utilizado para conectar o Arduino ao computador para programação e comunicação serial. | [Mercado Livre](https://www.mercadolivre.com.br/cabo-extensor-30-usb-macho-x-femea-blindado-1-metro/up/MLBU761551036?pdp_filters=item_id%3AMLB3332476705&matt_tool=38524122&ua=AcIKkO2h_3XowjPdoyE9cdFl9EQA4G668nq3fzt0SGVfRtc5#origin=share&sid=share&wid=MLB3332476705&action=copy)  |
+
 <div align="center">
   <p>
     <img src="assets/docs/maquete_1.png" alt="Componentes arduíno do varal" width="340" />
@@ -313,7 +345,7 @@ Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
 > [!NOTE]
 > Resumo prático da licença:
-> 
+>
 > - **Permitido**: uso pessoal, acadêmico, estudo, modificação e compartilhamento sem fins comerciais.
 > - **Proibido sem autorização**: qualquer uso comercial, venda, sublicenciamento ou monetização direta/indireta do código e de derivados.
 

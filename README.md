@@ -220,7 +220,7 @@ O controle físico do varal funciona em 3 camadas:
 
 1. **App Expo** envia/consulta estado via HTTP
 2. **API local Node/Express** (ponte serial) converte HTTP para comandos da serial
-3. **Arduino** Arduino executa a lógica embarcada, controla os sensores/motor envia o estado pela comunicação serial
+3. **Arduino** executa a lógica embarcada, controla os sensores/motor envia o estado pela comunicação serial
 
 ```
                      HTTP
